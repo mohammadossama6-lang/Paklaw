@@ -1,7 +1,7 @@
 # PakLaw — Law Firm Funnel Website
 
 A funnel website for PakLaw, a legal services platform for Pakistan.
-Built with **Next.js** (App Router) and a black & gold theme.
+Built with **Next.js** (App Router), styled after the Karachi Police website theme (navy blue + red on a light background).
 
 ## Pages
 
@@ -26,7 +26,7 @@ before going live.
 app/
   layout.js         # root layout: header + footer, global metadata
   page.js           # landing page
-  globals.css       # black & gold theme
+  globals.css       # navy/red government-style theme
   terms/page.js     # Terms & Conditions
   privacy/page.js   # Privacy Policy
 components/
