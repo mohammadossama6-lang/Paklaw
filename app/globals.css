@@ -109,24 +109,26 @@ img { max-width: 100%; display: block; }
   overflow: hidden;
 }
 
-/* Collage of small incident images forming the full hero background */
+/* Collage of small 1:1 incident images forming the full hero background */
 .hero-collage {
   position: absolute;
   inset: 0;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  align-content: start;
   gap: 3px;
+  overflow: hidden;
 }
 
 .tile {
   position: relative;
+  aspect-ratio: 1 / 1;
+  background-color: #14110c;
   background-size: cover;
   background-position: center;
   display: flex;
   align-items: flex-end;
-  min-height: 0;
-  filter: saturate(0.6);
+  filter: saturate(0.75);
 }
 
 .tile span {
@@ -138,29 +140,19 @@ img { max-width: 100%; display: block; }
   padding: 6px 8px;
 }
 
-/* Placeholder gradients — swap each tile for a real photograph:
-   e.g. .t1 { background-image: url("../assets/hero/gull-plaza.jpg"); } */
-.t1  { background: linear-gradient(145deg, #2e2417, #0c0a06); }
-.t2  { background: linear-gradient(145deg, #331d15, #0e0806); }
-.t3  { background: linear-gradient(145deg, #26221a, #0a0906); }
-.t4  { background: linear-gradient(145deg, #33301e, #0d0c08); }
-.t5  { background: linear-gradient(145deg, #1f2420, #080a09); }
-.t6  { background: linear-gradient(145deg, #2f2320, #0d0a09); }
-.t7  { background: linear-gradient(145deg, #292b1c, #0b0b08); }
-.t8  { background: linear-gradient(145deg, #241f2b, #0a090c); }
-.t9  { background: linear-gradient(145deg, #322619, #0d0a07); }
-.t10 { background: linear-gradient(145deg, #1d2b26, #080b0a); }
-.t11 { background: linear-gradient(145deg, #2d222b, #0c090b); }
-.t12 { background: linear-gradient(145deg, #202531, #08090d); }
+.tile span {
+  position: relative;
+  z-index: 1;
+}
 
 .hero-overlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     100deg,
-    rgba(5, 5, 5, 0.95) 0%,
-    rgba(5, 5, 5, 0.84) 45%,
-    rgba(5, 5, 5, 0.62) 100%
+    rgba(5, 5, 5, 0.92) 0%,
+    rgba(5, 5, 5, 0.78) 45%,
+    rgba(5, 5, 5, 0.55) 100%
   );
 }
 

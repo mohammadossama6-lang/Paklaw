@@ -40,15 +40,25 @@ lib/
 
 ## Hero collage images
 
-The hero background is a grid of tiles (`TILES` in `components/Hero.js`)
-representing incidents in Pakistan (Gull Plaza, RJ Plaza, Margalla Towers, …).
-They currently use placeholder gradients (`.t1`–`.t12` in `app/globals.css`).
-To use real photographs, drop images into `public/hero/` and set each tile's
-background, e.g.:
+The hero background is a grid of **square (1:1) tiles** (`TILES` in
+`components/Hero.js`), one per incident in Pakistan — Gul Plaza (2026),
+RJ Mall (2023), Margalla Towers (2005), Baldia Factory (2012) and others.
 
-```css
-.t1 { background-image: url("/hero/gull-plaza.jpg"); }
-```
+The images in `public/hero/` are locally generated artistic scenes of each
+incident (news photographs are copyrighted, and this build environment blocks
+image downloads). To use real photographs, replace a file in `public/hero/`
+with a square-cropped photo and update the path in `components/Hero.js` if
+you change the extension, e.g. `/hero/gul-plaza.jpg`.
+
+Photo sources to pull from:
+
+- Gul Plaza fire (2026): https://en.wikipedia.org/wiki/2026_Gul_Plaza_Shopping_Mall_fire
+- 2005 Kashmir earthquake / Margalla Towers (freely licensed):
+  https://commons.wikimedia.org/wiki/Category:2005_Kashmir_earthquake_damage
+- Baldia Town factory fire (2012): https://en.wikipedia.org/wiki/2012_Pakistan_garment_factory_fires
+- News archives (Dawn, Tribune, Geo) for RJ Mall, Regent Plaza, Hafeez Centre —
+  note these photos are copyrighted; obtain permission or a license before
+  publishing them.
 
 ## Development
 

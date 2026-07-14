@@ -1,34 +1,43 @@
 import Funnel from "./Funnel";
 
 /*
- * Hero collage: each tile is a small image from incidents in Pakistan
- * (Gull Plaza, RJ Plaza, Margalla Towers, etc.).
- * Replace a tile's gradient with a real photograph by adding
- * `background-image: url(...)` for its class in globals.css — or swap the
- * <div> for a next/image component when the photos are available.
+ * Hero collage: every tile is a square (1:1) image of an incident in
+ * Pakistan — Gul Plaza, RJ Mall, Margalla Towers and similar tragedies.
+ *
+ * The images in /public/hero are locally generated artistic scenes of each
+ * incident. To use real photographs instead, replace the corresponding file
+ * in public/hero/ with a square (1:1) photo — same filename, .jpg or .svg —
+ * and the collage picks it up automatically. See README for photo sources.
  */
 const TILES = [
-  "Gull Plaza",
-  "RJ Plaza",
-  "Margalla Towers",
-  "Hafeez Centre",
-  "Regent Plaza",
-  "Baldia Factory",
-  "Gulberg Fire",
-  "Karachi Timber Mkt",
-  "Lahore Anarkali",
-  "Nishtar Park",
-  "Faisalabad Mills",
-  "Murree Highway",
+  { label: "Gul Plaza — 2026", img: "/hero/gul-plaza.svg" },
+  { label: "RJ Mall — 2023", img: "/hero/rj-mall.svg" },
+  { label: "Margalla Towers — 2005", img: "/hero/margalla-towers.svg" },
+  { label: "Baldia Factory — 2012", img: "/hero/baldia-factory.svg" },
+  { label: "Regent Plaza — 2016", img: "/hero/regent-plaza.svg" },
+  { label: "Hafeez Centre — 2020", img: "/hero/hafeez-centre.svg" },
+  { label: "Timber Market — 2021", img: "/hero/timber-market.svg" },
+  { label: "Anarkali Bazaar — 2001", img: "/hero/anarkali.svg" },
+  { label: "Ghakhar Plaza — 2013", img: "/hero/ghakhar-plaza.svg" },
+  { label: "Mehran Town — 2021", img: "/hero/mehran-town.svg" },
+  { label: "Ahmedpur Tanker — 2017", img: "/hero/ahmedpur-tanker.svg" },
+  { label: "Lucky Plaza", img: "/hero/lucky-plaza.svg" },
 ];
+
+// Repeat the list so the square tiles always cover the hero's full height.
+const COLLAGE = [...TILES, ...TILES.slice(0, 6)];
 
 export default function Hero() {
   return (
     <section className="hero" id="hero">
       <div className="hero-collage" aria-hidden="true">
-        {TILES.map((label, i) => (
-          <div key={label} className={`tile t${i + 1}`}>
-            <span>{label}</span>
+        {COLLAGE.map((tile, i) => (
+          <div
+            key={`${tile.label}-${i}`}
+            className="tile"
+            style={{ backgroundImage: `url(${tile.img})` }}
+          >
+            <span>{tile.label}</span>
           </div>
         ))}
       </div>
@@ -43,7 +52,7 @@ export default function Hero() {
             Justice Shouldn&apos;t Wait.
           </h1>
           <p className="hero-sub">
-            From Gull Plaza to RJ Plaza — we stand with the victims. Get expert legal help for
+            From Gul Plaza to RJ Mall — we stand with the victims. Get expert legal help for
             compensation claims, property, family and corporate matters. Start below in 4 simple steps.
           </p>
           <ul className="hero-points">
