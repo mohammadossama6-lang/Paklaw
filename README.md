@@ -1,12 +1,13 @@
 # PakLaw — Law Firm Funnel Website
 
-A static funnel website for PakLaw, a legal services platform for Pakistan.
+A funnel website for PakLaw, a legal services platform for Pakistan.
+Built with **Next.js** (App Router) and a black & gold theme.
 
 ## Pages
 
-- `index.html` — landing page: header (logo + social icons), hero collage, 4-step funnel, footer
-- `terms.html` — Terms & Conditions
-- `privacy.html` — Privacy Policy
+- `/` — landing page: header (logo + social icons), hero collage, 4-step funnel, footer
+- `/terms` — Terms & Conditions
+- `/privacy` — Privacy Policy
 
 ## The 4-step funnel
 
@@ -19,21 +20,46 @@ On completion a confirmation screen is shown. Payment is currently a front-end
 mock — integrate a real gateway (e.g. Stripe, PayFast, JazzCash) and a backend
 before going live.
 
-## Hero collage images
+## Project structure
 
-The hero background is a grid of tiles (`.hero-collage .tile` in `index.html`)
-representing incidents in Pakistan (Gull Plaza, RJ Plaza, Margalla Towers, …).
-They currently use placeholder gradients. To use real photographs, drop images
-into `assets/hero/` and set each tile's background in `css/style.css`, e.g.:
-
-```css
-.t1 { background-image: url("../assets/hero/gull-plaza.jpg"); }
+```
+app/
+  layout.js         # root layout: header + footer, global metadata
+  page.js           # landing page
+  globals.css       # black & gold theme
+  terms/page.js     # Terms & Conditions
+  privacy/page.js   # Privacy Policy
+components/
+  Header.js  Footer.js  Logo.js  SocialLinks.js
+  Hero.js           # hero collage + copy
+  Funnel.js         # 4-step funnel (client component)
+  TrustStrip.js
+lib/
+  services.js       # service catalogue, nationalities, time slots, fee
 ```
 
-## Running locally
+## Hero collage images
 
-No build step — open `index.html` in a browser, or serve the folder:
+The hero background is a grid of tiles (`TILES` in `components/Hero.js`)
+representing incidents in Pakistan (Gull Plaza, RJ Plaza, Margalla Towers, …).
+They currently use placeholder gradients (`.t1`–`.t12` in `app/globals.css`).
+To use real photographs, drop images into `public/hero/` and set each tile's
+background, e.g.:
+
+```css
+.t1 { background-image: url("/hero/gull-plaza.jpg"); }
+```
+
+## Development
 
 ```bash
-python3 -m http.server 8000
+npm install
+npm run dev     # http://localhost:3000
+```
+
+## Production
+
+```bash
+npm run build
+npm start
 ```

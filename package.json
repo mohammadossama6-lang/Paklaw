@@ -1,0 +1,16 @@
+{
+  "name": "paklaw",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PakLaw — law firm funnel website built with Next.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^16.2.10",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  }
+}
