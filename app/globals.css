@@ -1,0 +1,188 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-playfair);
+
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-300: #93c5fd;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
+  --color-ink: #0f172a;
+  --color-muted: #64748b;
+
+  --color-gold-200: #f0e2bb;
+  --color-gold-300: #e3c98a;
+  --color-gold-400: #d1af6a;
+  --color-gold-500: #bd9553;
+  --color-gold-600: #9c7a3f;
+  --color-gold-700: #7a5f30;
+
+  --color-pine-700: #114e58;
+  --color-pine-800: #0c3a42;
+  --color-pine-900: #082b31;
+}
+
+@keyframes cta-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0);
+  }
+}
+
+@keyframes fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes marquee-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@layer utilities {
+  .animate-cta-glow {
+    animation: cta-glow 2.4s ease-in-out infinite;
+  }
+
+  .animate-fade-in-down {
+    animation: fade-in-down 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 1.4s ease-out both;
+  }
+
+  .bg-gradient-primary {
+    background-image: linear-gradient(135deg, #3b82f6 0%, #2563eb 45%, #4f46e5 100%);
+  }
+
+  .bg-gradient-gold {
+    background-image: linear-gradient(135deg, #f0e2bb 0%, #d1af6a 50%, #9c7a3f 100%);
+  }
+
+  .bg-gradient-hero {
+    background-image: linear-gradient(135deg, #081029 0%, #0f2657 45%, #1c4d8f 100%);
+  }
+
+  .bg-gradient-cta {
+    background-image: linear-gradient(90deg, #c026d3 0%, #db2777 45%, #f97316 100%);
+  }
+
+  .font-jost {
+    font-family: var(--font-jost), sans-serif;
+  }
+
+  .bg-star-field {
+    background-image:
+      linear-gradient(rgba(5, 10, 25, 0.55), rgba(5, 10, 25, 0.75)),
+      url("/hero-bg.png");
+    background-size: cover, cover;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+  }
+
+  .animate-marquee-left {
+    animation: marquee-left linear infinite;
+  }
+
+  .animate-marquee-right {
+    animation: marquee-right linear infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee-left,
+  .animate-marquee-right,
+  .animate-fade-in-down,
+  .animate-fade-in-up,
+  .animate-fade-in,
+  .animate-cta-glow {
+    animation: none;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+html {
+  scroll-padding-top: 5rem;
+  /* iOS/Android: stop the rubber-band/glow scroll effect from chaining
+     out of nested scroll containers (modals, marquees) into the page. */
+  overscroll-behavior-y: contain;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* remove the default gray tap flash on iOS/Android — buttons already
+     have their own :active/whileTap feedback */
+  -webkit-tap-highlight-color: transparent;
+}
+
+

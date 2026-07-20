@@ -1,0 +1,144 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Step 1
+  nationality String
+
+  // Step 2
+  fullName String
+  email    String
+  phone    String
+  gender   String
+  dob      String
+  province String
+  city     String
+  address  String
+
+  // Step 3
+  service    String
+  subService String
+  message    String
+  consent    Boolean
+
+  // Delivery tracking — did the GoHighLevel sync succeed, and which contact
+  // did it create/update there.
+  ghlNotifiedAt     DateTime?
+  ghlContactId      String?
+  ghlOpportunityId  String?
+
+  // Lawyer matching — the registered lawyer (same province, matching
+  // practice area) this lead was routed to, if any.
+  matchedLawyerId String?
+  matchedLawyer   LawyerApplication? @relation(fields: [matchedLawyerId], references: [id])
+  lawyerNotifiedAt DateTime?
+
+  // Portal — once the client verifies their phone via OTP, this lead is
+  // linked to their account so the client portal can list their case(s).
+  clientUserId String?
+  clientUser   User?     @relation(fields: [clientUserId], references: [id])
+  hearingDate  DateTime?
+  status       String    @default("open")
+  updates      CaseUpdate[]
+}
+
+enum Role {
+  CLIENT
+  LAWYER
+}
+
+// A portal account, identified by phone number and reached via WhatsApp OTP —
+// no passwords. A Lead is the client side; LawyerApplication.userId links the
+// lawyer side, so a phone number that matches an approved lawyer application
+// logs into the lawyer portal instead of the client one.
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  phone     String   @unique
+  role      Role
+
+  leads             Lead[]
+  lawyerApplication LawyerApplication?
+  caseUpdates       CaseUpdate[]
+}
+
+// Short-lived one-time codes sent over WhatsApp for portal login. A phone
+// number can request a new code at any time; only the most recent
+// unconsumed, unexpired code for that phone is valid.
+model OtpCode {
+  id         String    @id @default(cuid())
+  createdAt  DateTime  @default(now())
+  phone      String
+  code       String
+  expiresAt  DateTime
+  consumedAt DateTime?
+
+  @@index([phone])
+}
+
+// Audit trail for case changes made through the portal (currently just
+// hearing-date updates) — kept separate from Lead so every change a lawyer
+// makes is preserved, not just the latest value.
+model CaseUpdate {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  leadId String
+  lead   Lead   @relation(fields: [leadId], references: [id])
+
+  authorUserId String
+  author       User   @relation(fields: [authorUserId], references: [id])
+
+  hearingDate DateTime?
+  note        String?
+}
+
+model LawyerApplication {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  fullName String
+  email    String
+  phone    String
+  city     String
+  province String
+
+  barCouncilNumber  String
+  yearsOfExperience Int
+  practiceAreas     String[]
+
+  lawDegree      String
+  university     String
+  graduationYear Int
+
+  bio   String
+  cvUrl String?
+
+  // Delivery tracking — did the GoHighLevel sync succeed, and which Custom
+  // Object record it created. Lawyers are stored as a separate "Lawyer"
+  // custom object in GHL, not as Contacts, so they never mix with client
+  // leads in the Contacts tab.
+  ghlNotifiedAt DateTime?
+  ghlRecordId   String?
+
+  matchedLeads Lead[]
+
+  // Portal login — set once this lawyer verifies their phone via OTP, so
+  // subsequent logins from the same phone land in the lawyer portal.
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id])
+}
