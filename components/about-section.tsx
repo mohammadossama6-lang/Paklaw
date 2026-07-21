@@ -2,9 +2,15 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Clock, Compass, Globe, Shield, ShieldCheck } from "lucide-react";
-
-import { WhatsappIcon } from "@/components/social-icons";
+import {
+  Briefcase,
+  Compass,
+  GraduationCap,
+  Globe,
+  Landmark,
+  Megaphone,
+  Shield,
+} from "lucide-react";
 
 const ABOUT_TABS = [
   {
@@ -29,22 +35,32 @@ const ABOUT_TABS = [
 
 const TRUST_POINTS = [
   {
-    Icon: ShieldCheck,
-    label: "Licensed & Vetted",
-    body: "Every advocate is verified before we ever introduce you.",
-    accent: "from-brand-700 to-brand-900 shadow-brand-800/40",
+    Icon: Megaphone,
+    label: "Freedom of Expression",
+    body: "Standing with the media when its voice is threatened.",
+    accent: "from-gold-400 to-gold-600",
+    glow: "hover:shadow-gold-500/20",
   },
   {
-    Icon: Clock,
-    label: "1 Business Day",
-    body: "The average time it takes our team to get back to you.",
-    accent: "from-brand-700 to-brand-900 shadow-brand-800/40",
+    Icon: Landmark,
+    label: "Institutional Accountability",
+    body: "Challenging unfairness and ensuring public institutions answer to the law.",
+    accent: "from-brand-600 to-brand-900",
+    glow: "hover:shadow-brand-700/20",
   },
   {
-    Icon: WhatsappIcon,
-    label: "Direct Access",
-    body: "Message your lawyer yourself — no call centre in between.",
-    accent: "from-emerald-400 to-emerald-600 shadow-emerald-500/30",
+    Icon: Briefcase,
+    label: "Business & Investment",
+    body: "Protecting innovation, businesses and investment in Pakistan.",
+    accent: "from-emerald-500 to-emerald-700",
+    glow: "hover:shadow-emerald-600/20",
+  },
+  {
+    Icon: GraduationCap,
+    label: "Legal Education & Empowerment",
+    body: "Creating opportunities and building the next generation of legal professionals.",
+    accent: "from-indigo-500 to-indigo-800",
+    glow: "hover:shadow-indigo-600/20",
   },
 ] as const;
 
@@ -90,28 +106,43 @@ export default function AboutSection() {
           </p>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-          className="mx-auto mt-14 grid max-w-4xl gap-4 sm:grid-cols-3"
-        >
-          {TRUST_POINTS.map(({ Icon, label, body, accent }) => (
-            <div
+        <div className="mx-auto mt-14 grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {TRUST_POINTS.map(({ Icon, label, body, accent, glow }, i) => (
+            <motion.div
               key={label}
-              className="group rounded-2xl border border-slate-200/70 bg-white p-5 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand-200 hover:shadow-lg hover:shadow-brand-600/10"
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.55, ease: "easeOut", delay: 0.08 * i }}
+              className={`group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/70 bg-white p-6 text-left shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-transparent hover:shadow-2xl ${glow}`}
             >
               <span
-                className={`mx-auto flex size-11 items-center justify-center rounded-full bg-linear-to-br text-white shadow-md ${accent}`}
+                aria-hidden
+                className="pointer-events-none absolute -right-3 -top-5 select-none font-serif text-8xl font-black leading-none text-slate-100 transition-colors duration-500 group-hover:text-slate-50"
               >
-                <Icon className="size-5" />
+                {String(i + 1).padStart(2, "0")}
               </span>
-              <div className="mt-3 font-serif text-lg italic text-ink">{label}</div>
-              <p className="mt-1 text-sm leading-6 text-muted">{body}</p>
-            </div>
+              <span
+                aria-hidden
+                className={`absolute inset-x-0 top-0 h-1 bg-linear-to-r opacity-0 transition-opacity duration-500 group-hover:opacity-100 ${accent}`}
+              />
+
+              <span
+                className={`relative flex size-12 items-center justify-center rounded-2xl bg-linear-to-br text-white shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3 ${accent}`}
+              >
+                <Icon className="size-5.5" />
+              </span>
+              <div className="relative mt-5 text-[13px] font-bold uppercase tracking-[0.1em] text-ink">
+                {label}
+              </div>
+              <p className="relative mt-2 text-sm leading-6 text-muted">{body}</p>
+              <span
+                aria-hidden
+                className={`relative mt-auto block h-px w-8 bg-linear-to-r transition-all duration-500 group-hover:w-14 ${accent}`}
+              />
+            </motion.div>
           ))}
-        </motion.div>
+        </div>
 
         <motion.div
           initial={{ opacity: 0, y: 24 }}

@@ -1,7 +1,7 @@
+import Image from "next/image";
 import { ArrowRight, Landmark, Shield } from "lucide-react";
 
 import Footer from "@/components/footer";
-import HeroCtaCard from "@/components/hero-cta-card";
 import AboutSection from "@/components/about-section";
 import PracticeAreas from "@/components/practice-areas";
 import ClientsSection from "@/components/clients-section";
@@ -142,7 +142,13 @@ export default function Home() {
                 </a>
               ))}
             </div>
-            <HeroCtaCard />
+            <Image
+              src="/paklaw-credentials.jpg"
+              alt="PAK LAW — represented prominent media houses, anchors, and journalists; legal education and empowerment; business and investment counsel. Backed by AR & Co."
+              width={2048}
+              height={2048}
+              className="mx-auto h-auto w-auto max-h-[70vh] max-w-full rounded-3xl shadow-2xl shadow-slate-900/15"
+            />
           </div>
         </main>
       </div>
