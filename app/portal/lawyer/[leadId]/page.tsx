@@ -65,7 +65,7 @@ export default async function LawyerCasePage({
               <li key={update.id} className="relative">
                 <span
                   aria-hidden
-                  className="absolute -left-[1.6rem] top-1.5 size-2.5 rounded-full bg-gold-400 ring-4 ring-gold-100"
+                  className="absolute left-[-1.6rem] top-1.5 size-2.5 rounded-full bg-gold-400 ring-4 ring-gold-100"
                 />
                 <div className="rounded-xl border border-slate-100 bg-white p-4 text-sm shadow-sm">
                   <div className="text-xs text-slate-400">{update.createdAt.toLocaleString()}</div>

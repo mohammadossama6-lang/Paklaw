@@ -1,57 +1,40 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { Clock, Compass, Globe, Shield, ShieldCheck } from "lucide-react";
-
-import { WhatsappIcon } from "@/components/social-icons";
-
-const ABOUT_TABS = [
-  {
-    id: "mission",
-    label: "Our Mission",
-    Icon: Shield,
-    body: "PakLaw exists to make quality legal representation reachable for every Pakistani — at home or abroad. We protect and guide people regarding their legal rights, and help them engage effectively with public institutions that too often feel out of reach.",
-  },
-  {
-    id: "approach",
-    label: "Our Approach",
-    Icon: Compass,
-    body: "Every matter is matched to a licensed advocate suited to your case — not a call centre. From there, you deal directly with your lawyer, over WhatsApp or in person, with our team staying involved until it's resolved.",
-  },
-  {
-    id: "reach",
-    label: "Our Reach",
-    Icon: Globe,
-    body: "Our network of registered advocates reaches clients across Pakistan and abroad, so wherever you are and whatever your matter, the right person is already within reach.",
-  },
-] as const;
+import { Briefcase, GraduationCap, Landmark, Megaphone } from "lucide-react";
 
 const TRUST_POINTS = [
   {
-    Icon: ShieldCheck,
-    label: "Licensed & Vetted",
-    body: "Every advocate is verified before we ever introduce you.",
-    accent: "from-brand-700 to-brand-900 shadow-brand-800/40",
+    Icon: Megaphone,
+    label: "Freedom of Expression",
+    body: "Standing with the media when its voice is threatened.",
+    accent: "from-gold-400 to-gold-600",
+    glow: "hover:shadow-gold-500/20",
   },
   {
-    Icon: Clock,
-    label: "1 Business Day",
-    body: "The average time it takes our team to get back to you.",
-    accent: "from-brand-700 to-brand-900 shadow-brand-800/40",
+    Icon: Landmark,
+    label: "Institutional Accountability",
+    body: "Challenging unfairness and ensuring public institutions answer to the law.",
+    accent: "from-brand-600 to-brand-900",
+    glow: "hover:shadow-brand-700/20",
   },
   {
-    Icon: WhatsappIcon,
-    label: "Direct Access",
-    body: "Message your lawyer yourself — no call centre in between.",
-    accent: "from-emerald-400 to-emerald-600 shadow-emerald-500/30",
+    Icon: Briefcase,
+    label: "Business & Investment",
+    body: "Protecting innovation, businesses and investment in Pakistan.",
+    accent: "from-emerald-500 to-emerald-700",
+    glow: "hover:shadow-emerald-600/20",
+  },
+  {
+    Icon: GraduationCap,
+    label: "Legal Education & Empowerment",
+    body: "Creating opportunities and building the next generation of legal professionals.",
+    accent: "from-indigo-500 to-indigo-800",
+    glow: "hover:shadow-indigo-600/20",
   },
 ] as const;
 
 export default function AboutSection() {
-  const [activeTab, setActiveTab] = useState<(typeof ABOUT_TABS)[number]["id"]>("mission");
-  const active = ABOUT_TABS.find((tab) => tab.id === activeTab)!;
-
   return (
     <section id="about" className="relative overflow-hidden bg-slate-50 px-4 py-24 sm:px-6">
       <div
@@ -90,87 +73,43 @@ export default function AboutSection() {
           </p>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-          className="mx-auto mt-14 grid max-w-4xl gap-4 sm:grid-cols-3"
-        >
-          {TRUST_POINTS.map(({ Icon, label, body, accent }) => (
-            <div
+        <div className="mx-auto mt-14 grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {TRUST_POINTS.map(({ Icon, label, body, accent, glow }, i) => (
+            <motion.div
               key={label}
-              className="group rounded-2xl border border-slate-200/70 bg-white p-5 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand-200 hover:shadow-lg hover:shadow-brand-600/10"
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.55, ease: "easeOut", delay: 0.08 * i }}
+              className={`group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/70 bg-white p-6 text-left shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-transparent hover:shadow-2xl ${glow}`}
             >
               <span
-                className={`mx-auto flex size-11 items-center justify-center rounded-full bg-linear-to-br text-white shadow-md ${accent}`}
+                aria-hidden
+                className="pointer-events-none absolute -right-3 -top-5 select-none font-serif text-8xl font-black leading-none text-slate-100 transition-colors duration-500 group-hover:text-slate-50"
               >
-                <Icon className="size-5" />
+                {String(i + 1).padStart(2, "0")}
               </span>
-              <div className="mt-3 font-serif text-lg italic text-ink">{label}</div>
-              <p className="mt-1 text-sm leading-6 text-muted">{body}</p>
-            </div>
-          ))}
-        </motion.div>
+              <span
+                aria-hidden
+                className={`absolute inset-x-0 top-0 h-1 bg-linear-to-r opacity-0 transition-opacity duration-500 group-hover:opacity-100 ${accent}`}
+              />
 
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
-          className="mx-auto mt-16 max-w-3xl"
-        >
-          <div className="flex flex-wrap justify-center gap-2 rounded-full bg-white p-1.5 shadow-sm ring-1 ring-slate-200">
-            {ABOUT_TABS.map(({ id, label, Icon }) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setActiveTab(id)}
-                className={`flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold transition-all ${
-                  activeTab === id
-                    ? "bg-linear-to-r from-brand-800 via-brand-900 to-indigo-900 text-white shadow-md shadow-brand-900/40"
-                    : "text-muted hover:bg-slate-100 hover:text-ink"
-                }`}
+              <span
+                className={`relative flex size-12 items-center justify-center rounded-2xl bg-linear-to-br text-white shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3 ${accent}`}
               >
-                <Icon className="size-4" />
+                <Icon className="size-5.5" />
+              </span>
+              <div className="relative mt-5 text-[13px] font-bold uppercase tracking-widest text-ink">
                 {label}
-              </button>
-            ))}
-          </div>
-
-          <div className="relative mt-6 overflow-hidden rounded-3xl bg-ink p-8 shadow-2xl shadow-slate-900/25 sm:p-10">
-            <span
-              aria-hidden
-              className="pointer-events-none absolute -right-4 -top-14 select-none font-serif text-[11rem] italic leading-none text-white/4"
-            >
-              &rdquo;
-            </span>
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -left-16 bottom-0 size-56 rounded-full bg-brand-800/25 blur-[100px]"
-            />
-
-            <div className="relative flex flex-col items-start gap-5 sm:flex-row">
-              <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-gold-300 to-gold-500 text-pine-900 shadow-lg shadow-gold-500/30">
-                <active.Icon className="size-5.5" />
-              </span>
-              <div>
-                <div className="text-sm font-bold uppercase tracking-[0.15em] text-gold-300">
-                  {active.label}
-                </div>
-                <motion.p
-                  key={active.id}
-                  initial={{ opacity: 0, x: 12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="mt-2 font-serif text-lg italic leading-8 text-slate-100 sm:text-xl"
-                >
-                  {active.body}
-                </motion.p>
               </div>
-            </div>
-          </div>
-        </motion.div>
+              <p className="relative mt-2 text-sm leading-6 text-muted">{body}</p>
+              <span
+                aria-hidden
+                className={`relative mt-auto block h-px w-8 bg-linear-to-r transition-all duration-500 group-hover:w-14 ${accent}`}
+              />
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );

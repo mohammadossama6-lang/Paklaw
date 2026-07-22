@@ -65,7 +65,14 @@ export default function Header() {
           </div>
           <span aria-hidden className="h-4 w-px bg-slate-200" />
           <a
-            href="#contact-us"
+            href="#testimonials"
+            className="rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:text-brand-600"
+          >
+            Testimonials
+          </a>
+          <span aria-hidden className="h-4 w-px bg-slate-200" />
+          <a
+            href="#footer"
             className="rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:text-brand-600"
           >
             Contact Us
@@ -96,7 +103,7 @@ export default function Header() {
               <UserCheck className="size-3.5" />
             </motion.span>
             <span className="relative transition-all duration-300 group-hover:tracking-wide">
-              Register as a Client
+              Get a Free Consultation
             </span>
           </motion.button>
 
@@ -203,7 +210,15 @@ export default function Header() {
               </AnimatePresence>
 
               <a
-                href="#contact-us"
+                href="#testimonials"
+                onClick={() => setMenuOpen(false)}
+                className="rounded-xl px-4 py-3 text-sm font-medium text-ink transition-colors hover:bg-slate-50 hover:text-brand-600"
+              >
+                Testimonials
+              </a>
+
+              <a
+                href="#footer"
                 onClick={() => setMenuOpen(false)}
                 className="rounded-xl px-4 py-3 text-sm font-medium text-ink transition-colors hover:bg-slate-50 hover:text-brand-600"
               >
@@ -224,7 +239,7 @@ export default function Header() {
                 <span className="flex size-6.5 shrink-0 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/40">
                   <UserCheck className="size-3.5" />
                 </span>
-                Register as a Client
+                Get a Free Consultation
               </motion.button>
               <motion.button
                 type="button"

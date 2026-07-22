@@ -46,17 +46,16 @@ const PRACTICE_AREA_HEX: Record<ServiceKey, string> = {
 
 const PRACTICE_AREA_DESCRIPTIONS: Record<ServiceKey, string> = {
   "public-institution-complaints":
-    "Filing and following up complaints with CDA, NADRA, FBR, PTA and other public bodies.",
+    "Filing complaints with CDA, NADRA, FBR, PTA and other public bodies.",
   "facilitation-center":
     "Business registration, licensing, tax filing, and documentation support.",
   "overseas-pakistani":
     "Property, inheritance, and family law support for Pakistanis living abroad.",
   "regulatory-government":
     "Resolving regulatory delays and disputes with government departments.",
-  "women-desk": "Family law, custody, maintenance and protection matters for women.",
+  "women-desk": "custody, maintenance and protection matters for women etc...",
   litigation: "Civil litigation, arbitration, and constitutional petitions.",
 };
-
 // Vertical distance from the last card's connector point to the button below
 // it, and the flow space reserved after the cards so the absolutely-
 // positioned button never overlaps the section that follows.
@@ -219,7 +218,7 @@ export default function PracticeAreas() {
       ? SERVICE_OPTIONS.map((option, i) => ({
           offset: (points[i]?.y ?? 0) / trackSize.height,
           color: PRACTICE_AREA_HEX[option.value as ServiceKey],
-        })).concat(endPoint ? [{ offset: endPoint.y / trackSize.height, color: "#d1af6a" }] : [])
+        })).concat(endPoint ? [{ offset: endPoint.y / trackSize.height, color: "#d4af37" }] : [])
       : [];
 
   // Mobile: cards stack full-width in one column, so the wide zigzag sweep
@@ -257,7 +256,7 @@ export default function PracticeAreas() {
       />
 
       <div className="relative mx-auto max-w-5xl">
-        <div className="mx-auto max-w-xl text-center">
+        <div className="mx-auto max-w-2xl text-center">
           <span className="text-sm font-bold uppercase tracking-[0.15em] text-sky-400">
             What We Do
           </span>
@@ -265,8 +264,15 @@ export default function PracticeAreas() {
             Practice Areas
           </h2>
           <p className="mt-4 text-base leading-7 text-slate-400">
-            Six focused desks, one firm — so your matter always reaches the
-            people best placed to handle it.
+            Pakistan&apos;s leading legal platform, offering a Facilitation
+            Center where we help raise your concerns with public
+            institutions.
+          </p>
+          <p className="mt-3 text-base leading-7 text-slate-400">
+            We are also a full-service legal advisory firm known for
+            fearless advocacy and strategic legal excellence  providing
+            comprehensive services in litigation, corporate advisory,
+            regulatory compliance, and public authority matters.
           </p>
         </div>
 
@@ -337,12 +343,12 @@ export default function PracticeAreas() {
                     cy={p.y}
                     r={5}
                     fill="none"
-                    stroke="#d1af6a"
+                    stroke="#d4af37"
                     strokeWidth={1.5}
                     animate={{ r: [5, 13, 5], opacity: [0.6, 0, 0.6] }}
                     transition={{ duration: 2.4, repeat: Infinity, ease: "easeOut", delay: i * 0.3 }}
                   />
-                  <circle cx={p.x} cy={p.y} r={5} fill="#d1af6a" className="drop-shadow-[0_0_6px_rgba(209,175,106,0.7)]" />
+                  <circle cx={p.x} cy={p.y} r={5} fill="#d4af37" className="drop-shadow-[0_0_6px_rgba(212,175,55,0.7)]" />
                 </g>
               ))}
             </svg>
