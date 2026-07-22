@@ -1,37 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  Briefcase,
-  Compass,
-  GraduationCap,
-  Globe,
-  Landmark,
-  Megaphone,
-  Shield,
-} from "lucide-react";
-
-const ABOUT_TABS = [
-  {
-    id: "mission",
-    label: "Our Mission",
-    Icon: Shield,
-    body: "PakLaw exists to make quality legal representation reachable for every Pakistani — at home or abroad. We protect and guide people regarding their legal rights, and help them engage effectively with public institutions that too often feel out of reach.",
-  },
-  {
-    id: "approach",
-    label: "Our Approach",
-    Icon: Compass,
-    body: "Every matter is matched to a licensed advocate suited to your case — not a call centre. From there, you deal directly with your lawyer, over WhatsApp or in person, with our team staying involved until it's resolved.",
-  },
-  {
-    id: "reach",
-    label: "Our Reach",
-    Icon: Globe,
-    body: "Our network of registered advocates reaches clients across Pakistan and abroad, so wherever you are and whatever your matter, the right person is already within reach.",
-  },
-] as const;
+import { Briefcase, GraduationCap, Landmark, Megaphone } from "lucide-react";
 
 const TRUST_POINTS = [
   {
@@ -65,9 +35,6 @@ const TRUST_POINTS = [
 ] as const;
 
 export default function AboutSection() {
-  const [activeTab, setActiveTab] = useState<(typeof ABOUT_TABS)[number]["id"]>("mission");
-  const active = ABOUT_TABS.find((tab) => tab.id === activeTab)!;
-
   return (
     <section id="about" className="relative overflow-hidden bg-slate-50 px-4 py-24 sm:px-6">
       <div
@@ -132,7 +99,7 @@ export default function AboutSection() {
               >
                 <Icon className="size-5.5" />
               </span>
-              <div className="relative mt-5 text-[13px] font-bold uppercase tracking-[0.1em] text-ink">
+              <div className="relative mt-5 text-[13px] font-bold uppercase tracking-widest text-ink">
                 {label}
               </div>
               <p className="relative mt-2 text-sm leading-6 text-muted">{body}</p>
@@ -143,65 +110,6 @@ export default function AboutSection() {
             </motion.div>
           ))}
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
-          className="mx-auto mt-16 max-w-3xl"
-        >
-          <div className="flex flex-wrap justify-center gap-2 rounded-full bg-white p-1.5 shadow-sm ring-1 ring-slate-200">
-            {ABOUT_TABS.map(({ id, label, Icon }) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setActiveTab(id)}
-                className={`flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold transition-all ${
-                  activeTab === id
-                    ? "bg-linear-to-r from-brand-800 via-brand-900 to-indigo-900 text-white shadow-md shadow-brand-900/40"
-                    : "text-muted hover:bg-slate-100 hover:text-ink"
-                }`}
-              >
-                <Icon className="size-4" />
-                {label}
-              </button>
-            ))}
-          </div>
-
-          <div className="relative mt-6 overflow-hidden rounded-3xl bg-ink p-8 shadow-2xl shadow-slate-900/25 sm:p-10">
-            <span
-              aria-hidden
-              className="pointer-events-none absolute -right-4 -top-14 select-none font-serif text-[11rem] italic leading-none text-white/4"
-            >
-              &rdquo;
-            </span>
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -left-16 bottom-0 size-56 rounded-full bg-brand-800/25 blur-[100px]"
-            />
-
-            <div className="relative flex flex-col items-start gap-5 sm:flex-row">
-              <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-gold-300 to-gold-500 text-pine-900 shadow-lg shadow-gold-500/30">
-                <active.Icon className="size-5.5" />
-              </span>
-              <div>
-                <div className="text-sm font-bold uppercase tracking-[0.15em] text-gold-300">
-                  {active.label}
-                </div>
-                <motion.p
-                  key={active.id}
-                  initial={{ opacity: 0, x: 12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="mt-2 font-serif text-lg italic leading-8 text-slate-100 sm:text-xl"
-                >
-                  {active.body}
-                </motion.p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

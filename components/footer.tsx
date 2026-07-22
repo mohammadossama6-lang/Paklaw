@@ -8,7 +8,7 @@ import { CONTACT } from "@/lib/constants";
 const COLUMN_ONE = [
   { label: "About Us", href: "#about" },
   { label: "Services", href: "#contact" },
-  { label: "Contact Us", href: "#contact-us" },
+  { label: "Contact Us", href: "#footer" },
 ];
 // TODO: wire these up once the corresponding pages/sections exist.
 const COLUMN_TWO = [
@@ -21,7 +21,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="animate-fade-in-up relative overflow-hidden bg-slate-50 px-6 pb-10 pt-16 sm:px-10">
+    <footer id="footer" className="animate-fade-in-up relative overflow-hidden bg-slate-50 px-6 pb-10 pt-16 sm:px-10">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-gold-400/70 to-transparent"

@@ -1,12 +1,11 @@
-import Image from "next/image";
 import { ArrowRight, Landmark, Shield } from "lucide-react";
 
 import Footer from "@/components/footer";
 import AboutSection from "@/components/about-section";
 import PracticeAreas from "@/components/practice-areas";
+import OurWorkSection from "@/components/our-work-section";
 import ClientsSection from "@/components/clients-section";
-import ContactSection from "@/components/contact-section";
-import CtaBanner from "@/components/cta-banner";
+import TestimonialsSection from "@/components/testimonials-section";
 import { SOCIAL_LINKS, WhatsappIcon } from "@/components/social-icons";
 
 const WHATSAPP_HREF = "https://wa.me/923035521111";
@@ -61,11 +60,11 @@ export default function Home() {
           </div>
         </div>
 
-        <main className="relative mx-auto grid w-full max-w-6xl gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
-          <div className="order-1 text-center lg:text-left">
+        <main className="relative mx-auto flex w-full max-w-6xl flex-col items-start gap-10 text-left">
+          <div className="max-w-xl">
             <span className="animate-fade-in-up inline-flex items-center gap-2.5 text-sm font-bold uppercase tracking-[0.15em] text-sky-400">
               <span aria-hidden className="h-px w-6 bg-linear-to-r from-transparent to-gold-400" />
-              Pakistan No.1 Law Firm
+              Pakistan&apos;s Leading Legal Platform
             </span>
             <h1
               style={{ animationDelay: "220ms" }}
@@ -83,7 +82,7 @@ export default function Home() {
                 <div
                   key={text}
                   style={{ animationDelay: `${460 + i * 200}ms` }}
-                  className="animate-fade-in-up flex items-center justify-center gap-4 lg:justify-start"
+                  className="animate-fade-in-up flex items-center justify-start gap-4"
                 >
                   <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#328FF8] text-white shadow-lg shadow-[#328FF8]/40">
                     <Icon className="size-5" />
@@ -120,17 +119,13 @@ export default function Home() {
               <ArrowRight className="ml-1 size-4 text-white/50 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white" />
               <span
                 aria-hidden
-                className="pointer-events-none absolute inset-y-0 left-0 w-1/4 -translate-x-[150%] -skew-x-12 bg-white/10 blur-[2px] transition-transform duration-700 ease-out group-hover:translate-x-[600%]"
+                className="pointer-events-none absolute inset-y-0 left-0 w-1/4 translate-x-[-150%] -skew-x-12 bg-white/10 blur-[2px] transition-transform duration-700 ease-out group-hover:translate-x-[600%]"
               />
             </a>
           </div>
 
-          <div
-            id="contact"
-            style={{ animationDelay: "360ms" }}
-            className="animate-fade-in-up order-2"
-          >
-            <div className="mb-4 flex items-center justify-center gap-3 lg:hidden">
+          <div id="contact" style={{ animationDelay: "360ms" }} className="animate-fade-in-up">
+            <div className="flex items-center justify-start gap-3 lg:hidden">
               {SOCIAL_LINKS.map(({ name, href, Icon }) => (
                 <a
                   key={name}
@@ -142,21 +137,14 @@ export default function Home() {
                 </a>
               ))}
             </div>
-            <Image
-              src="/paklaw-credentials.jpg"
-              alt="PAK LAW — represented prominent media houses, anchors, and journalists; legal education and empowerment; business and investment counsel. Backed by AR & Co."
-              width={2048}
-              height={2048}
-              className="mx-auto h-auto w-auto max-h-[70vh] max-w-full rounded-3xl shadow-2xl shadow-slate-900/15"
-            />
           </div>
         </main>
       </div>
       <AboutSection />
       <PracticeAreas />
+      <OurWorkSection />
       <ClientsSection />
-      <ContactSection />
-      <CtaBanner />
+      <TestimonialsSection />
       <Footer />
     </>
   );
