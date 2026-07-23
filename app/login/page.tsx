@@ -1,10 +1,9 @@
 "use client";
 
 import { Suspense, useState, type FormEvent } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
-
-import { LogoMark } from "@/components/logo-mark";
 
 const inputClass =
   "w-full rounded-xl border border-slate-200 bg-slate-50/60 p-2.5 text-ink outline-none transition-all placeholder:text-slate-400 hover:border-slate-300 focus:border-[#328FF8] focus:bg-white focus:ring-4 focus:ring-[#328FF8]/10";
@@ -99,7 +98,13 @@ function LoginForm() {
         <div aria-hidden className="absolute inset-x-0 top-0 h-1.5 bg-linear-to-r from-[#328FF8] to-gold-400" />
 
         <div className="mb-6 flex flex-col items-center text-center">
-          <LogoMark className="mb-3 size-10 text-ink" />
+          <Image
+            src="/logo.png"
+            alt="PakLaw"
+            width={612}
+            height={511}
+            className="mb-3 size-10 object-contain"
+          />
           <h1 className="font-serif text-2xl italic tracking-tight text-ink">
             {step === "phone" ? "Client & Lawyer Login" : "Enter your code"}
           </h1>

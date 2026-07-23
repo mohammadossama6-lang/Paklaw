@@ -131,6 +131,14 @@
     font-family: var(--font-jost), sans-serif;
   }
 
+  .font-lora {
+    font-family: var(--font-lora), serif;
+  }
+
+  .font-nastaleeq {
+    font-family: var(--font-nastaleeq), serif;
+  }
+
   .bg-star-field {
     background-image:
       linear-gradient(rgba(5, 10, 25, 0.55), rgba(5, 10, 25, 0.75)),

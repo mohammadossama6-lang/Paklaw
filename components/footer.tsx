@@ -1,7 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
 
-import { LogoMark } from "@/components/logo-mark";
 import { SOCIAL_LINKS } from "@/components/social-icons";
 import { CONTACT } from "@/lib/constants";
 
@@ -34,9 +34,15 @@ export default function Footer() {
       <div className="relative mx-auto grid max-w-6xl grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-4">
         <div className="col-span-2 flex flex-col gap-4 sm:col-span-1">
           <Link href="#home" className="flex items-center gap-2.5">
-            <LogoMark className="size-9 text-ink sm:size-10" />
+            <Image
+              src="/logo.png"
+              alt="PakLaw"
+              width={612}
+              height={511}
+              className="size-9 object-contain sm:size-10"
+            />
             <span className="flex flex-col leading-none">
-              <span className="font-serif text-lg font-semibold uppercase tracking-tight text-ink sm:text-xl">
+              <span className="font-lora text-lg font-semibold uppercase tracking-tight text-ink sm:text-xl">
                 PakLaw
               </span>
               <span className="mt-0.5 text-[8px] font-medium uppercase tracking-[0.25em] text-muted">

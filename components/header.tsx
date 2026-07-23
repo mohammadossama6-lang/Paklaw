@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Menu, UserCheck, UserPlus, X as CloseIcon } from "lucide-react";
 
-import { LogoMark } from "@/components/logo-mark";
 import { SERVICE_OPTIONS } from "@/lib/constants";
 import LawyerRegisterModal from "@/components/lawyer-register-modal";
 import { useIntakeModal } from "@/components/intake-modal-provider";
@@ -23,13 +23,24 @@ export default function Header() {
           href="#home"
           className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2.5"
         >
-          <LogoMark className="size-9 text-ink sm:size-10" />
+          <Image
+            src="/logo.png"
+            alt="PakLaw"
+            width={612}
+            height={511}
+            className="size-9 object-contain sm:size-10"
+            priority
+          />
           <span className="flex flex-col leading-none">
-            <span className="font-serif text-xl font-semibold tracking-tight text-ink sm:text-2xl">
+            <span className="font-lora text-xl font-semibold tracking-tight text-ink sm:text-2xl">
               PakLaw
             </span>
-            <span className="mt-0.5 text-[9px] font-medium uppercase tracking-[0.3em] text-muted">
-              Advocates &amp; Legal Counsel
+            <span
+              dir="rtl"
+              lang="ur"
+              className="font-nastaleeq mt-1 text-sm leading-none text-muted sm:text-base"
+            >
+              حق کی بات، پاک لاء کے ساتھ
             </span>
           </span>
         </Link>

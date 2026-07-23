@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Jost, Playfair_Display } from "next/font/google";
+import { Geist, Geist_Mono, Jost, Lora, Playfair_Display } from "next/font/google";
+import localFont from "next/font/local";
 import { MotionConfig } from "framer-motion";
 import Header from "@/components/header";
 import { IntakeModalProvider } from "@/components/intake-modal-provider";
@@ -25,6 +26,17 @@ const jost = Jost({
   subsets: ["latin"],
 });
 
+const lora = Lora({
+  variable: "--font-lora",
+  subsets: ["latin"],
+});
+
+const nastaleeq = localFont({
+  src: "./fonts/JameelNooriNastaleeqKasheeda.ttf",
+  variable: "--font-nastaleeq",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "PakLaw — Legal Services in Pakistan",
   description:
@@ -39,7 +51,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${jost.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${jost.variable} ${lora.variable} ${nastaleeq.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <MotionConfig reducedMotion="user">
