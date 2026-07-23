@@ -59,25 +59,15 @@ export function TiktokIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export function YoutubeIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
-      <rect x="2.5" y="5.5" width="19" height="13" rx="4" stroke="currentColor" strokeWidth="1.8" />
-      <path fill="currentColor" d="M10.3 9.2v5.6l4.8-2.8z" />
-    </svg>
-  );
-}
-
-// TODO: replace "#" with the firm's actual profile URLs once available.
 export const SOCIAL_LINKS: {
   name: string;
   href: string;
   Icon: ComponentType<SVGProps<SVGSVGElement>>;
 }[] = [
-  { name: "Facebook", href: "#", Icon: FacebookIcon },
-  { name: "Instagram", href: "#", Icon: InstagramIcon },
-  { name: "TikTok", href: "#", Icon: TiktokIcon },
-  { name: "YouTube", href: "#", Icon: YoutubeIcon },
+  { name: "Facebook", href: "https://www.facebook.com/paklawofficial", Icon: FacebookIcon },
+  { name: "Instagram", href: "https://www.instagram.com/thepaklawofficial", Icon: InstagramIcon },
+  { name: "LinkedIn", href: "https://www.linkedin.com/company/pak-law-official", Icon: LinkedinIcon },
+  { name: "TikTok", href: "https://www.tiktok.com/@pak.law.official", Icon: TiktokIcon },
 ];
 
 export function WhatsappIcon(props: SVGProps<SVGSVGElement>) {

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Jost, Lora, Playfair_Display } from "next/font/google";
-import localFont from "next/font/local";
+import { Geist, Geist_Mono, Jost, Lora, Noto_Nastaliq_Urdu, Playfair_Display } from "next/font/google";
 import { MotionConfig } from "framer-motion";
 import Header from "@/components/header";
 import { IntakeModalProvider } from "@/components/intake-modal-provider";
@@ -31,9 +30,9 @@ const lora = Lora({
   subsets: ["latin"],
 });
 
-const nastaleeq = localFont({
-  src: "./fonts/JameelNooriNastaleeqKasheeda.ttf",
+const nastaleeq = Noto_Nastaliq_Urdu({
   variable: "--font-nastaleeq",
+  subsets: ["arabic"],
   display: "swap",
 });
 
