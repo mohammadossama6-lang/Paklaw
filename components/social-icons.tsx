@@ -59,6 +59,17 @@ export function TiktokIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+export function YoutubeIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}>
+      <path
+        fill="currentColor"
+        d="M21.6 7.2a2.7 2.7 0 0 0-1.9-1.9C18 4.8 12 4.8 12 4.8s-6 0-7.7.5A2.7 2.7 0 0 0 2.4 7.2 28.3 28.3 0 0 0 2 12a28.3 28.3 0 0 0 .4 4.8 2.7 2.7 0 0 0 1.9 1.9c1.7.5 7.7.5 7.7.5s6 0 7.7-.5a2.7 2.7 0 0 0 1.9-1.9A28.3 28.3 0 0 0 22 12a28.3 28.3 0 0 0-.4-4.8ZM10 15V9l5.2 3L10 15Z"
+      />
+    </svg>
+  );
+}
+
 export const SOCIAL_LINKS: {
   name: string;
   href: string;
@@ -68,6 +79,7 @@ export const SOCIAL_LINKS: {
   { name: "Instagram", href: "https://www.instagram.com/thepaklawofficial", Icon: InstagramIcon },
   { name: "LinkedIn", href: "https://www.linkedin.com/company/pak-law-official", Icon: LinkedinIcon },
   { name: "TikTok", href: "https://www.tiktok.com/@pak.law.official", Icon: TiktokIcon },
+  { name: "YouTube", href: "https://www.youtube.com/@paklawofficial", Icon: YoutubeIcon },
 ];
 
 export function WhatsappIcon(props: SVGProps<SVGSVGElement>) {

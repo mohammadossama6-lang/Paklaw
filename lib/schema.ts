@@ -69,6 +69,7 @@ export const SERVICE_SUBSERVICE_MAP = {
     "power-of-attorney",
     "overseas-family-law",
     "inheritance-succession-matters",
+    "will-drafting",
     "civil-litigation-court-representation",
     "corporate-business-legal-services",
     "documentation-affidavits-notarial",

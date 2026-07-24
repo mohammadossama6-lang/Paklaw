@@ -115,7 +115,7 @@ export default function ClientsSection() {
           <p className="mt-4 text-base leading-7 text-muted">
             From national broadcasters and banks to global energy leaders and
             universities — organizations across Pakistan and abroad trust
-            PakLaw with matters that matter.
+            Pak Law with matters that matter.
           </p>
         </motion.div>
 

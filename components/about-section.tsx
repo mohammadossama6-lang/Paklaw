@@ -7,14 +7,14 @@ const TRUST_POINTS = [
   {
     Icon: Megaphone,
     label: "Freedom of Expression",
-    body: "Standing with the media when its voice is threatened.",
+    body: "Defending freedom of expression. Standing with those who dare to speak.",
     accent: "from-gold-400 to-gold-600",
     glow: "hover:shadow-gold-500/20",
   },
   {
     Icon: Landmark,
     label: "Institutional Accountability",
-    body: "Challenging unfairness and ensuring public institutions answer to the law.",
+    body: "Challenging unfairness and holding public institutions accountable to the law.",
     accent: "from-brand-600 to-brand-900",
     glow: "hover:shadow-brand-700/20",
   },
@@ -60,16 +60,18 @@ export default function AboutSection() {
         >
           <span className="inline-flex items-center gap-2.5 text-sm font-bold uppercase tracking-[0.15em] text-brand-600">
             <span aria-hidden className="h-px w-6 bg-linear-to-r from-transparent to-gold-400" />
-            About PakLaw
+            About Pak Law
             <span aria-hidden className="h-px w-6 bg-linear-to-l from-transparent to-gold-400" />
           </span>
           <h2 className="mt-3 font-serif text-3xl italic tracking-tight text-ink sm:text-5xl">
             Who We Are
           </h2>
           <p className="mt-4 text-base leading-7 text-muted">
-            Pakistan&apos;s No.1 law firm platform — connecting clients directly
-            with vetted, licensed advocates, and staying with you from the
-            first message to the last hearing.
+            Pak Law is a distinguished full-service law firm headed by
+            Barrister Shoaib Razzaq, known for its fearless advocacy and
+            strategic legal excellence. Our valued clients include leading
+            corporate entities, financial institutions, media groups,
+            government bodies, and prominent public figures across Pakistan.
           </p>
         </motion.div>
 

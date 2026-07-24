@@ -38,7 +38,7 @@ const PROVINCE_LABELS: Record<(typeof PROVINCES)[number], string> = {
 const SERVICE_LABELS: Record<ServiceKey, string> = {
   "public-institution-complaints": "Public Institution Complaints",
   "facilitation-center": "Facilitation Center",
-  "overseas-pakistani": "Overseas Pakistani",
+  "overseas-pakistani": "Local & Overseas Pakistani",
   "regulatory-government": "Regulatory And Government",
   "women-desk": "Women Desk",
   litigation: "Litigation",
@@ -84,6 +84,7 @@ const SUB_SERVICE_LABELS: Record<SubServiceKey, string> = {
   "power-of-attorney": "Power of Attorney Services",
   "overseas-family-law": "Family Law (Divorce, Custody, Maintenance)",
   "inheritance-succession-matters": "Inheritance & Succession Matters",
+  "will-drafting": "Will",
   "civil-litigation-court-representation": "Civil Litigation and Court Representation",
   "corporate-business-legal-services": "Corporate & Business Legal Services",
   "documentation-affidavits-notarial": "Documentation, Affidavits & Notarial Service",
@@ -136,6 +137,7 @@ export const SUB_SERVICE_OPTIONS = Object.fromEntries(
 // TODO: replace with the firm's real email and address once available.
 export const CONTACT = {
   email: "info@paklaw.ai",
+  phonePrimary: "0303 5561111",
   phone: "+92 303 5521111",
   address: ["House#20 Street#29 F-8/1", "Islamabad, Pakistan"],
 };

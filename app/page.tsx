@@ -6,6 +6,7 @@ import PracticeAreas from "@/components/practice-areas";
 import OurWorkSection from "@/components/our-work-section";
 import ClientsSection from "@/components/clients-section";
 import TestimonialsSection from "@/components/testimonials-section";
+import FaqSection from "@/components/faq-section";
 import { SOCIAL_LINKS, WhatsappIcon } from "@/components/social-icons";
 
 const WHATSAPP_HREF = "https://wa.me/923035521111";
@@ -51,6 +52,8 @@ export default function Home() {
               <a
                 key={name}
                 href={href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={name}
                 className="flex size-12 items-center justify-center rounded-full bg-ink text-white shadow-md shadow-black/20 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:scale-115 hover:rotate-6 hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-600/40"
               >
@@ -64,7 +67,7 @@ export default function Home() {
           <div className="max-w-xl">
             <span className="animate-fade-in-up inline-flex items-center gap-2.5 text-sm font-bold uppercase tracking-[0.15em] text-sky-400">
               <span aria-hidden className="h-px w-6 bg-linear-to-r from-transparent to-gold-400" />
-              Pakistan&apos;s Leading Legal Platform
+              Pakistan&apos;s Trusted Legal Advisory
             </span>
             <h1
               style={{ animationDelay: "220ms" }}
@@ -130,6 +133,8 @@ export default function Home() {
                 <a
                   key={name}
                   href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={name}
                   className="flex size-12 items-center justify-center rounded-full bg-ink text-white shadow-md shadow-black/20 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:scale-115 hover:rotate-6 hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-600/40"
                 >
@@ -145,6 +150,7 @@ export default function Home() {
       <OurWorkSection />
       <ClientsSection />
       <TestimonialsSection />
+      <FaqSection />
       <Footer />
     </>
   );

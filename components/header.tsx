@@ -25,7 +25,7 @@ export default function Header() {
         >
           <Image
             src="/logo.png"
-            alt="PakLaw"
+            alt="Pak Law"
             width={612}
             height={511}
             className="size-9 object-contain sm:size-10"
@@ -33,7 +33,7 @@ export default function Header() {
           />
           <span className="flex flex-col leading-none">
             <span className="font-lora text-xl font-semibold tracking-tight text-ink sm:text-2xl">
-              PakLaw
+              Pak Law
             </span>
             <span
               dir="rtl"
@@ -58,7 +58,7 @@ export default function Header() {
               type="button"
               className="flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:text-brand-600"
             >
-              Services
+              Practice Areas
               <ChevronDown className="size-3.5" />
             </button>
             <div className="invisible absolute left-1/2 top-full mt-3 w-64 -translate-x-1/2 overflow-hidden rounded-2xl bg-white p-2 opacity-0 shadow-2xl shadow-black/20 transition-all group-hover:visible group-hover:opacity-100">
@@ -114,7 +114,7 @@ export default function Header() {
               <UserCheck className="size-3.5" />
             </motion.span>
             <span className="relative transition-all duration-300 group-hover:tracking-wide">
-              Get a Free Consultation
+              Book Free Consultation
             </span>
           </motion.button>
 
@@ -189,7 +189,7 @@ export default function Header() {
                 aria-expanded={mobileServicesOpen}
                 className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-ink transition-colors hover:bg-slate-50 hover:text-brand-600"
               >
-                Services
+                Practice Areas
                 <ChevronDown
                   className={`size-4 transition-transform ${mobileServicesOpen ? "rotate-180" : ""}`}
                 />
@@ -250,7 +250,7 @@ export default function Header() {
                 <span className="flex size-6.5 shrink-0 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/40">
                   <UserCheck className="size-3.5" />
                 </span>
-                Get a Free Consultation
+                Book Free Consultation
               </motion.button>
               <motion.button
                 type="button"

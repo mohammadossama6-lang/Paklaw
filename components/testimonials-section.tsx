@@ -102,15 +102,18 @@ function initials(text: string) {
 }
 
 const ACCENTS = [
-  "from-gold-400 to-gold-600",
-  "from-brand-600 to-brand-900",
-  "from-emerald-500 to-emerald-700",
-  "from-indigo-500 to-indigo-800",
+  { bar: "from-gold-400 to-gold-600", ring: "ring-gold-400/30", text: "text-gold-500", tint: "from-amber-50" },
+  { bar: "from-brand-600 to-brand-900", ring: "ring-brand-500/30", text: "text-brand-600", tint: "from-brand-50" },
+  { bar: "from-emerald-500 to-emerald-700", ring: "ring-emerald-500/30", text: "text-emerald-600", tint: "from-emerald-50" },
+  { bar: "from-indigo-500 to-indigo-800", ring: "ring-indigo-500/30", text: "text-indigo-600", tint: "from-indigo-50" },
 ];
 
 export default function TestimonialsSection() {
   return (
-    <section className="relative overflow-hidden bg-[#f7f8fc] px-4 py-24 sm:px-6">
+    <section
+      id="testimonials"
+      className="relative overflow-hidden bg-[#f7f8fc] px-4 py-24 sm:px-6"
+    >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -120,7 +123,7 @@ export default function TestimonialsSection() {
         }}
       />
 
-      <div className="relative mx-auto max-w-6xl">
+      <div className="relative mx-auto max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -130,7 +133,7 @@ export default function TestimonialsSection() {
         >
           <span className="inline-flex items-center gap-2.5 text-sm font-bold uppercase tracking-[0.15em] text-brand-600">
             <span aria-hidden className="h-px w-6 bg-linear-to-r from-transparent to-gold-400" />
-            Client Voices
+            Testimonials
             <span aria-hidden className="h-px w-6 bg-linear-to-l from-transparent to-gold-400" />
           </span>
           <h2 className="mt-3 font-serif text-3xl italic tracking-tight text-ink sm:text-5xl">
@@ -138,52 +141,63 @@ export default function TestimonialsSection() {
           </h2>
           <p className="mt-4 text-base leading-7 text-muted">
             From national media houses to multinational corporations —
-            hear directly from the people PakLaw has stood beside.
+            hear directly from the people Pak Law has stood beside.
           </p>
         </motion.div>
 
-        <div className="mt-14 columns-1 gap-6 sm:columns-2 lg:columns-3">
+        {/* Horizontal testimonial bars — the client's name sits prominently on
+            the left panel, with their words running alongside it. */}
+        <div className="mt-14 flex flex-col gap-4">
           {TESTIMONIALS.map((t, i) => {
             const accent = ACCENTS[i % ACCENTS.length];
+            const label = t.name ?? t.company;
             return (
-              <motion.div
+              <motion.article
                 key={`${t.company}-${i}`}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: -24 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.5, ease: "easeOut", delay: 0.05 * (i % 6) }}
-                className="group relative mb-6 break-inside-avoid overflow-hidden rounded-2xl border border-slate-200/70 bg-white p-6 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:border-transparent hover:shadow-xl"
+                transition={{ duration: 0.5, ease: "easeOut", delay: 0.04 * (i % 6) }}
+                className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm transition-all duration-500 hover:-translate-y-0.5 hover:border-transparent hover:shadow-xl sm:flex-row"
               >
+                {/* prominent accent bar running down the left edge */}
                 <span
                   aria-hidden
-                  className={`absolute inset-x-0 top-0 h-1 bg-linear-to-r opacity-0 transition-opacity duration-500 group-hover:opacity-100 ${accent}`}
+                  className={`absolute inset-y-0 left-0 w-1.5 bg-linear-to-b ${accent.bar}`}
                 />
-                <Quote
-                  aria-hidden
-                  className="size-7 text-slate-200 transition-colors duration-500 group-hover:text-gold-300"
-                />
-                <p className="mt-3 text-[15px] leading-7 text-slate-700">{t.quote}</p>
-                <div className="mt-5 flex items-center gap-3">
+
+                {/* name panel */}
+                <div
+                  className={`relative flex shrink-0 items-center gap-4 bg-linear-to-r ${accent.tint} to-transparent py-5 pl-7 pr-6 sm:w-72 sm:flex-col sm:items-start sm:justify-center sm:gap-3`}
+                >
                   <span
-                    className={`flex size-10 shrink-0 items-center justify-center rounded-full bg-linear-to-br text-xs font-bold text-white shadow-md ${accent}`}
+                    className={`flex size-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br text-sm font-bold text-white shadow-md ring-4 ${accent.bar} ${accent.ring}`}
                   >
-                    {initials(t.name ?? t.company)}
+                    {initials(label)}
                   </span>
                   <div className="min-w-0">
-                    {t.name && (
-                      <div className="truncate font-serif text-base italic text-ink">
-                        {t.name}
-                        {t.title && (
-                          <span className="font-sans text-sm not-italic text-muted"> · {t.title}</span>
-                        )}
-                      </div>
-                    )}
-                    <div className="truncate text-xs font-bold uppercase tracking-[0.08em] text-slate-400">
-                      {t.company}
+                    <div className="font-serif text-xl italic leading-tight tracking-tight text-ink sm:text-2xl">
+                      {t.name ?? t.company}
+                    </div>
+                    <div
+                      className={`mt-1 text-[11px] font-bold uppercase tracking-[0.12em] ${accent.text}`}
+                    >
+                      {t.name ? [t.title, t.company].filter(Boolean).join(" · ") : "Client"}
                     </div>
                   </div>
                 </div>
-              </motion.div>
+
+                {/* the words */}
+                <div className="relative flex flex-1 items-center border-t border-slate-100 px-7 py-5 sm:border-l sm:border-t-0">
+                  <Quote
+                    aria-hidden
+                    className="absolute -top-1 left-5 size-8 text-slate-100 transition-colors duration-500 group-hover:text-gold-200 sm:left-6"
+                  />
+                  <p className="relative text-[15px] leading-7 text-slate-700">
+                    {t.quote}
+                  </p>
+                </div>
+              </motion.article>
             );
           })}
         </div>

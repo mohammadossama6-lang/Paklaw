@@ -466,7 +466,7 @@ export default function IntakeForm() {
                         className="mt-1 size-4 accent-[#328FF8]"
                       />
                       <span className="text-sm text-muted">
-                        I agree to be contacted by PakLaw regarding my inquiry.
+                        I agree to be contacted by Pak Law regarding my inquiry.
                       </span>
                     </label>
                     {errors.consent && <p className={errorClass}>{errors.consent.message}</p>}

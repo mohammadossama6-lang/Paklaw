@@ -50,7 +50,7 @@ const PRACTICE_AREA_DESCRIPTIONS: Record<ServiceKey, string> = {
   "facilitation-center":
     "Business registration, licensing, tax filing, and documentation support.",
   "overseas-pakistani":
-    "Property, inheritance, and family law support for Pakistanis living abroad.",
+    "Property, inheritance, wills and family law support for Pakistanis at home and abroad.",
   "regulatory-government":
     "Resolving regulatory delays and disputes with government departments.",
   "women-desk": "custody, maintenance and protection matters for women etc...",
@@ -264,11 +264,6 @@ export default function PracticeAreas() {
             Practice Areas
           </h2>
           <p className="mt-4 text-base leading-7 text-slate-400">
-            Pakistan&apos;s leading legal platform, offering a Facilitation
-            Center where we help raise your concerns with public
-            institutions.
-          </p>
-          <p className="mt-3 text-base leading-7 text-slate-400">
             We are also a full-service legal advisory firm known for
             fearless advocacy and strategic legal excellence  providing
             comprehensive services in litigation, corporate advisory,

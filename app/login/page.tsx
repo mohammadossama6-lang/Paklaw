@@ -100,7 +100,7 @@ function LoginForm() {
         <div className="mb-6 flex flex-col items-center text-center">
           <Image
             src="/logo.png"
-            alt="PakLaw"
+            alt="Pak Law"
             width={612}
             height={511}
             className="mb-3 size-10 object-contain"

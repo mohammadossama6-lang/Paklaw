@@ -37,9 +37,9 @@ const nastaleeq = Noto_Nastaliq_Urdu({
 });
 
 export const metadata: Metadata = {
-  title: "PakLaw — Legal Services in Pakistan",
+  title: "Pak Law — Legal Services in Pakistan",
   description:
-    "Tell us about your legal matter and a PakLaw team member will get back to you within one business day.",
+    "Tell us about your legal matter and a Pak Law team member will get back to you within one business day.",
 };
 
 export default function RootLayout({

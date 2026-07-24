@@ -164,7 +164,7 @@ export default function LawyerRegisterModal({
                   Application received
                 </h3>
                 <p className="max-w-sm text-muted">
-                  Thank you for registering with PakLaw. Our team will review your
+                  Thank you for registering with Pak Law. Our team will review your
                   application and reach out shortly.
                 </p>
               </div>
@@ -177,7 +177,7 @@ export default function LawyerRegisterModal({
                   </span>
                 </h2>
                 <p className="mb-6 text-sm text-muted">
-                  Join the PakLaw network. Tell us about your practice and we&apos;ll be
+                  Join the Pak Law network. Tell us about your practice and we&apos;ll be
                   in touch.
                 </p>
 

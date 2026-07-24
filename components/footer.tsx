@@ -10,11 +10,9 @@ const COLUMN_ONE = [
   { label: "Services", href: "#contact" },
   { label: "Contact Us", href: "#footer" },
 ];
-// TODO: wire these up once the corresponding pages/sections exist.
 const COLUMN_TWO = [
   { label: "Practice Areas", href: "#practice-areas" },
-  { label: "FAQ", href: "#" },
-  { label: "Resources", href: "#" },
+  { label: "FAQ", href: "#faq" },
 ];
 
 export default function Footer() {
@@ -36,14 +34,14 @@ export default function Footer() {
           <Link href="#home" className="flex items-center gap-2.5">
             <Image
               src="/logo.png"
-              alt="PakLaw"
+              alt="Pak Law"
               width={612}
               height={511}
               className="size-9 object-contain sm:size-10"
             />
             <span className="flex flex-col leading-none">
               <span className="font-lora text-lg font-semibold uppercase tracking-tight text-ink sm:text-xl">
-                PakLaw
+                Pak Law
               </span>
               <span className="mt-0.5 text-[8px] font-medium uppercase tracking-[0.25em] text-muted">
                 Advocates &amp; Legal Counsel
@@ -55,6 +53,8 @@ export default function Footer() {
               <a
                 key={name}
                 href={href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={name}
                 className="flex size-11 items-center justify-center rounded-full bg-white text-slate-500 shadow-sm ring-1 ring-slate-200 transition-all duration-300 hover:-translate-y-0.5 hover:text-brand-600 hover:shadow-md hover:ring-brand-200"
               >
@@ -108,6 +108,20 @@ export default function Footer() {
             {CONTACT.email}
           </a>
           <a
+            href={`tel:${CONTACT.phonePrimary.replace(/\s+/g, "")}`}
+            className="group flex items-center gap-3 text-sm text-muted transition-colors hover:text-brand-600"
+          >
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm ring-1 ring-slate-200 transition-colors group-hover:bg-brand-600 group-hover:text-white">
+              <Phone className="size-3.5" />
+            </span>
+            <span className="flex items-center gap-2">
+              {CONTACT.phonePrimary}
+              <span className="rounded-full bg-brand-600/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-brand-600">
+                Primary
+              </span>
+            </span>
+          </a>
+          <a
             href={`tel:${CONTACT.phone.replace(/\s+/g, "")}`}
             className="group flex items-center gap-3 text-sm text-muted transition-colors hover:text-brand-600"
           >
@@ -130,7 +144,7 @@ export default function Footer() {
       </div>
 
       <div className="relative mx-auto mt-12 flex max-w-6xl items-center justify-between border-t border-slate-200 pt-6 text-xs text-muted">
-        <span>© {year} PakLaw. All rights reserved.</span>
+        <span>© {year} Pak Law. All rights reserved.</span>
         <span className="hidden font-serif italic text-slate-400 sm:inline">
           Your Rights. Our Priority.
         </span>
