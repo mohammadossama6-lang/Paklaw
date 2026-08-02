@@ -20,7 +20,7 @@ import { PROVINCE_OPTIONS } from "@/lib/constants";
 
 export function PakistaniCitizenPersonalFields({ register, errors }: FieldProps) {
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-2">
       <NameField register={register} errors={errors} />
       <EmailField register={register} errors={errors} />
 
@@ -47,7 +47,7 @@ export function PakistaniCitizenPersonalFields({ register, errors }: FieldProps)
 
 export function PakistaniCitizenLocationFields({ register, errors }: FieldProps) {
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-2">
       <div className="sm:col-span-2">
         <label htmlFor="province" className={labelClass}>
           Province

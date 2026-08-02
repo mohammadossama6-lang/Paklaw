@@ -1,41 +1,61 @@
 "use client";
 
+import { useMemo } from "react";
+import type { UseFormSetValue, UseFormWatch } from "react-hook-form";
+
+import type { IntakeFormValues } from "@/lib/intake/form-schema";
 import type { FieldProps } from "@/components/intake/fields";
 import { errorClass, inputClass, labelClass } from "@/components/intake/fields";
+import SearchableSelect, { type SearchOption } from "@/components/intake/searchable-select";
 import { COUNTRIES } from "@/lib/intake/locations";
 
+type Props = FieldProps & {
+  watch: UseFormWatch<IntakeFormValues>;
+  setValue: UseFormSetValue<IntakeFormValues>;
+};
+
 /**
- * International phone entry: a country-code dropdown (every country in the
- * world) plus a national-number box. The chosen country ISO drives
- * per-country validation via libphonenumber-js in the form schema.
+ * International phone entry: a searchable country-code picker plus the national
+ * number. The picker shows the ISO code and dial code ("PK +92") so it stays
+ * narrow beside the number, but it searches the full country name too — typing
+ * "pakistan", "pk" or "92" all find it.
  */
-export default function IntlPhoneField({ register, errors }: FieldProps) {
+export default function IntlPhoneField({ register, errors, watch, setValue }: Props) {
+  const phoneCountry = watch("phoneCountry");
+
+  const codeOptions = useMemo<SearchOption[]>(
+    () =>
+      COUNTRIES.map((c) => ({
+        value: c.iso,
+        label: `${c.iso} ${c.dialCode}`,
+        prefix: c.flag,
+        keywords: `${c.name} ${c.dialCode.replace("+", "")}`,
+      })),
+    []
+  );
+
   return (
     <div className="sm:col-span-2">
-      <label htmlFor="phoneNumber" className={labelClass}>
+      <label htmlFor="phoneCountry" className={labelClass}>
         Phone Number
       </label>
       <div className="flex gap-2">
-        <select
-          aria-label="Country code"
-          {...register("phoneCountry")}
-          defaultValue=""
-          className={`${inputClass} w-auto max-w-[8.5rem] shrink-0`}
-        >
-          <option value="" disabled>
-            Code
-          </option>
-          {COUNTRIES.map((c) => (
-            <option key={c.iso} value={c.iso}>
-              {c.flag} {c.iso} {c.dialCode}
-            </option>
-          ))}
-        </select>
+        <SearchableSelect
+          id="phoneCountry"
+          options={codeOptions}
+          value={phoneCountry}
+          onChange={(v) => setValue("phoneCountry", v, { shouldValidate: true })}
+          placeholder="Code"
+          searchPlaceholder="Search country or code…"
+          invalid={Boolean(errors.phoneCountry)}
+          className="w-[7.5rem] shrink-0 sm:w-[9.5rem]"
+        />
         <input
           id="phoneNumber"
           type="tel"
+          inputMode="tel"
           autoComplete="tel-national"
-          placeholder="Phone number"
+          placeholder="300 1234567"
           {...register("phoneNumber")}
           className={`${inputClass} flex-1`}
         />

@@ -13,12 +13,25 @@ import InternationalLocationFields from "@/components/intake/international-locat
 /* International phone (country-code dropdown) + country/state/city location.   */
 /* -------------------------------------------------------------------------- */
 
-export function OverseasPakistaniPersonalFields({ register, errors }: FieldProps) {
+export function OverseasPakistaniPersonalFields({
+  register,
+  errors,
+  watch,
+  setValue,
+}: FieldProps & {
+  watch: UseFormWatch<IntakeFormValues>;
+  setValue: UseFormSetValue<IntakeFormValues>;
+}) {
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-2">
       <NameField register={register} errors={errors} />
       <EmailField register={register} errors={errors} />
-      <IntlPhoneField register={register} errors={errors} />
+      <IntlPhoneField
+        register={register}
+        errors={errors}
+        watch={watch}
+        setValue={setValue}
+      />
       <GenderField register={register} errors={errors} />
       <DobField register={register} errors={errors} />
     </div>

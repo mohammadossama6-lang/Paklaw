@@ -176,11 +176,12 @@ export default function IntakeForm() {
 
   if (submitState === "success") {
     return (
-      <div className="flex flex-col items-center gap-5 rounded-3xl bg-white p-10 text-center shadow-2xl shadow-slate-900/15">
-        <div className="flex size-16 items-center justify-center rounded-full bg-[#328FF8] shadow-lg shadow-[#328FF8]/40">
+      <div className="relative flex flex-col items-center gap-5 overflow-hidden rounded-3xl bg-white p-10 text-center shadow-2xl shadow-slate-900/10 ring-1 ring-slate-900/5">
+        <div aria-hidden className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-brand-600 via-brand-500 to-gold-400" />
+        <div className="flex size-16 items-center justify-center rounded-full bg-linear-to-br from-brand-600 to-brand-700 shadow-lg shadow-brand-600/30">
           <Check className="size-8 text-white" strokeWidth={3} />
         </div>
-        <h3 className="text-2xl font-semibold tracking-tight text-ink">
+        <h3 className="font-serif text-2xl italic tracking-tight text-ink">
           Thank you — we&apos;ve received your request
         </h3>
         <p className="text-muted">
@@ -193,31 +194,46 @@ export default function IntakeForm() {
   }
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-white p-5 shadow-2xl shadow-slate-900/15 sm:p-7">
-      <div aria-hidden className="absolute inset-x-0 top-0 h-1.5 bg-[#328FF8]" />
-      <h2 className="mb-4 text-center font-sans text-xl font-black tracking-tight text-ink sm:text-2xl">
-        Schedule Your{" "}
-        <span className="bg-linear-to-r from-[#328FF8] to-sky-500 bg-clip-text text-transparent">
-          Legal Consultation
+    <div className="relative overflow-hidden rounded-3xl bg-white p-6 shadow-2xl shadow-slate-900/10 ring-1 ring-slate-900/5 sm:p-8">
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-brand-600 via-brand-500 to-gold-400"
+      />
+
+      <div className="mb-6 text-center">
+        <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-brand-600">
+          <span aria-hidden className="h-px w-5 bg-linear-to-r from-transparent to-gold-400" />
+          Free Consultation
+          <span aria-hidden className="h-px w-5 bg-linear-to-l from-transparent to-gold-400" />
         </span>
-      </h2>
-      <ol className="mb-6 flex items-center" aria-label="Form progress">
+        <h2 className="mt-2 font-serif text-2xl italic tracking-tight text-ink sm:text-3xl">
+          Schedule Your Legal Consultation
+        </h2>
+      </div>
+
+      <ol className="mb-7 flex items-center" aria-label="Form progress">
         {STEP_LABELS.map((label, i) => (
           <li key={label} className="flex flex-1 items-center last:flex-none">
-            <div className="flex flex-col items-center gap-1.5">
+            <div className="flex flex-col items-center gap-2">
               <div
                 aria-current={i === step ? "step" : undefined}
-                className={`flex size-8 items-center justify-center rounded-full text-sm font-semibold transition-all ${
+                className={`flex size-9 items-center justify-center rounded-full text-sm font-semibold transition-all duration-300 ${
                   i < step
-                    ? "bg-[#328FF8] text-white shadow-md shadow-[#328FF8]/30"
+                    ? "bg-brand-600 text-white shadow-md shadow-brand-600/25"
                     : i === step
-                      ? "bg-[#328FF8] text-white shadow-lg shadow-[#328FF8]/40 ring-4 ring-[#328FF8]/20"
-                      : "bg-slate-100 text-muted"
+                      ? "bg-linear-to-br from-brand-600 to-brand-700 text-white shadow-lg shadow-brand-600/30 ring-4 ring-brand-500/15"
+                      : "bg-slate-100 text-slate-400"
                 }`}
               >
                 {i < step ? <Check className="size-4" strokeWidth={3} /> : i + 1}
               </div>
-              <span className="hidden text-xs text-muted sm:block">{label}</span>
+              <span
+                className={`hidden text-[11px] font-semibold uppercase tracking-[0.08em] transition-colors sm:block ${
+                  i <= step ? "text-ink" : "text-slate-400"
+                }`}
+              >
+                {label}
+              </span>
             </div>
             {i < STEP_LABELS.length - 1 && (
               <div className="mx-3 flex flex-1 items-center justify-center gap-2.5" aria-hidden>
@@ -227,7 +243,7 @@ export default function IntakeForm() {
                     <span
                       key={dot}
                       className={`size-2 rounded-full transition-all duration-300 ${
-                        filled ? "scale-110 bg-[#328FF8]" : "bg-slate-200"
+                        filled ? "scale-125 bg-brand-500" : "bg-slate-200"
                       }`}
                     />
                   );
@@ -263,9 +279,19 @@ export default function IntakeForm() {
 
                     {detailsSubStep === 1 &&
                       (nationality === "overseas-pakistani" ? (
-                        <OverseasPakistaniPersonalFields register={register} errors={errors} />
+                        <OverseasPakistaniPersonalFields
+                          register={register}
+                          errors={errors}
+                          watch={watch}
+                          setValue={setValue}
+                        />
                       ) : nationality === "foreign-national" ? (
-                        <ForeignNationalPersonalFields register={register} errors={errors} />
+                        <ForeignNationalPersonalFields
+                          register={register}
+                          errors={errors}
+                          watch={watch}
+                          setValue={setValue}
+                        />
                       ) : (
                         <PakistaniCitizenPersonalFields register={register} errors={errors} />
                       ))}
@@ -381,7 +407,7 @@ export default function IntakeForm() {
                         onChange={(e) =>
                           setValue("consent", e.target.checked, { shouldValidate: true })
                         }
-                        className="mt-1 size-4 accent-[#328FF8]"
+                        className="mt-1 size-4 accent-brand-600"
                       />
                       <span className="text-sm text-muted">
                         I agree to be contacted by Pak Law regarding my inquiry, and I
@@ -389,7 +415,7 @@ export default function IntakeForm() {
                         <Link
                           href="/terms"
                           target="_blank"
-                          className="text-[#328FF8] underline underline-offset-2"
+                          className="font-medium text-brand-600 underline underline-offset-2 transition-colors hover:text-brand-700"
                         >
                           Terms &amp; Conditions
                         </Link>{" "}
@@ -397,7 +423,7 @@ export default function IntakeForm() {
                         <Link
                           href="/privacy"
                           target="_blank"
-                          className="text-[#328FF8] underline underline-offset-2"
+                          className="font-medium text-brand-600 underline underline-offset-2 transition-colors hover:text-brand-700"
                         >
                           Privacy Policy
                         </Link>
@@ -434,7 +460,7 @@ export default function IntakeForm() {
             <button
               type="button"
               onClick={goNext}
-              className="flex items-center gap-2 rounded-xl bg-[#328FF8] px-6 py-2.5 font-semibold text-white shadow-lg shadow-[#328FF8]/30 transition-all hover:shadow-xl hover:shadow-[#328FF8]/60 hover:brightness-110 active:scale-[0.98]"
+              className="flex items-center gap-2 rounded-xl bg-linear-to-br from-brand-600 to-brand-700 px-6 py-3 text-[15px] font-semibold text-white shadow-lg shadow-brand-600/25 transition-all hover:shadow-xl hover:shadow-brand-600/35 hover:brightness-110 active:scale-[0.98]"
             >
               Next Step
               <ArrowRight className="size-4" />
@@ -443,7 +469,7 @@ export default function IntakeForm() {
             <button
               type="submit"
               disabled={submitState === "submitting"}
-              className="flex items-center gap-2 rounded-xl bg-[#328FF8] px-6 py-2.5 font-semibold text-white shadow-lg shadow-[#328FF8]/30 transition-all hover:shadow-xl hover:shadow-[#328FF8]/60 hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+              className="flex items-center gap-2 rounded-xl bg-linear-to-br from-brand-600 to-brand-700 px-6 py-3 text-[15px] font-semibold text-white shadow-lg shadow-brand-600/25 transition-all hover:shadow-xl hover:shadow-brand-600/35 hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
             >
               {submitState === "submitting" && <Loader2 className="size-4 animate-spin" />}
               {submitState === "submitting" ? "Submitting..." : "Submit request"}

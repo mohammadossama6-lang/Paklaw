@@ -21,9 +21,9 @@ export default function NationalityStep({ register, errors }: FieldProps) {
           return (
             <label
               key={opt.value}
-              className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl border border-slate-200 p-3 text-center transition-all hover:-translate-y-0.5 hover:border-[#328FF8]/40 hover:shadow-md hover:shadow-[#328FF8]/10 has-checked:border-[#328FF8] has-checked:bg-[#328FF8]/5 has-checked:shadow-lg has-checked:shadow-[#328FF8]/15"
+              className="flex cursor-pointer flex-col items-center gap-2.5 rounded-2xl border border-slate-200 bg-white p-4 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md hover:shadow-brand-600/10 has-checked:border-brand-600 has-checked:bg-brand-50/60 has-checked:shadow-lg has-checked:shadow-brand-600/15 has-checked:ring-1 has-checked:ring-brand-600/20"
             >
-              <span className="flex size-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors has-checked:bg-[#328FF8] has-checked:text-white">
+              <span className="flex size-10 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors has-checked:bg-linear-to-br has-checked:from-brand-600 has-checked:to-brand-700 has-checked:text-white">
                 <input type="radio" value={opt.value} {...register("nationality")} className="sr-only" />
                 <Icon className="size-5" />
               </span>

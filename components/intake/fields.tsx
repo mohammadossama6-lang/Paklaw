@@ -5,10 +5,13 @@ import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import type { IntakeFormValues } from "@/lib/intake/form-schema";
 import { GENDER_OPTIONS } from "@/lib/constants";
 
+/* Field styling for the intake form. Uses the site's brand/ink/muted tokens
+   rather than a one-off blue, so the form reads as part of the same design. */
 export const inputClass =
-  "w-full rounded-xl border border-slate-200 bg-slate-50/60 p-2.5 text-ink outline-none transition-all placeholder:text-slate-400 hover:border-slate-300 focus:border-[#328FF8] focus:bg-white focus:ring-4 focus:ring-[#328FF8]/10";
-export const labelClass = "mb-1.5 block text-sm font-medium text-slate-700";
-export const errorClass = "mt-1.5 text-sm text-red-500";
+  "w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-[15px] text-ink shadow-sm outline-none transition-all placeholder:text-slate-400 hover:border-brand-300 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 disabled:shadow-none";
+export const labelClass =
+  "mb-1.5 block text-[13px] font-semibold uppercase tracking-[0.06em] text-slate-500";
+export const errorClass = "mt-1.5 flex items-start gap-1 text-sm text-red-600";
 
 export type FieldProps = {
   register: UseFormRegister<IntakeFormValues>;
