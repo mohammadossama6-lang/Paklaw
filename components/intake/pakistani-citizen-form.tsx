@@ -24,7 +24,10 @@ export function PakistaniCitizenPersonalFields({ register, errors }: FieldProps)
       <NameField register={register} errors={errors} />
       <EmailField register={register} errors={errors} />
 
-      <div>
+      {/* Full width so the rows pair up as Name+Email, Phone, Gender+DOB —
+          matching the overseas/foreign forms, whose phone field spans the row
+          because of its country-code picker. */}
+      <div className="sm:col-span-2">
         <label htmlFor="phone" className={labelClass}>
           Phone Number
         </label>

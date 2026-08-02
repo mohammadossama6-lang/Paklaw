@@ -25,7 +25,9 @@ export type FieldProps = {
 
 export function NameField({ register, errors }: FieldProps) {
   return (
-    <div className="sm:col-span-2">
+    // Half width so it pairs with Email on one row, the same way Gender and
+    // Date of Birth pair up below.
+    <div>
       <label htmlFor="fullName" className={labelClass}>
         Full Name
       </label>
