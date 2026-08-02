@@ -9,6 +9,13 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    // Migrations run through the Prisma CLI, which needs a DIRECT (unpooled)
+    // connection: Neon's pooled `-pooler` endpoint runs PgBouncer in
+    // transaction mode, where the advisory locks and session state that
+    // `migrate deploy` relies on aren't available. The app itself keeps using
+    // the pooled DATABASE_URL via the Neon adapter in lib/prisma.ts — only the
+    // CLI needs the direct one. Falls back to DATABASE_URL so local setups
+    // pointed at an unpooled database keep working without extra config.
+    url: process.env["DIRECT_URL"] ?? process.env["DATABASE_URL"],
   },
 });

@@ -1,5 +1,12 @@
 import { z } from "zod";
 
+import {
+  addressSchema,
+  dobSchema,
+  emailSchema,
+  fullNameSchema,
+} from "@/lib/intake/validators";
+
 /* ------------------------------------------------------------------ */
 /* Step 1 — Nationality                                               */
 /* ------------------------------------------------------------------ */
@@ -113,36 +120,41 @@ export const SERVICES = Object.keys(
 ) as [ServiceKey, ...ServiceKey[]];
 
 /* ------------------------------------------------------------------ */
-/* Main schema                                                        */
+/* Persisted lead schema — the normalized shape stored in the database */
+/* and validated by the API. The client form (see                     */
+/* lib/intake/form-schema.ts) collapses its three per-nationality      */
+/* variants into this shape before submitting: a single `phone`, and   */
+/* either `province` (Pakistani citizens) or `country` + `state`       */
+/* (overseas / foreign), never both.                                   */
 /* ------------------------------------------------------------------ */
 export const leadSchema = z
   .object({
-    // Step 1
-    nationality: z.enum(NATIONALITIES, {
-      error: "Please select your nationality.",
-    }),
+    nationality: z.enum(NATIONALITIES, { error: "Please select your nationality." }),
 
-    // Step 2
-    fullName: z.string().min(2, "Please enter your full name."),
-    email: z.email("Please enter a valid email address."),
+    fullName: fullNameSchema,
+    email: emailSchema,
     phone: z
       .string()
-      .min(7, "Please enter a valid phone number.")
-      .max(20, "Please enter a valid phone number."),
+      .min(5, "Please enter a valid phone number.")
+      .max(24, "Please enter a valid phone number."),
     gender: z.enum(GENDERS, { error: "Please select your gender." }),
-    dob: z.iso.date("Please enter a valid date of birth."),
-    province: z.enum(PROVINCES, { error: "Please select your province." }),
-    city: z.string().min(2, "Please enter your city."),
-    address: z.string().min(5, "Please enter your address."),
+    dob: dobSchema,
+    address: addressSchema,
+    city: z.string().trim().min(2, "Please enter your city.").max(80),
 
-    // Step 3 — subService's *valid values* depend on `service`, so it's
-    // just a non-empty string here; the real check happens below in
-    // superRefine, where both fields are available together.
+    // Pakistani citizens supply a province; overseas / foreign supply a
+    // country (+ state). All are nullable so a lead only carries the ones
+    // relevant to its nationality.
+    province: z.string().max(60).optional().nullable(),
+    country: z.string().max(80).optional().nullable(),
+    state: z.string().max(80).optional().nullable(),
+
+    // subService's valid values depend on `service`; the real check happens
+    // in superRefine below where both fields are available together.
     service: z.enum(SERVICES, { error: "Please select a service." }),
     subService: z.string().min(1, "Please select a sub-service."),
 
-    // Step 4
-    message: z.string().min(10, "Please tell us a bit more (10+ characters)."),
+    message: z.string().trim().min(10, "Please tell us a bit more (10+ characters)."),
     consent: z
       .boolean()
       .refine((val) => val === true, "You must agree to be contacted to submit."),
@@ -157,28 +169,15 @@ export const leadSchema = z
         message: "Please select a valid sub-service for the chosen service.",
       });
     }
+
+    if (data.nationality === "pakistani-national") {
+      if (!data.province) {
+        ctx.addIssue({ code: "custom", path: ["province"], message: "Province is required." });
+      }
+    } else if (!data.country) {
+      ctx.addIssue({ code: "custom", path: ["country"], message: "Country is required." });
+    }
   });
 
 export type LeadFormValues = z.infer<typeof leadSchema>;
-
-/* ------------------------------------------------------------------ */
-/* Which fields belong to each step — used for per-step validation.   */
-/* The form now has 2 top-level steps: "Your details" (nationality +  */
-/* personal + location) and "Service" (service + subService + message */
-/* + consent).                                                        */
-/* ------------------------------------------------------------------ */
-export const STEP_FIELDS: readonly (keyof LeadFormValues)[][] = [
-  ["nationality", "fullName", "email", "phone", "gender", "dob", "province", "city", "address"],
-  ["service", "subService", "message", "consent"],
-];
-
-/* ------------------------------------------------------------------ */
-/* The "Your details" step is split into three animated sub-steps     */
-/* (nationality, then personal, then location) so it doesn't feel     */
-/* like one long wall of fields.                                      */
-/* ------------------------------------------------------------------ */
-export const DETAILS_SUB_STEP_FIELDS: readonly (keyof LeadFormValues)[][] = [
-  ["nationality"],
-  ["fullName", "email", "phone", "gender", "dob"],
-  ["province", "city", "address"],
-];
+export type LeadInput = z.input<typeof leadSchema>;

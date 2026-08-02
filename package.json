@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "prisma migrate deploy && prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate"
@@ -14,8 +14,10 @@
     "@prisma/adapter-neon": "^7.8.0",
     "@prisma/client": "7.8.0",
     "@vercel/blob": "^2.6.1",
+    "country-state-city": "^3.2.1",
     "framer-motion": "^12.42.2",
     "jose": "^6.2.3",
+    "libphonenumber-js": "^1.13.9",
     "lucide-react": "^1.24.0",
     "next": "16.2.10",
     "prisma": "7.8.0",

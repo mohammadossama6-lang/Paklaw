@@ -22,15 +22,19 @@ export async function POST(request: Request) {
   const lead = await prisma.lead.create({ data: parsed.data });
 
   // Best-effort: a failed lawyer match shouldn't fail the lead submission
-  // itself, since the lead is already safely persisted above.
-  const matchedLawyer = await findMatchingLawyer({
-    service: parsed.data.service,
-    province: parsed.data.province,
-    city: parsed.data.city,
-  }).catch((err) => {
-    console.error("Lawyer matching failed:", err);
-    return null;
-  });
+  // itself, since the lead is already safely persisted above. Lawyer matching
+  // is province-based, so it only applies to leads that have a province
+  // (Pakistani citizens) — overseas / foreign leads skip it.
+  const matchedLawyer = parsed.data.province
+    ? await findMatchingLawyer({
+        service: parsed.data.service,
+        province: parsed.data.province,
+        city: parsed.data.city,
+      }).catch((err) => {
+        console.error("Lawyer matching failed:", err);
+        return null;
+      })
+    : null;
 
   if (matchedLawyer) {
     await prisma.lead.update({

@@ -25,7 +25,11 @@ model Lead {
   phone    String
   gender   String
   dob      String
-  province String
+  // Pakistani citizens carry a province; overseas / foreign leads carry a
+  // country (+ state) instead, so all three are optional.
+  province String?
+  country  String?
+  state    String?
   city     String
   address  String
 
