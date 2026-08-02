@@ -40,6 +40,9 @@ export default function CaseUpdateForm({
 
     if (!res.ok) {
       setError(body?.message ?? "Something went wrong. Please try again.");
+      // An expired session can't be recovered from in place — send them to
+      // sign in again rather than leaving the update stuck.
+      if (res.status === 401) router.push("/login");
       return;
     }
 

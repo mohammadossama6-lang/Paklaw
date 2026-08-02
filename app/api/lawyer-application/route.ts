@@ -56,7 +56,16 @@ export async function POST(request: Request) {
       return Response.json({ message: "CV must be under 5MB." }, { status: 400 });
     }
 
-    const blob = await put(`lawyer-cvs/${Date.now()}-${cvFile.name}`, cvFile, {
+    // cvFile.name is attacker-controlled, so it never goes into the blob key
+    // as-is: strip directory separators and anything outside a safe set, and
+    // cap the length so the key stays predictable.
+    const safeName =
+      cvFile.name
+        .replace(/[^a-zA-Z0-9._-]/g, "-")
+        .replace(/^[.-]+/, "")
+        .slice(-80) || "cv";
+
+    const blob = await put(`lawyer-cvs/${Date.now()}-${safeName}`, cvFile, {
       access: "public",
       addRandomSuffix: true,
     });

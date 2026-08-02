@@ -1,4 +1,5 @@
 import "server-only";
+import { randomInt } from "node:crypto";
 
 import { prisma } from "@/lib/prisma";
 import { sendOtpViaWhatsApp } from "@/lib/whatsapp";
@@ -8,16 +9,27 @@ import type { User } from "@/lib/generated/prisma/client";
 const OTP_LENGTH = 6;
 const OTP_TTL_MS = 5 * 60 * 1000;
 
+/**
+ * Uses the CSPRNG, not Math.random(): this code is the only thing standing
+ * between a phone number and a logged-in session, and Math.random()'s output
+ * is predictable from previous values.
+ */
 function generateCode(): string {
   const max = 10 ** OTP_LENGTH;
-  return Math.floor(Math.random() * max)
-    .toString()
-    .padStart(OTP_LENGTH, "0");
+  return randomInt(0, max).toString().padStart(OTP_LENGTH, "0");
 }
 
 export async function requestOtp(phone: string): Promise<void> {
   const code = generateCode();
   const expiresAt = new Date(Date.now() + OTP_TTL_MS);
+
+  // Retire any code still outstanding for this phone before issuing a new one.
+  // Without this, every re-send leaves another guessable code live, so N
+  // requests turn a 1-in-a-million guess into N-in-a-million.
+  await prisma.otpCode.updateMany({
+    where: { phone, consumedAt: null },
+    data: { consumedAt: new Date() },
+  });
 
   await prisma.otpCode.create({ data: { phone, code, expiresAt } });
   await sendOtpViaWhatsApp(phone, code);
@@ -26,8 +38,14 @@ export async function requestOtp(phone: string): Promise<void> {
 /**
  * Verifies a code and returns the User for that phone, creating one (and
  * linking any existing Lead/LawyerApplication rows with the same phone) on
- * first login. A phone that matches an approved lawyer application becomes a
- * LAWYER account; everyone else is a CLIENT.
+ * first login. A phone matching ANY lawyer application becomes a LAWYER
+ * account; everyone else is a CLIENT.
+ *
+ * NOTE: LawyerApplication has no approval status, and /api/lawyer-application
+ * is a public endpoint — so submitting the lawyer form is currently enough to
+ * be granted the LAWYER role and see any leads routed to that application.
+ * Gating this needs an approval field plus a check here; see the deployment
+ * notes before opening lawyer registration to the public.
  */
 export async function verifyOtp(phone: string, code: string): Promise<User | null> {
   const otp = await prisma.otpCode.findFirst({

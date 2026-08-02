@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
-import { verifySession, getCaseForLawyer } from "@/lib/dal";
+import { getSession, getCaseForLawyerOrNull } from "@/lib/dal";
 import { updateCaseHearingDate } from "@/lib/ghl";
 
 const caseUpdateSchema = z.object({
@@ -13,10 +13,14 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ leadId: string }> }
 ) {
-  const session = await verifySession();
+  const session = await getSession();
+  if (!session) {
+    return Response.json({ message: "Your session has expired. Please sign in again." }, { status: 401 });
+  }
+
   const { leadId } = await params;
 
-  const lead = await getCaseForLawyer(leadId);
+  const lead = await getCaseForLawyerOrNull(leadId);
   if (!lead) {
     return Response.json({ message: "Case not found." }, { status: 404 });
   }
