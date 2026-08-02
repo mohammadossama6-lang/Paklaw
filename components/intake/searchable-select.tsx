@@ -156,7 +156,7 @@ export default function SearchableSelect({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={open ? listboxId : undefined}
-        className={`flex w-full items-center justify-between gap-2 rounded-xl border px-3.5 py-3 text-left text-[15px] shadow-sm transition-all
+        className={`flex w-full items-center justify-between gap-2 rounded-xl border px-3.5 py-2.5 text-left text-[15px] shadow-sm transition-all
           focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/10
           disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 disabled:shadow-none
           ${fieldTone}`}

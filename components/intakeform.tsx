@@ -99,6 +99,21 @@ export default function IntakeForm() {
       const field = issue.path[0] as keyof IntakeFormValues | undefined;
       if (field) setError(field, { type: "manual", message: issue.message });
     }
+
+    // The modal hides its scrollbar, so an error below the fold would leave
+    // Next Step looking like it does nothing. Bring the first one into view.
+    // Two deliberate choices here, both found by testing:
+    //  - setTimeout, not requestAnimationFrame: rAF callbacks are throttled to
+    //    zero in a backgrounded or non-compositing tab, so the scroll silently
+    //    never happened. A macrotask still lets React paint the errors first.
+    //  - no `behavior: "smooth"`: inside the modal's transformed, animated
+    //    container Chrome drops the smooth scroll and the field never moves.
+    const firstField = result.error.issues[0]?.path[0];
+    if (typeof firstField === "string") {
+      setTimeout(() => {
+        document.getElementById(firstField)?.scrollIntoView({ block: "center" });
+      }, 0);
+    }
     return false;
   }
 
@@ -194,30 +209,30 @@ export default function IntakeForm() {
   }
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-white p-6 shadow-2xl shadow-slate-900/10 ring-1 ring-slate-900/5 sm:p-8">
+    <div className="relative overflow-hidden rounded-3xl bg-white p-5 shadow-2xl shadow-slate-900/10 ring-1 ring-slate-900/5 sm:p-7">
       <div
         aria-hidden
         className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-brand-600 via-brand-500 to-gold-400"
       />
 
-      <div className="mb-6 text-center">
+      <div className="mb-4 text-center">
         <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-brand-600">
           <span aria-hidden className="h-px w-5 bg-linear-to-r from-transparent to-gold-400" />
           Free Consultation
           <span aria-hidden className="h-px w-5 bg-linear-to-l from-transparent to-gold-400" />
         </span>
-        <h2 className="mt-2 font-serif text-2xl italic tracking-tight text-ink sm:text-3xl">
+        <h2 className="mt-1 font-serif text-xl italic tracking-tight text-ink sm:text-2xl">
           Schedule Your Legal Consultation
         </h2>
       </div>
 
-      <ol className="mb-7 flex items-center" aria-label="Form progress">
+      <ol className="mb-5 flex items-center" aria-label="Form progress">
         {STEP_LABELS.map((label, i) => (
           <li key={label} className="flex flex-1 items-center last:flex-none">
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center gap-1.5">
               <div
                 aria-current={i === step ? "step" : undefined}
-                className={`flex size-9 items-center justify-center rounded-full text-sm font-semibold transition-all duration-300 ${
+                className={`flex size-8 items-center justify-center rounded-full text-sm font-semibold transition-all duration-300 ${
                   i < step
                     ? "bg-brand-600 text-white shadow-md shadow-brand-600/25"
                     : i === step
@@ -264,7 +279,7 @@ export default function IntakeForm() {
             {/* STEP 1 — Your details: nationality, then personal, then location */}
             {step === 0 && (
               <fieldset>
-                <legend className="mb-3 text-base font-semibold tracking-tight text-ink">
+                <legend className="mb-2.5 text-base font-semibold tracking-tight text-ink">
                   {detailsSubStep === 0 ? "What is your nationality?" : "Your details"}
                 </legend>
                 <motion.div
@@ -322,7 +337,7 @@ export default function IntakeForm() {
             {step === 1 && (
               <>
                 <fieldset>
-                  <legend className="mb-3 text-base font-semibold tracking-tight text-ink">
+                  <legend className="mb-2.5 text-base font-semibold tracking-tight text-ink">
                     Which service do you need?
                   </legend>
                   <div className="grid gap-3 sm:grid-cols-2">
@@ -382,7 +397,7 @@ export default function IntakeForm() {
                 </fieldset>
 
                 <fieldset className="mt-5">
-                  <legend className="mb-3 text-base font-semibold tracking-tight text-ink">
+                  <legend className="mb-2.5 text-base font-semibold tracking-tight text-ink">
                     Tell us about your matter
                   </legend>
                   <div className="space-y-3">
@@ -443,7 +458,7 @@ export default function IntakeForm() {
             )}
         </motion.div>
 
-        <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
+        <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3.5">
           {isFirstScreen ? (
             <span aria-hidden />
           ) : (

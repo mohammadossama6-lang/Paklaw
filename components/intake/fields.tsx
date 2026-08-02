@@ -8,9 +8,9 @@ import { GENDER_OPTIONS } from "@/lib/constants";
 /* Field styling for the intake form. Uses the site's brand/ink/muted tokens
    rather than a one-off blue, so the form reads as part of the same design. */
 export const inputClass =
-  "w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-[15px] text-ink shadow-sm outline-none transition-all placeholder:text-slate-400 hover:border-brand-300 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 disabled:shadow-none";
+  "w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-[15px] text-ink shadow-sm outline-none transition-all placeholder:text-slate-400 hover:border-brand-300 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 disabled:shadow-none";
 export const labelClass =
-  "mb-1.5 block text-[13px] font-semibold uppercase tracking-[0.06em] text-slate-500";
+  "mb-1 block text-[13px] font-semibold uppercase tracking-[0.06em] text-slate-500";
 export const errorClass = "mt-1.5 flex items-start gap-1 text-sm text-red-600";
 
 export type FieldProps = {
