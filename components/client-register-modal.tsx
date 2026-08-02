@@ -46,14 +46,11 @@ export default function ClientRegisterModal({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            /* max-h uses calc, not a dvh percentage: the overlay adds p-4
-               either side, so a plain 90dvh cap left the card shorter than the
-               space actually available and forced a scrollbar it didn't need.
-               The scrollbar chrome is hidden — the form fits on ordinary
-               screens now, and a bar cutting through the card looked broken —
-               but the element still scrolls by wheel, touch and keyboard, and
-               failed validation scrolls the offending field into view. */
-            className="relative max-h-[calc(100dvh-2rem)] w-full max-w-xl overflow-y-auto overscroll-contain rounded-3xl [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            /* Caps the height and lets the card lay itself out as a column;
+               the card scrolls only its field area, so the Back/Submit row
+               stays visible however tall the content gets. calc, not a dvh
+               percentage, because the overlay already adds p-4 either side. */
+            className="relative flex max-h-[calc(100dvh-2rem)] w-full max-w-xl flex-col rounded-3xl"
           >
             <button
               type="button"

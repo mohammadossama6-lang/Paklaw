@@ -187,6 +187,17 @@ export default function IntakeForm() {
         return;
       }
     }
+
+    // Everything that failed is on this step. Bring the first one into view —
+    // the field area scrolls without a visible scrollbar, so an error further
+    // down would otherwise go unnoticed. setTimeout, not rAF: see
+    // validateDetailsStep.
+    const firstField = failed[0];
+    if (firstField) {
+      setTimeout(() => {
+        document.getElementById(firstField)?.scrollIntoView({ block: "center" });
+      }, 0);
+    }
   };
 
   if (submitState === "success") {
@@ -209,13 +220,13 @@ export default function IntakeForm() {
   }
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-white p-5 shadow-2xl shadow-slate-900/10 ring-1 ring-slate-900/5 sm:p-7">
+    <div className="relative flex min-h-0 flex-col overflow-hidden rounded-3xl bg-white p-5 shadow-2xl shadow-slate-900/10 ring-1 ring-slate-900/5 sm:p-7">
       <div
         aria-hidden
         className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-brand-600 via-brand-500 to-gold-400"
       />
 
-      <div className="mb-4 text-center">
+      <div className="mb-4 shrink-0 text-center">
         <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-brand-600">
           <span aria-hidden className="h-px w-5 bg-linear-to-r from-transparent to-gold-400" />
           Free Consultation
@@ -226,7 +237,7 @@ export default function IntakeForm() {
         </h2>
       </div>
 
-      <ol className="mb-5 flex items-center" aria-label="Form progress">
+      <ol className="mb-5 flex shrink-0 items-center" aria-label="Form progress">
         {STEP_LABELS.map((label, i) => (
           <li key={label} className="flex flex-1 items-center last:flex-none">
             <div className="flex flex-col items-center gap-1.5">
@@ -269,7 +280,18 @@ export default function IntakeForm() {
         ))}
       </ol>
 
-      <form onSubmit={handleSubmit(onSubmit, onInvalid)} noValidate>
+      <form
+        onSubmit={handleSubmit(onSubmit, onInvalid)}
+        noValidate
+        className="flex min-h-0 flex-1 flex-col"
+      >
+        {/* Only the fields scroll. The Back/Submit row below sits outside this
+            box, so it stays on screen even when every field shows an error and
+            the content outgrows the viewport. Scrollbar chrome is hidden; the
+            area still scrolls by wheel, touch and keyboard, and a failed
+            submit scrolls the first error into view. The negative margin plus
+            padding keeps focus rings from being clipped at the edges. */}
+        <div className="-mx-1 min-h-0 flex-1 overflow-y-auto overscroll-contain px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <motion.div
           key={step}
           initial={{ opacity: 0, x: 12 }}
@@ -417,6 +439,9 @@ export default function IntakeForm() {
 
                     <label className="flex cursor-pointer items-start gap-3">
                       <input
+                        /* id so a failed submit can scroll this into view —
+                           the consent error is the last thing on the step. */
+                        id="consent"
                         type="checkbox"
                         checked={consentChecked ?? false}
                         onChange={(e) =>
@@ -457,8 +482,9 @@ export default function IntakeForm() {
               </>
             )}
         </motion.div>
+        </div>
 
-        <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3.5">
+        <div className="mt-4 flex shrink-0 items-center justify-between border-t border-slate-100 pt-3.5">
           {isFirstScreen ? (
             <span aria-hidden />
           ) : (
