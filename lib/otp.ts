@@ -38,14 +38,11 @@ export async function requestOtp(phone: string): Promise<void> {
 /**
  * Verifies a code and returns the User for that phone, creating one (and
  * linking any existing Lead/LawyerApplication rows with the same phone) on
- * first login. A phone matching ANY lawyer application becomes a LAWYER
- * account; everyone else is a CLIENT.
+ * first login.
  *
- * NOTE: LawyerApplication has no approval status, and /api/lawyer-application
- * is a public endpoint — so submitting the lawyer form is currently enough to
- * be granted the LAWYER role and see any leads routed to that application.
- * Gating this needs an approval field plus a check here; see the deployment
- * notes before opening lawyer registration to the public.
+ * Only a phone matching an *approved* lawyer application becomes a LAWYER
+ * account — the application form is a public endpoint, so submitting it must
+ * not by itself grant access to client cases. Everyone else is a CLIENT.
  */
 export async function verifyOtp(phone: string, code: string): Promise<User | null> {
   const otp = await prisma.otpCode.findFirst({
@@ -60,7 +57,9 @@ export async function verifyOtp(phone: string, code: string): Promise<User | nul
   const existing = await prisma.user.findUnique({ where: { phone } });
   if (existing) return existing;
 
-  const lawyerApplication = await prisma.lawyerApplication.findFirst({ where: { phone } });
+  const lawyerApplication = await prisma.lawyerApplication.findFirst({
+    where: { phone, approved: true },
+  });
   const role = lawyerApplication ? Role.LAWYER : Role.CLIENT;
 
   const user = await prisma.user.create({ data: { phone, role } });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
@@ -383,7 +384,24 @@ export default function IntakeForm() {
                         className="mt-1 size-4 accent-[#328FF8]"
                       />
                       <span className="text-sm text-muted">
-                        I agree to be contacted by Pak Law regarding my inquiry.
+                        I agree to be contacted by Pak Law regarding my inquiry, and I
+                        accept the{" "}
+                        <Link
+                          href="/terms"
+                          target="_blank"
+                          className="text-[#328FF8] underline underline-offset-2"
+                        >
+                          Terms &amp; Conditions
+                        </Link>{" "}
+                        and{" "}
+                        <Link
+                          href="/privacy"
+                          target="_blank"
+                          className="text-[#328FF8] underline underline-offset-2"
+                        >
+                          Privacy Policy
+                        </Link>
+                        .
                       </span>
                     </label>
                     {errors.consent && <p className={errorClass}>{errors.consent.message}</p>}

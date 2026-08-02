@@ -132,6 +132,11 @@ model LawyerApplication {
   bio   String
   cvUrl String?
 
+  // Submitting the public application form is NOT enough to act as a lawyer.
+  // Flip this to true once the application has been vetted; until then the
+  // applicant gets no LAWYER role and is never matched to a client lead.
+  approved Boolean @default(false)
+
   // Delivery tracking — did the GoHighLevel sync succeed, and which Custom
   // Object record it created. Lawyers are stored as a separate "Lawyer"
   // custom object in GHL, not as Contacts, so they never mix with client

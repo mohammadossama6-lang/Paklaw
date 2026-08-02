@@ -20,11 +20,21 @@ export const verifySession = cache(async () => {
   return session;
 });
 
-/** Returns null instead of redirecting — for route handlers. */
+/**
+ * Returns null instead of redirecting — for route handlers.
+ *
+ * Re-checks `approved` on every request rather than trusting the role baked
+ * into the session, so revoking an approval takes effect immediately instead
+ * of waiting out the 7-day cookie.
+ */
 export const getLawyerApplicationOrNull = cache(async () => {
   const session = await getSession();
   if (!session || session.role !== Role.LAWYER) return null;
-  return prisma.lawyerApplication.findUnique({ where: { userId: session.userId } });
+
+  const lawyer = await prisma.lawyerApplication.findUnique({
+    where: { userId: session.userId },
+  });
+  return lawyer?.approved ? lawyer : null;
 });
 
 export const getLawyerApplication = cache(async () => {

@@ -38,6 +38,8 @@ export async function findMatchingLawyer(params: {
 
   const candidates = await prisma.lawyerApplication.findMany({
     where: {
+      // Unvetted applicants must never be handed a real client's matter.
+      approved: true,
       province: params.province,
       practiceAreas: { hasSome: practiceAreas },
     },

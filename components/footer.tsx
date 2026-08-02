@@ -143,11 +143,19 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="relative mx-auto mt-12 flex max-w-6xl items-center justify-between border-t border-slate-200 pt-6 text-xs text-muted">
+      <div className="relative mx-auto mt-12 flex max-w-6xl flex-col gap-3 border-t border-slate-200 pt-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
         <span>© {year} Pak Law. All rights reserved.</span>
-        <span className="hidden font-serif italic text-slate-400 sm:inline">
-          Your Rights. Our Priority.
-        </span>
+        <div className="flex items-center gap-4">
+          <Link href="/terms" className="transition-colors hover:text-brand-600">
+            Terms &amp; Conditions
+          </Link>
+          <Link href="/privacy" className="transition-colors hover:text-brand-600">
+            Privacy Policy
+          </Link>
+          <span className="hidden font-serif italic text-slate-400 lg:inline">
+            Your Rights. Our Priority.
+          </span>
+        </div>
       </div>
     </footer>
   );
