@@ -174,11 +174,24 @@ async function createOpportunity(params: {
   });
 
   if (!res.ok) {
-    console.error(
-      "GoHighLevel opportunity creation failed:",
-      res.status,
-      await res.text().catch(() => "")
-    );
+    const text = await res.text().catch(() => "");
+
+    // GHL refuses a second open opportunity for the same contact. That is the
+    // normal case for a returning client — and because contacts/upsert matches
+    // on phone OR email, it also fires whenever anyone re-submits the form.
+    // The existing opportunity is the right one to link this lead to, so take
+    // the id GHL hands back rather than treating this as a failure. The full
+    // enquiry is still recorded as a note on the contact either way.
+    try {
+      const parsed = JSON.parse(text);
+      if (parsed?.code === "OPPORTUNITY_NO_DUPLICATE" && parsed?.meta?.existingId) {
+        return parsed.meta.existingId as string;
+      }
+    } catch {
+      /* fall through to the error below */
+    }
+
+    console.error("GoHighLevel opportunity creation failed:", res.status, text);
     return undefined;
   }
 
