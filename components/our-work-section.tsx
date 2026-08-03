@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Briefcase, Building2, Gavel, Landmark, Scale, ShieldCheck } from "lucide-react";
+import { Briefcase, Building2, ChevronDown, Gavel, Landmark, Scale, ShieldCheck } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 
 type WorkItem = {
@@ -63,7 +64,17 @@ const WORK_ITEMS: WorkItem[] = [
   },
 ];
 
+/**
+ * Cards shown on a phone before the "view more" button. The grid is one column
+ * on mobile, so all six ran to nearly three screens; from sm up it is two or
+ * three columns and every card renders without the scroll cost.
+ */
+const MOBILE_VISIBLE = 3;
+
 export default function OurWorkSection() {
+  const [showAll, setShowAll] = useState(false);
+  const hiddenOnMobile = WORK_ITEMS.length - MOBILE_VISIBLE;
+
   return (
     <section className="relative overflow-hidden bg-[#05070f] px-4 py-16 sm:py-28 sm:px-6">
       <div
@@ -104,7 +115,10 @@ export default function OurWorkSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.55, ease: "easeOut", delay: 0.06 * i }}
-              className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/3 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-gold-400/40 hover:bg-white/6"
+              className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/3 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-gold-400/40 hover:bg-white/6 ${
+                // Hidden on mobile until expanded; always visible from sm up.
+                i >= MOBILE_VISIBLE && !showAll ? "hidden sm:flex" : ""
+              }`}
             >
               <span
                 aria-hidden
@@ -126,6 +140,20 @@ export default function OurWorkSection() {
             </motion.div>
           ))}
         </div>
+
+        {/* Mobile only — from sm up the grid shows every card without the scroll cost. */}
+        {!showAll && hiddenOnMobile > 0 && (
+          <div className="mt-6 flex justify-center sm:hidden">
+            <button
+              type="button"
+              onClick={() => setShowAll(true)}
+              className="flex min-h-11 items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:border-gold-400/40 hover:bg-white/10"
+            >
+              View {hiddenOnMobile} more matters
+              <ChevronDown aria-hidden className="size-4" />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
