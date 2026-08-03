@@ -90,7 +90,11 @@ export default function Header() {
           </a>
         </nav>
 
-        <div className="flex items-center gap-2.5">
+        {/* ml-auto keeps this hard against the right edge below xl, where the
+            nav beside it is hidden and the logo is absolutely centred — without
+            it justify-between drops the menu button on the far left and leaves
+            the right side of the bar empty. */}
+        <div className="ml-auto flex items-center gap-2.5">
           <motion.button
             type="button"
             onClick={openIntakeModal}

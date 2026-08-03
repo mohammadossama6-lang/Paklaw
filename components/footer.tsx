@@ -145,11 +145,14 @@ export default function Footer() {
 
       <div className="relative mx-auto mt-12 flex max-w-6xl flex-col gap-3 border-t border-slate-200 pt-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
         <span>© {year} Pak Law. All rights reserved.</span>
-        <div className="flex items-center gap-4">
-          <Link href="/terms" className="transition-colors hover:text-brand-600">
+        {/* -my-2 py-2 gives these a finger-sized hit area on touch without
+            adding visible height to the footer bar — at 16px tall they were
+            well under the 44px guideline. */}
+        <div className="-my-2 flex items-center gap-4">
+          <Link href="/terms" className="py-2 transition-colors hover:text-brand-600">
             Terms &amp; Conditions
           </Link>
-          <Link href="/privacy" className="transition-colors hover:text-brand-600">
+          <Link href="/privacy" className="py-2 transition-colors hover:text-brand-600">
             Privacy Policy
           </Link>
           <span className="hidden font-serif italic text-slate-400 lg:inline">
