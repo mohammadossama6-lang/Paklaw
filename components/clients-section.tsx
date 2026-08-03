@@ -49,6 +49,9 @@ function MarqueeRow({
               alt={name}
               fill
               sizes="176px"
+              /* Rendered grayscale at 50% opacity, so extra fidelity is
+                 invisible; this trims the strip without a visible change. */
+              quality={65}
               /* Not lazy: the track sits translated off-screen and is animated
                  with transform, which the browser's lazy-loading intersection
                  check doesn't re-evaluate — so these never loaded at all and

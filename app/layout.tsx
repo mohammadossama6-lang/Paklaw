@@ -56,6 +56,20 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${playfairDisplay.variable} ${jost.variable} ${lora.variable} ${nastaleeq.variable} h-full antialiased`}
     >
+      <head>
+        {/* The hero image is a CSS background, so the browser only discovers it
+            after parsing the stylesheet and building the render tree — it was
+            starting 2.3s in, on the largest thing above the fold. Preloading
+            starts it with the document. The media attributes mean each device
+            fetches only its own variant. */}
+        <link
+          rel="preload"
+          as="image"
+          href="/hero-bg-mobile.webp"
+          media="(max-width: 767px)"
+        />
+        <link rel="preload" as="image" href="/hero-bg.webp" media="(min-width: 768px)" />
+      </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <MotionConfig reducedMotion="user">
           <IntakeModalProvider>
