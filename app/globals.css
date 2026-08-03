@@ -9,7 +9,6 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
   --font-serif: var(--font-playfair);
 
   --color-brand-50: #eff6ff;
@@ -139,13 +138,26 @@
     font-family: var(--font-nastaleeq), serif;
   }
 
+  /* A CSS background is never touched by next/image, so this file has to do the
+     optimising itself. The source was a 3 MB PNG of photographic content;
+     phones now pull a 1100px WebP (47 KB) and only wider screens fetch the
+     full-size one (147 KB). It sits under a 55-75% dark overlay, so the
+     compression is invisible. */
   .bg-star-field {
     background-image:
       linear-gradient(rgba(5, 10, 25, 0.55), rgba(5, 10, 25, 0.75)),
-      url("/hero-bg.png");
+      url("/hero-bg-mobile.webp");
     background-size: cover, cover;
     background-position: center, center;
     background-repeat: no-repeat, no-repeat;
+  }
+
+  @media (min-width: 768px) {
+    .bg-star-field {
+      background-image:
+        linear-gradient(rgba(5, 10, 25, 0.55), rgba(5, 10, 25, 0.75)),
+        url("/hero-bg.webp");
+    }
   }
 
   .animate-marquee-left {
