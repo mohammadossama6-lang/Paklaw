@@ -114,9 +114,13 @@ function getCustomFieldIds(): Promise<Map<string, string>> {
       }
     } catch (err) {
       console.error("GoHighLevel custom field setup failed:", err);
-      // Don't cache a failure — let the next request try again.
-      customFieldIdsPromise = null;
     }
+
+    // Only a complete map is worth keeping. A partial one — a token that was
+    // missing the customFields scope, say — would otherwise stick for the life
+    // of the instance and never pick the missing fields up once that's fixed.
+    if (ids.size < LEAD_CUSTOM_FIELDS.length) customFieldIdsPromise = null;
+
     return ids;
   })();
 
