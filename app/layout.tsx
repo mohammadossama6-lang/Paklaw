@@ -68,7 +68,13 @@ export default function RootLayout({
           href="/hero-bg-mobile.webp"
           media="(max-width: 767px)"
         />
-        <link rel="preload" as="image" href="/hero-bg.webp" media="(min-width: 768px)" />
+        <link
+          rel="preload"
+          as="image"
+          href="/hero-bg-tablet.webp"
+          media="(min-width: 768px) and (max-width: 1279px)"
+        />
+        <link rel="preload" as="image" href="/hero-bg.webp" media="(min-width: 1280px)" />
       </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <MotionConfig reducedMotion="user">

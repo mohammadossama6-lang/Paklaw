@@ -152,7 +152,17 @@
     background-repeat: no-repeat, no-repeat;
   }
 
+  /* Tablets were pulling the full 1920px image for a ~1000px viewport; a
+     1500px variant is a third of the bytes and indistinguishable there. */
   @media (min-width: 768px) {
+    .bg-star-field {
+      background-image:
+        linear-gradient(rgba(5, 10, 25, 0.55), rgba(5, 10, 25, 0.75)),
+        url("/hero-bg-tablet.webp");
+    }
+  }
+
+  @media (min-width: 1280px) {
     .bg-star-field {
       background-image:
         linear-gradient(rgba(5, 10, 25, 0.55), rgba(5, 10, 25, 0.75)),
