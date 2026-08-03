@@ -16,28 +16,30 @@ model Lead {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  // Step 1
+  // Client details, in the order the intake form collects them and the
+  // GoHighLevel note lists them:
+  //   nationality, name, email, phone, gender, dob,
+  //   country, state/region, city, address, service, sub-service, case details
   nationality String
+  fullName    String
+  email       String
+  phone       String
+  gender      String
+  dob         String
 
-  // Step 2
-  fullName String
-  email    String
-  phone    String
-  gender   String
-  dob      String
-  // Pakistani citizens carry a province; overseas / foreign leads carry a
-  // country (+ state) instead, so all three are optional.
-  province String?
-  country  String?
+  country String?
+  // Pakistani citizens carry a province where others carry a state; both sit
+  // in the State/Region slot when the lead is presented.
   state    String?
+  province String?
   city     String
   address  String
 
-  // Step 3
   service    String
   subService String
-  message    String
-  consent    Boolean
+  /** The client's description of their matter — "Case Details" in GHL. */
+  message String
+  consent Boolean
 
   // Delivery tracking — did the GoHighLevel sync succeed, and which contact
   // did it create/update there.

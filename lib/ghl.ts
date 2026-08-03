@@ -222,22 +222,42 @@ async function createObjectRecord(
   return body?.record?.id;
 }
 
+/**
+ * The note is the full record of the enquiry as staff read it in GoHighLevel,
+ * so it lists every field in one fixed order:
+ *
+ *   Nationality, Full Name, Email, Phone Number, Gender, Date of Birth,
+ *   Country, State/Region, City, Address, Service, Sub-service, Case Details
+ *
+ * Name, email and phone are repeated here even though they also populate the
+ * contact's own fields — the note is meant to be readable on its own.
+ *
+ * Every line is always emitted, blank ones included: a missing line would
+ * shift the order and make the notes harder to scan side by side.
+ */
 function buildLeadNote(lead: LeadFormValues, matchedLawyer?: LawyerApplication) {
+  // Pakistani citizens carry a province rather than a state; it belongs in the
+  // State/Region slot so the sequence reads the same for every nationality.
+  const stateOrProvince =
+    lead.state || (lead.province ? labelFor(PROVINCE_OPTIONS, lead.province) : "");
+
   return [
-    `New consultation request from paklaw.com`,
+    `New consultation request from paklaw.ai`,
     ``,
     `Nationality: ${labelFor(NATIONALITY_OPTIONS, lead.nationality)}`,
+    `Full Name: ${lead.fullName}`,
+    `Email: ${lead.email}`,
+    `Phone Number: ${lead.phone}`,
     `Gender: ${labelFor(GENDER_OPTIONS, lead.gender)}`,
-    `Date of birth: ${lead.dob}`,
-    ...(lead.province ? [`Province: ${labelFor(PROVINCE_OPTIONS, lead.province)}`] : []),
-    ...(lead.country ? [`Country: ${lead.country}`] : []),
-    ...(lead.state ? [`State/Region: ${lead.state}`] : []),
+    `Date of Birth: ${lead.dob}`,
+    `Country: ${lead.country ?? ""}`,
+    `State/Region: ${stateOrProvince}`,
     `City: ${lead.city}`,
     `Address: ${lead.address}`,
     `Service: ${labelFor(SERVICE_OPTIONS, lead.service)}`,
     `Sub-service: ${labelFor(SUB_SERVICE_OPTIONS[lead.service], lead.subService)}`,
     ``,
-    `Message:`,
+    `Case Details:`,
     lead.message,
     ...(matchedLawyer
       ? [
