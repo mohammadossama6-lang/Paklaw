@@ -4,8 +4,29 @@ import { leadSchema } from "@/lib/schema";
 import { prisma } from "@/lib/prisma";
 import { syncLeadToGoHighLevel } from "@/lib/ghl";
 import { findMatchingLawyer } from "@/lib/lawyer-matching";
+import { checkRateLimit } from "@/lib/rate-limit";
+
+// A genuine enquirer submits once, maybe twice if they mistype something.
+// Five in ten minutes leaves room for that while stopping a script from
+// filling the CRM.
+const LEAD_RATE_LIMIT = 5;
+const LEAD_RATE_WINDOW_MS = 10 * 60 * 1000;
 
 export async function POST(request: Request) {
+  const rate = await checkRateLimit({
+    request,
+    scope: "lead",
+    limit: LEAD_RATE_LIMIT,
+    windowMs: LEAD_RATE_WINDOW_MS,
+  });
+
+  if (!rate.allowed) {
+    return Response.json(
+      { message: "You've sent several requests already. Please try again in a few minutes." },
+      { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+    );
+  }
+
   const body = await request.json().catch(() => null);
   const parsed = leadSchema.safeParse(body);
 

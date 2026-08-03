@@ -12,6 +12,18 @@ datasource db {
   provider = "postgresql"
 }
 
+/// One row per submission attempt to a public endpoint, used to rate limit it.
+/// `key` is a salted hash of the caller's IP — never the address itself, so
+/// this holds nothing that identifies a person. Rows older than the window are
+/// pruned as they are counted.
+model RateLimitHit {
+  id        String   @id @default(cuid())
+  key       String
+  createdAt DateTime @default(now())
+
+  @@index([key, createdAt])
+}
+
 model Lead {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())

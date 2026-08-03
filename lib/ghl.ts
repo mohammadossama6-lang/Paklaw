@@ -42,6 +42,98 @@ function labelFor(options: { value: string; label: string }[], value: string) {
   return options.find((opt) => opt.value === value)?.label ?? value;
 }
 
+/* ------------------------------------------------------------------ */
+/* Custom fields                                                       */
+/*                                                                    */
+/* GHL contacts natively cover name, email, phone, address, city,      */
+/* state, country and date of birth. The remaining intake fields have  */
+/* no native equivalent, so they are mapped to custom fields — created */
+/* on first use if the location doesn't have them yet, then cached for */
+/* the lifetime of the server instance.                                */
+/* ------------------------------------------------------------------ */
+
+const LEAD_CUSTOM_FIELDS = [
+  { name: "Nationality", dataType: "TEXT" },
+  { name: "Gender", dataType: "TEXT" },
+  { name: "Service", dataType: "TEXT" },
+  { name: "Sub-service", dataType: "TEXT" },
+  { name: "Case Details", dataType: "LARGE_TEXT" },
+] as const;
+
+type LeadCustomFieldName = (typeof LEAD_CUSTOM_FIELDS)[number]["name"];
+
+let customFieldIdsPromise: Promise<Map<string, string>> | null = null;
+
+async function fetchCustomFields(): Promise<{ id: string; name: string }[]> {
+  const res = await fetch(
+    `${GHL_API_BASE}/locations/${GHL_LOCATION_ID}/customFields?model=contact`,
+    { headers: ghlHeaders() }
+  );
+  if (!res.ok) {
+    throw new Error(`list customFields ${res.status}: ${(await res.text().catch(() => "")).slice(0, 300)}`);
+  }
+  const body = await res.json();
+  return (body?.customFields ?? []) as { id: string; name: string }[];
+}
+
+async function createCustomField(name: string, dataType: string): Promise<string | undefined> {
+  const res = await fetch(`${GHL_API_BASE}/locations/${GHL_LOCATION_ID}/customFields`, {
+    method: "POST",
+    headers: ghlHeaders(),
+    body: JSON.stringify({ name, dataType, model: "contact" }),
+  });
+  if (!res.ok) {
+    console.error(
+      `GoHighLevel custom field "${name}" could not be created:`,
+      res.status,
+      (await res.text().catch(() => "")).slice(0, 300)
+    );
+    return undefined;
+  }
+  const body = await res.json();
+  return body?.customField?.id;
+}
+
+/**
+ * Maps each intake custom field name to its GHL id, creating any that are
+ * missing. Resolved once per instance and reused; on failure it returns an
+ * empty map so the sync still writes the native fields and the note rather
+ * than failing outright.
+ */
+function getCustomFieldIds(): Promise<Map<string, string>> {
+  customFieldIdsPromise ??= (async () => {
+    const ids = new Map<string, string>();
+    try {
+      const existing = await fetchCustomFields();
+      const byName = new Map(existing.map((f) => [f.name, f.id]));
+
+      for (const field of LEAD_CUSTOM_FIELDS) {
+        const found = byName.get(field.name);
+        const id = found ?? (await createCustomField(field.name, field.dataType));
+        if (id) ids.set(field.name, id);
+      }
+    } catch (err) {
+      console.error("GoHighLevel custom field setup failed:", err);
+      // Don't cache a failure — let the next request try again.
+      customFieldIdsPromise = null;
+    }
+    return ids;
+  })();
+
+  return customFieldIdsPromise;
+}
+
+async function buildCustomFieldValues(
+  values: Record<LeadCustomFieldName, string>
+): Promise<{ id: string; value: string }[]> {
+  const ids = await getCustomFieldIds();
+  return LEAD_CUSTOM_FIELDS.flatMap((field) => {
+    const id = ids.get(field.name);
+    const value = values[field.name];
+    return id && value ? [{ id, value }] : [];
+  });
+}
+
 type SyncResult = {
   ok: boolean;
   contactId?: string;
@@ -53,10 +145,14 @@ async function upsertContact(params: {
   fullName: string;
   email: string;
   phone: string;
+  dateOfBirth?: string;
+  country?: string;
+  state?: string;
   city: string;
   address1?: string;
   source: string;
   tags: string[];
+  customFields?: { id: string; value: string }[];
 }): Promise<string | undefined> {
   const [firstName, ...rest] = params.fullName.trim().split(/\s+/);
 
@@ -69,10 +165,16 @@ async function upsertContact(params: {
       lastName: rest.join(" ") || undefined,
       email: params.email,
       phone: params.phone,
+      // GHL has native fields for these — previously they were only mentioned
+      // in the note, leaving the contact record itself incomplete.
+      dateOfBirth: params.dateOfBirth,
+      country: params.country,
+      state: params.state,
       address1: params.address1,
       city: params.city,
       source: params.source,
       tags: params.tags,
+      ...(params.customFields?.length ? { customFields: params.customFields } : {}),
     }),
   });
 
@@ -288,14 +390,37 @@ export async function syncLeadToGoHighLevel(
   const tags = [labelFor(SERVICE_OPTIONS, lead.service), labelFor(NATIONALITY_OPTIONS, lead.nationality)];
   if (matchedLawyer) tags.push(`Matched Lawyer: ${matchedLawyer.fullName}`);
 
+  // Pakistani citizens carry a province where others carry a state; both map
+  // onto GHL's single native "state" field.
+  const stateOrProvince =
+    lead.state || (lead.province ? labelFor(PROVINCE_OPTIONS, lead.province) : undefined);
+
+  // Best-effort: if the custom fields can't be read or created (a token
+  // without the customFields scope, say), fall back to the native fields plus
+  // the note rather than failing the whole sync.
+  const customFields = await buildCustomFieldValues({
+    Nationality: labelFor(NATIONALITY_OPTIONS, lead.nationality),
+    Gender: labelFor(GENDER_OPTIONS, lead.gender),
+    Service: labelFor(SERVICE_OPTIONS, lead.service),
+    "Sub-service": labelFor(SUB_SERVICE_OPTIONS[lead.service], lead.subService),
+    "Case Details": lead.message,
+  }).catch((err) => {
+    console.error("GoHighLevel custom field mapping failed:", err);
+    return [];
+  });
+
   const contactId = await upsertContact({
     fullName: lead.fullName,
     email: lead.email,
     phone: lead.phone,
+    dateOfBirth: lead.dob,
+    country: lead.country ?? undefined,
+    state: stateOrProvince,
     city: lead.city,
     address1: lead.address,
-    source: "PakLaw website",
+    source: "Pak Law website",
     tags,
+    customFields,
   });
 
   if (!contactId) return { ok: false };
