@@ -121,8 +121,6 @@ function getCustomFieldIds(): Promise<Map<string, string>> {
     // of the instance and never pick the missing fields up once that's fixed.
     if (ids.size < LEAD_CUSTOM_FIELDS.length) customFieldIdsPromise = null;
 
-    console.log("[ghl:customFields] resolved %s", JSON.stringify([...ids.entries()]));
-
     return ids;
   })();
 
@@ -195,19 +193,19 @@ async function upsertContact(params: {
 
   const body = await res.json();
 
-  // Temporary diagnostic: GHL accepts an upsert even when it silently ignores
-  // custom field values, so compare what we sent against what came back.
+  // GHL will accept an upsert while silently ignoring custom field values, so
+  // check what came back. Only ids are logged, never the values — those carry
+  // the client's case details and have no business in server logs.
   if (params.customFields?.length) {
-    const returned = (body?.contact?.customFields ?? []) as { id?: string; value?: unknown }[];
+    const returned = (body?.contact?.customFields ?? []) as { id?: string }[];
     const returnedIds = new Set(returned.map((f) => f.id));
     const dropped = params.customFields.filter((f) => !returnedIds.has(f.id));
-    console.log(
-      "[ghl:customFields] sent=%d returned=%d dropped=%s rawReturned=%s",
-      params.customFields.length,
-      returned.length,
-      JSON.stringify(dropped.map((d) => d.id)),
-      JSON.stringify(returned).slice(0, 600)
-    );
+    if (dropped.length) {
+      console.warn(
+        "GoHighLevel ignored custom field ids:",
+        dropped.map((d) => d.id).join(", ")
+      );
+    }
   }
 
   return body?.contact?.id;
