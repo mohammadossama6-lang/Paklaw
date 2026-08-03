@@ -124,7 +124,7 @@ export default function ClientsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-          className="relative mx-auto mt-14 flex max-w-5xl flex-col gap-8"
+          className="relative mx-auto mt-10 sm:mt-14 flex max-w-5xl flex-col gap-8"
         >
           <MarqueeRow items={ROW_ONE} direction="right" duration={32} />
           <MarqueeRow items={ROW_TWO} direction="left" duration={30} />

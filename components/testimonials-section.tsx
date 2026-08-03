@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Quote } from "lucide-react";
+import { ChevronDown, Quote } from "lucide-react";
 
 type Testimonial = {
   company: string;
@@ -108,11 +109,22 @@ const ACCENTS = [
   { bar: "from-indigo-500 to-indigo-800", ring: "ring-indigo-500/30", text: "text-indigo-600", tint: "from-indigo-50" },
 ];
 
+/**
+ * How many bars to show on a phone before the "show more" button. All twelve
+ * stacked ran to roughly four and a half screens, burying the FAQ and footer
+ * beneath them. Desktop lays them out far more compactly, so the cap is
+ * mobile-only — from `sm` up every testimonial renders as before.
+ */
+const MOBILE_VISIBLE = 4;
+
 export default function TestimonialsSection() {
+  const [showAll, setShowAll] = useState(false);
+  const hiddenOnMobile = TESTIMONIALS.length - MOBILE_VISIBLE;
+
   return (
     <section
       id="testimonials"
-      className="relative overflow-hidden bg-[#f7f8fc] px-4 py-24 sm:px-6"
+      className="relative overflow-hidden bg-[#f7f8fc] px-4 py-14 sm:py-24 sm:px-6"
     >
       <div
         aria-hidden
@@ -147,7 +159,7 @@ export default function TestimonialsSection() {
 
         {/* Horizontal testimonial bars — the client's name sits prominently on
             the left panel, with their words running alongside it. */}
-        <div className="mt-14 flex flex-col gap-4">
+        <div className="mt-10 sm:mt-14 flex flex-col gap-4">
           {TESTIMONIALS.map((t, i) => {
             const accent = ACCENTS[i % ACCENTS.length];
             const label = t.name ?? t.company;
@@ -158,7 +170,10 @@ export default function TestimonialsSection() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.5, ease: "easeOut", delay: 0.04 * (i % 6) }}
-                className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm transition-all duration-500 hover:-translate-y-0.5 hover:border-transparent hover:shadow-xl sm:flex-row"
+                className={`group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm transition-all duration-500 hover:-translate-y-0.5 hover:border-transparent hover:shadow-xl sm:flex-row ${
+                  // Hidden on mobile until expanded; always visible from sm up.
+                  i >= MOBILE_VISIBLE && !showAll ? "hidden sm:flex" : ""
+                }`}
               >
                 {/* prominent accent bar running down the left edge */}
                 <span
@@ -201,6 +216,20 @@ export default function TestimonialsSection() {
             );
           })}
         </div>
+
+        {/* Mobile only — desktop already shows every bar without the scroll cost. */}
+        {!showAll && hiddenOnMobile > 0 && (
+          <div className="mt-6 flex justify-center sm:hidden">
+            <button
+              type="button"
+              onClick={() => setShowAll(true)}
+              className="flex min-h-11 items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-ink shadow-sm transition-colors hover:border-brand-300 hover:text-brand-600"
+            >
+              Read {hiddenOnMobile} more testimonials
+              <ChevronDown aria-hidden className="size-4" />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

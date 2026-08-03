@@ -245,7 +245,7 @@ export default function PracticeAreas() {
       : [];
 
   return (
-    <section id="practice-areas" className="relative overflow-hidden bg-[#05070f] px-4 py-28 sm:px-6">
+    <section id="practice-areas" className="relative overflow-hidden bg-[#05070f] px-4 py-16 sm:py-28 sm:px-6">
       <div
         aria-hidden
         className="pointer-events-none absolute -top-32 left-1/4 size-96 rounded-full bg-brand-600/25 blur-[130px]"
@@ -271,7 +271,7 @@ export default function PracticeAreas() {
           </p>
         </div>
 
-        <div ref={trackRef} className="relative mt-20">
+        <div ref={trackRef} className="relative mt-12 sm:mt-20">
           {pathD && (
             <svg
               aria-hidden
@@ -432,7 +432,7 @@ export default function PracticeAreas() {
             </svg>
           )}
 
-          <div className="space-y-16 sm:space-y-14">
+          <div className="space-y-10 sm:space-y-14">
             {SERVICE_OPTIONS.map((option, i) => {
               const Icon = PRACTICE_AREA_ICONS[option.value as ServiceKey];
               const isEven = i % 2 === 0;

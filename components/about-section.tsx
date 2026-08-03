@@ -36,7 +36,7 @@ const TRUST_POINTS = [
 
 export default function AboutSection() {
   return (
-    <section id="about" className="relative overflow-hidden bg-slate-50 px-4 py-24 sm:px-6">
+    <section id="about" className="relative overflow-hidden bg-slate-50 px-4 py-14 sm:py-24 sm:px-6">
       <div
         aria-hidden
         className="pointer-events-none absolute -top-40 left-1/4 size-96 rounded-full bg-brand-500/10 blur-[130px]"
@@ -75,7 +75,7 @@ export default function AboutSection() {
           </p>
         </motion.div>
 
-        <div className="mx-auto mt-14 grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mx-auto mt-10 sm:mt-14 grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {TRUST_POINTS.map(({ Icon, label, body, accent, glow }, i) => (
             <motion.div
               key={label}

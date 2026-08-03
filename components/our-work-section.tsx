@@ -65,7 +65,7 @@ const WORK_ITEMS: WorkItem[] = [
 
 export default function OurWorkSection() {
   return (
-    <section className="relative overflow-hidden bg-[#05070f] px-4 py-28 sm:px-6">
+    <section className="relative overflow-hidden bg-[#05070f] px-4 py-16 sm:py-28 sm:px-6">
       <div
         aria-hidden
         className="pointer-events-none absolute -top-32 left-1/4 size-96 rounded-full bg-gold-400/10 blur-[130px]"
@@ -96,7 +96,7 @@ export default function OurWorkSection() {
           </p>
         </motion.div>
 
-        <div className="mx-auto mt-16 grid max-w-5xl gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mx-auto mt-10 sm:mt-16 grid max-w-5xl gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {WORK_ITEMS.map(({ title, category, client, description, Icon }, i) => (
             <motion.div
               key={title}
