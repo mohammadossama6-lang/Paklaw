@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 const ROW_ONE = [
   { name: "MCB Bank", src: "/clients/mcb.webp" },
   { name: "ARY News", src: "/clients/ary-news.webp" },
-  { name: "Audi", src: "/clients/audi.png" },
-  { name: "NITB", src: "/clients/nitb.png" },
+  { name: "Audi", src: "/clients/audi.webp" },
+  { name: "NITB", src: "/clients/nitb.webp" },
   { name: "PTCL", src: "/clients/ptcl.webp" },
   { name: "Askari Bank", src: "/clients/askari-bank.webp" },
   { name: "BOL News", src: "/clients/bol-news.webp" },
@@ -49,6 +49,12 @@ function MarqueeRow({
               alt={name}
               fill
               sizes="176px"
+              /* Not lazy: the track sits translated off-screen and is animated
+                 with transform, which the browser's lazy-loading intersection
+                 check doesn't re-evaluate — so these never loaded at all and
+                 the strip rendered empty. They are ~7 KB each at this size and
+                 the two halves of the loop share the same files. */
+              loading="eager"
               className="object-contain grayscale opacity-50 transition-all duration-500 ease-out group-hover/card:scale-110 group-hover/card:opacity-100 group-hover/card:grayscale-0"
             />
           </div>
