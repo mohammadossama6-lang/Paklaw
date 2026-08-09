@@ -74,10 +74,10 @@ export const SOCIAL_LINKS: {
   href: string;
   Icon: ComponentType<SVGProps<SVGSVGElement>>;
 }[] = [
-  { name: "Facebook", href: "#", Icon: FacebookIcon },
-  { name: "Instagram", href: "#", Icon: InstagramIcon },
-  { name: "TikTok", href: "#", Icon: TiktokIcon },
-  { name: "YouTube", href: "#", Icon: YoutubeIcon },
+  { name: "Facebook", href: "https://www.facebook.com/paklawofficial", Icon: FacebookIcon },
+  { name: "Instagram", href: "https://www.instagram.com/thepaklawofficial", Icon: InstagramIcon },
+  { name: "TikTok", href: "https://www.tiktok.com/@pak.law.official", Icon: TiktokIcon },
+  { name: "YouTube", href: "https://www.youtube.com/@paklawofficial", Icon: YoutubeIcon },
 ];
 
 export function WhatsappIcon(props: SVGProps<SVGSVGElement>) {

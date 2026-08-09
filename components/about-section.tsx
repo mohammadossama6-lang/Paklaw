@@ -24,6 +24,7 @@ const TRUST_POINTS = [
     body: "Protecting innovation, businesses and investment in Pakistan.",
     accent: "from-emerald-500 to-emerald-700",
     glow: "hover:shadow-emerald-600/20",
+
   },
   {
     Icon: GraduationCap,
@@ -60,7 +61,7 @@ export default function AboutSection() {
         >
           <span className="inline-flex items-center gap-2.5 text-sm font-bold uppercase tracking-[0.15em] text-brand-600">
             <span aria-hidden className="h-px w-6 bg-linear-to-r from-transparent to-gold-400" />
-            About PakLaw
+            About Pak Law
             <span aria-hidden className="h-px w-6 bg-linear-to-l from-transparent to-gold-400" />
           </span>
           <h2 className="mt-3 font-serif text-3xl italic tracking-tight text-ink sm:text-5xl">

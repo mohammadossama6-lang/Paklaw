@@ -18,7 +18,7 @@ import {
   PROVINCE_OPTIONS,
   SERVICE_OPTIONS,
   SUB_SERVICE_OPTIONS,
-} from "@/lib/constants";
+} from "@/lib/constants"
 
 const STEP_LABELS = ["Your Details", "Service"];
 const TOTAL_STEPS = STEP_LABELS.length;
@@ -131,7 +131,7 @@ export default function IntakeForm() {
           <Check className="size-8 text-white" strokeWidth={3} />
         </div>
         <h3 className="text-2xl font-semibold tracking-tight text-ink">
-          Thank you — we&apos;ve received your request
+          Thank you we have received your request
         </h3>
         <p className="text-muted">
           A member of our team will reach out shortly. If your matter is
@@ -248,7 +248,9 @@ export default function IntakeForm() {
                           <label htmlFor="fullName" className={labelClass}>
                             Full Name
                           </label>
+                          
                           <input
+                          
                             id="fullName"
                             type="text"
                             autoComplete="name"
@@ -285,9 +287,10 @@ export default function IntakeForm() {
                             {...register("phone")}
                             className={inputClass}
                           />
+                          
                           {errors.phone && <p className={errorClass}>{errors.phone.message}</p>}
                         </div>
-
+                              */Pakistani phone numbers should start with +92 or 0 and should be 11 digits long. No special characters or spaces are allowed in the phone number field.
                         <div>
                           <label htmlFor="gender" className={labelClass}>
                             Gender
@@ -313,6 +316,7 @@ export default function IntakeForm() {
                             {...register("dob")}
                             className={inputClass}
                           />
+                         
                           {errors.dob && <p className={errorClass}>{errors.dob.message}</p>}
                         </div>
                       </div>
@@ -343,7 +347,8 @@ export default function IntakeForm() {
                           <label htmlFor="city" className={labelClass}>
                             City
                           </label>
-                          <input
+                          <option value="">Select city</option>
+                           <input
                             id="city"
                             type="text"
                             autoComplete="address-level2"
@@ -352,11 +357,12 @@ export default function IntakeForm() {
                           />
                           {errors.city && <p className={errorClass}>{errors.city.message}</p>}
                         </div>
-
+                          
                         <div>
                           <label htmlFor="address" className={labelClass}>
                             Address
                           </label>
+                          
                           <input
                             id="address"
                             type="text"
@@ -374,7 +380,7 @@ export default function IntakeForm() {
                 </AnimatePresence>
               </fieldset>
             )}
-
+            
             {/* STEP 2 — Service + dependent sub-service, then message/consent/submit */}
             {step === 1 && (
               <>
@@ -388,6 +394,7 @@ export default function IntakeForm() {
                         Service
                       </label>
                       <select
+                       
                         id="service"
                         {...register("service")}
                         onChange={(e) => {
@@ -436,10 +443,10 @@ export default function IntakeForm() {
                     </div>
                   </div>
                 </fieldset>
-
+                  
                 <fieldset className="mt-5">
                   <legend className="mb-3 text-base font-semibold tracking-tight text-ink">
-                    Tell us about your matter
+                    Tell us about your case
                   </legend>
                   <div className="space-y-3">
                     <div>

@@ -26,10 +26,10 @@ export default function Header() {
           <LogoMark className="size-9 text-ink sm:size-10" />
           <span className="flex flex-col leading-none">
             <span className="font-serif text-xl font-semibold tracking-tight text-ink sm:text-2xl">
-              PakLaw
+              Pak Law
             </span>
-            <span className="mt-0.5 text-[9px] font-medium uppercase tracking-[0.3em] text-muted">
-              Advocates &amp; Legal Counsel
+            <span className="mt-0.5 text-[12px] font-medium uppercase tracking-[0.3em] text-muted">
+              حق کی بات، پاک لاء کے ساتھ
             </span>
           </span>
         </Link>
@@ -47,7 +47,7 @@ export default function Header() {
               type="button"
               className="flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:text-brand-600"
             >
-              Services
+              Practice Areas
               <ChevronDown className="size-3.5" />
             </button>
             <div className="invisible absolute left-1/2 top-full mt-3 w-64 -translate-x-1/2 overflow-hidden rounded-2xl bg-white p-2 opacity-0 shadow-2xl shadow-black/20 transition-all group-hover:visible group-hover:opacity-100">
