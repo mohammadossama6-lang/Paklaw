@@ -24,7 +24,6 @@ const GENDER_LABELS: Record<(typeof GENDERS)[number], string> = {
   male: "Male",
   female: "Female",
 };
-
 const PROVINCE_LABELS: Record<(typeof PROVINCES)[number], string> = {
   punjab: "Punjab",
   sindh: "Sindh",
@@ -139,5 +138,5 @@ export const CONTACT = {
   email: "info@paklaw.ai",
   phonePrimary: "0303 5561111",
   phone: "+92 303 5521111",
-  address: ["House#20 Street#29 F-8/1", "Islamabad, Pakistan"],
+  address: ["House No.20 Street No.29 F-8/1", "Islamabad, Pakistan"],
 };
