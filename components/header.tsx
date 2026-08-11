@@ -72,6 +72,11 @@ export default function Header() {
               <div className="rounded-2xl bg-white p-2 shadow-2xl shadow-black/20">
                 {SERVICE_OPTIONS.map((option) => {
                   const subServices = SUB_SERVICE_OPTIONS[option.value as ServiceKey];
+                  // Facilitation Center alone has 16 matters. Splitting the
+                  // long lists into two columns keeps every fly-out short
+                  // enough to show whole, instead of capping the height and
+                  // making people scroll inside a menu.
+                  const wide = subServices.length > 8;
                   return (
                     <div key={option.value} className="group/svc relative">
                       <button
@@ -85,8 +90,12 @@ export default function Header() {
 
                       {/* pl-2 keeps the pointer inside the hover target while it
                           travels from the parent row into the flyout. */}
-                      <div className="invisible absolute left-full top-0 w-80 pl-2 opacity-0 transition-all group-hover/svc:visible group-hover/svc:opacity-100 group-focus-within/svc:visible group-focus-within/svc:opacity-100">
-                        <div className="max-h-[70vh] overflow-y-auto rounded-2xl bg-white p-2 shadow-2xl shadow-black/20">
+                      <div
+                        className={`invisible absolute left-full top-0 ${wide ? "w-[36rem]" : "w-80"} pl-2 opacity-0 transition-all group-hover/svc:visible group-hover/svc:opacity-100 group-focus-within/svc:visible group-focus-within/svc:opacity-100`}
+                      >
+                        <div
+                          className={`rounded-2xl bg-white p-2 shadow-2xl shadow-black/20 ${wide ? "grid grid-cols-2 gap-x-1" : ""}`}
+                        >
                           {subServices.map((sub) => (
                             <button
                               key={sub.value}
