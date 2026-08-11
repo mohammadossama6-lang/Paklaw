@@ -15,6 +15,10 @@ const eslintConfig = defineConfig([
     // Prisma's generated client — not our code, already carries its own
     // eslint-disable header, excluded here for speed/robustness.
     "lib/generated/**",
+    // Git worktrees live here and carry their own .next build output, which
+    // isn't matched by the ".next/**" pattern above and would otherwise
+    // flood `eslint .` with thousands of errors from bundled vendor code.
+    ".claude/**",
   ]),
 ]);
 
