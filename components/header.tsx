@@ -4,15 +4,19 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Menu, UserCheck, UserPlus, X as CloseIcon } from "lucide-react";
+import { ChevronDown, ChevronRight, Menu, UserCheck, UserPlus, X as CloseIcon } from "lucide-react";
 
-import { SERVICE_OPTIONS } from "@/lib/constants";
+import { SERVICE_OPTIONS, SUB_SERVICE_OPTIONS } from "@/lib/constants";
+import type { ServiceKey } from "@/lib/schema";
 import LawyerRegisterModal from "@/components/lawyer-register-modal";
 import { useIntakeModal } from "@/components/intake-modal-provider";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  // Which practice area's sub-services are expanded in the mobile panel —
+  // one at a time, so the list doesn't become an unscrollable wall.
+  const [mobileOpenService, setMobileOpenService] = useState<string | null>(null);
   const [lawyerModalOpen, setLawyerModalOpen] = useState(false);
   const { openIntakeModal } = useIntakeModal();
 
@@ -61,17 +65,44 @@ export default function Header() {
               Practice Areas
               <ChevronDown className="size-3.5" />
             </button>
-            <div className="invisible absolute left-1/2 top-full mt-3 w-64 -translate-x-1/2 overflow-hidden rounded-2xl bg-white p-2 opacity-0 shadow-2xl shadow-black/20 transition-all group-hover:visible group-hover:opacity-100">
-              {SERVICE_OPTIONS.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={openIntakeModal}
-                  className="block w-full rounded-xl px-4 py-2.5 text-left text-sm text-ink transition-colors hover:bg-slate-50 hover:text-brand-600"
-                >
-                  {option.label}
-                </button>
-              ))}
+            {/* pt-3 rather than mt-3: the gap between the trigger and the panel
+                has to be part of the hover target, or the menu closes as the
+                pointer crosses it on its way down to a sub-menu. */}
+            <div className="invisible absolute left-1/2 top-full w-64 -translate-x-1/2 pt-3 opacity-0 transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+              <div className="rounded-2xl bg-white p-2 shadow-2xl shadow-black/20">
+                {SERVICE_OPTIONS.map((option) => {
+                  const subServices = SUB_SERVICE_OPTIONS[option.value as ServiceKey];
+                  return (
+                    <div key={option.value} className="group/svc relative">
+                      <button
+                        type="button"
+                        onClick={openIntakeModal}
+                        className="flex w-full items-center justify-between gap-2 rounded-xl px-4 py-2.5 text-left text-sm text-ink transition-colors hover:bg-slate-50 hover:text-brand-600 group-focus-within/svc:bg-slate-50"
+                      >
+                        {option.label}
+                        <ChevronRight className="size-3.5 shrink-0 text-muted" />
+                      </button>
+
+                      {/* pl-2 keeps the pointer inside the hover target while it
+                          travels from the parent row into the flyout. */}
+                      <div className="invisible absolute left-full top-0 w-80 pl-2 opacity-0 transition-all group-hover/svc:visible group-hover/svc:opacity-100 group-focus-within/svc:visible group-focus-within/svc:opacity-100">
+                        <div className="max-h-[70vh] overflow-y-auto rounded-2xl bg-white p-2 shadow-2xl shadow-black/20">
+                          {subServices.map((sub) => (
+                            <button
+                              key={sub.value}
+                              type="button"
+                              onClick={openIntakeModal}
+                              className="block w-full rounded-xl px-4 py-2 text-left text-sm text-muted transition-colors hover:bg-slate-50 hover:text-brand-600"
+                            >
+                              {sub.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
           <span aria-hidden className="h-4 w-px bg-slate-200" />
@@ -207,19 +238,54 @@ export default function Header() {
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden pl-4"
                   >
-                    {SERVICE_OPTIONS.map((option) => (
-                      <button
-                        key={option.value}
-                        type="button"
-                        onClick={() => {
-                          setMenuOpen(false);
-                          openIntakeModal();
-                        }}
-                        className="block w-full rounded-xl px-4 py-2 text-left text-sm text-muted transition-colors hover:bg-slate-50 hover:text-brand-600"
-                      >
-                        {option.label}
-                      </button>
-                    ))}
+                    {SERVICE_OPTIONS.map((option) => {
+                      const subServices = SUB_SERVICE_OPTIONS[option.value as ServiceKey];
+                      const expanded = mobileOpenService === option.value;
+                      return (
+                        <div key={option.value}>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setMobileOpenService((current) =>
+                                current === option.value ? null : option.value
+                              )
+                            }
+                            aria-expanded={expanded}
+                            className="flex w-full items-center justify-between gap-2 rounded-xl px-4 py-2 text-left text-sm text-muted transition-colors hover:bg-slate-50 hover:text-brand-600"
+                          >
+                            {option.label}
+                            <ChevronDown
+                              className={`size-3.5 shrink-0 transition-transform ${expanded ? "rotate-180" : ""}`}
+                            />
+                          </button>
+                          <AnimatePresence>
+                            {expanded && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="overflow-hidden pl-4"
+                              >
+                                {subServices.map((sub) => (
+                                  <button
+                                    key={sub.value}
+                                    type="button"
+                                    onClick={() => {
+                                      setMenuOpen(false);
+                                      openIntakeModal();
+                                    }}
+                                    className="block w-full rounded-xl px-4 py-2 text-left text-sm text-muted/80 transition-colors hover:bg-slate-50 hover:text-brand-600"
+                                  >
+                                    {sub.label}
+                                  </button>
+                                ))}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    })}
                   </motion.div>
                 )}
               </AnimatePresence>
