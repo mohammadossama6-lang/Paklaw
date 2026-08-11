@@ -108,6 +108,14 @@ export const SERVICE_SUBSERVICE_MAP = {
     "constitutional-petitions",
     "adr-mediation",
   ],
+  "due-diligence": [
+    "property-title-verification",
+    "corporate-ma-due-diligence",
+    "company-background-verification",
+    "contract-compliance-review",
+    "litigation-encumbrance-search",
+  ],
+  "ip-trademark": ["trademark", "copyright"],
 } as const satisfies Record<string, readonly string[]>;
 
 export type ServiceKey = keyof typeof SERVICE_SUBSERVICE_MAP;

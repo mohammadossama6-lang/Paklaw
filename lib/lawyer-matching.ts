@@ -21,6 +21,8 @@ const SERVICE_TO_PRACTICE_AREAS: Record<ServiceKey, PracticeArea[]> = {
   "regulatory-government": ["constitutional-law", "tax-law"],
   "women-desk": ["family-law"],
   litigation: ["civil-litigation", "corporate-law", "constitutional-law"],
+  "due-diligence": ["property-law", "corporate-law", "civil-litigation"],
+  "ip-trademark": ["intellectual-property", "corporate-law"],
 };
 
 /**

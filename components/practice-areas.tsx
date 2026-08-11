@@ -2,7 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Building2, Gavel, HeartHandshake, Landmark, Plane, ShieldCheck } from "lucide-react";
+import {
+  Building2,
+  Copyright,
+  FileSearch,
+  Gavel,
+  HeartHandshake,
+  Landmark,
+  Plane,
+  ShieldCheck,
+} from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 
 import { SERVICE_OPTIONS } from "@/lib/constants";
@@ -19,6 +28,8 @@ const PRACTICE_AREA_ICONS: Record<ServiceKey, ComponentType<SVGProps<SVGSVGEleme
   "regulatory-government": ShieldCheck,
   "women-desk": HeartHandshake,
   litigation: Gavel,
+  "due-diligence": FileSearch,
+  "ip-trademark": Copyright,
 };
 
 // A distinct accent per card, echoing the reference's varied icon colors
@@ -30,6 +41,8 @@ const PRACTICE_AREA_ACCENTS: Record<ServiceKey, string> = {
   "regulatory-government": "text-gold-300",
   "women-desk": "text-rose-300",
   litigation: "text-violet-300",
+  "due-diligence": "text-cyan-300",
+  "ip-trademark": "text-fuchsia-300",
 };
 
 // Same accents as hex, for the SVG connector gradient — each stretch of line
@@ -42,6 +55,8 @@ const PRACTICE_AREA_HEX: Record<ServiceKey, string> = {
   "regulatory-government": "#e3c98a",
   "women-desk": "#fda4af",
   litigation: "#c4b5fd",
+  "due-diligence": "#67e8f9",
+  "ip-trademark": "#f0abfc",
 };
 
 const PRACTICE_AREA_DESCRIPTIONS: Record<ServiceKey, string> = {
@@ -55,6 +70,10 @@ const PRACTICE_AREA_DESCRIPTIONS: Record<ServiceKey, string> = {
     "Resolving regulatory delays and disputes with government departments.",
   "women-desk": "custody, maintenance and protection matters for women etc...",
   litigation: "Civil litigation, arbitration, and constitutional petitions.",
+  "due-diligence":
+    "Title, corporate and background verification before you invest or sign.",
+  "ip-trademark":
+    "Trademark and copyright registration, protection and enforcement.",
 };
 // Vertical distance from the last card's connector point to the button below
 // it, and the flow space reserved after the cards so the absolutely-

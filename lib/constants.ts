@@ -41,6 +41,8 @@ const SERVICE_LABELS: Record<ServiceKey, string> = {
   "regulatory-government": "Regulatory And Government",
   "women-desk": "Women Desk",
   litigation: "Litigation",
+  "due-diligence": "Due Diligence",
+  "ip-trademark": "IP & Trademark",
 };
 
 const SUB_SERVICE_LABELS: Record<SubServiceKey, string> = {
@@ -114,6 +116,17 @@ const SUB_SERVICE_LABELS: Record<SubServiceKey, string> = {
   "commercial-arbitration": "Commercial Arbitration",
   "constitutional-petitions": "Constitutional Petitions",
   "adr-mediation": "ADR & Mediation",
+
+  // Due Diligence
+  "property-title-verification": "Property Title Verification",
+  "corporate-ma-due-diligence": "Corporate / M&A Due Diligence",
+  "company-background-verification": "Company & Background Verification",
+  "contract-compliance-review": "Contract & Compliance Review",
+  "litigation-encumbrance-search": "Litigation & Encumbrance Search",
+
+  // IP & Trademark
+  trademark: "Trademark",
+  copyright: "Copyright",
 };
 
 export const toOptions = <V extends string>(
