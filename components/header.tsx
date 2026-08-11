@@ -76,7 +76,7 @@ export default function Header() {
                     <div key={option.value} className="group/svc relative">
                       <button
                         type="button"
-                        onClick={openIntakeModal}
+                        onClick={() => openIntakeModal({ service: option.value as ServiceKey })}
                         className="flex w-full items-center justify-between gap-2 rounded-xl px-4 py-2.5 text-left text-sm text-ink transition-colors hover:bg-slate-50 hover:text-brand-600 group-focus-within/svc:bg-slate-50"
                       >
                         {option.label}
@@ -91,7 +91,12 @@ export default function Header() {
                             <button
                               key={sub.value}
                               type="button"
-                              onClick={openIntakeModal}
+                              onClick={() =>
+                                openIntakeModal({
+                                  service: option.value as ServiceKey,
+                                  subService: sub.value,
+                                })
+                              }
                               className="block w-full rounded-xl px-4 py-2 text-left text-sm text-muted transition-colors hover:bg-slate-50 hover:text-brand-600"
                             >
                               {sub.label}
@@ -128,7 +133,7 @@ export default function Header() {
         <div className="ml-auto flex items-center gap-2.5">
           <motion.button
             type="button"
-            onClick={openIntakeModal}
+            onClick={() => openIntakeModal()}
             whileHover={{
               scale: 1.05,
               y: -2,
@@ -273,7 +278,10 @@ export default function Header() {
                                     type="button"
                                     onClick={() => {
                                       setMenuOpen(false);
-                                      openIntakeModal();
+                                      openIntakeModal({
+                                        service: option.value as ServiceKey,
+                                        subService: sub.value,
+                                      });
                                     }}
                                     className="block w-full rounded-xl px-4 py-2 text-left text-sm text-muted/80 transition-colors hover:bg-slate-50 hover:text-brand-600"
                                   >

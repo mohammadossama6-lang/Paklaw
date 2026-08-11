@@ -15,6 +15,7 @@ import {
   type IntakeFormValues,
 } from "@/lib/intake/form-schema";
 import { SERVICE_OPTIONS, SUB_SERVICE_OPTIONS } from "@/lib/constants";
+import type { IntakePreset } from "@/components/intake-modal-provider";
 import { errorClass, inputClass, labelClass } from "@/components/intake/fields";
 import NationalityStep from "@/components/intake/nationality-step";
 import {
@@ -53,7 +54,7 @@ function detailsFieldsFor(subStep: number, nationality?: string): (keyof IntakeF
   return isPakistani ? ["province", "city", "address"] : ["country", "state", "city", "address"];
 }
 
-export default function IntakeForm() {
+export default function IntakeForm({ preset }: { preset?: IntakePreset } = {}) {
   const [step, setStep] = useState(0);
   const [detailsSubStep, setDetailsSubStep] = useState(0);
   const [detailsSlideDirection, setDetailsSlideDirection] = useState(1);
@@ -73,7 +74,13 @@ export default function IntakeForm() {
   } = useForm<IntakeFormValues>({
     resolver: zodResolver(intakeFormSchema),
     mode: "onTouched",
-    defaultValues: intakeFormDefaults as IntakeFormValues,
+    // The modal is unmounted while closed, so these defaults are re-read every
+    // time it opens — a preset from the menu lands on a fresh form.
+    defaultValues: {
+      ...intakeFormDefaults,
+      ...(preset?.service ? { service: preset.service } : {}),
+      ...(preset?.subService ? { subService: preset.subService } : {}),
+    } as IntakeFormValues,
   });
 
   const nationality = useWatch({ control, name: "nationality" });
@@ -370,7 +377,7 @@ export default function IntakeForm() {
                       <select
                         id="service"
                         {...register("service")}
-                        defaultValue=""
+                        defaultValue={preset?.service ?? ""}
                         onChange={(e) => {
                           setValue("service", e.target.value as IntakeFormValues["service"], {
                             shouldValidate: true,

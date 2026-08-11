@@ -17,7 +17,7 @@ import type { ComponentType, SVGProps } from "react";
 import { SERVICE_OPTIONS } from "@/lib/constants";
 import type { ServiceKey } from "@/lib/schema";
 import { WhatsappIcon } from "@/components/social-icons";
-import { useIntakeModal } from "@/components/intake-modal-provider";
+import { useIntakeModal, type IntakePreset } from "@/components/intake-modal-provider";
 
 const WHATSAPP_HREF = "https://wa.me/923035521111";
 
@@ -101,7 +101,7 @@ function PracticeCard({
   index: number;
   Icon: ComponentType<SVGProps<SVGSVGElement>>;
   cardRef: (el: HTMLButtonElement | null) => void;
-  openIntakeModal: () => void;
+  openIntakeModal: (preset?: IntakePreset) => void;
 }) {
   const localRef = useRef<HTMLButtonElement>(null);
   const { scrollYProgress } = useScroll({
@@ -118,7 +118,7 @@ function PracticeCard({
         cardRef(el);
       }}
       type="button"
-      onClick={openIntakeModal}
+      onClick={() => openIntakeModal({ service: option.value as ServiceKey })}
       style={{ scale, opacity: zoomOpacity }}
       whileHover={{ y: -4 }}
       transition={{ type: "spring", stiffness: 300, damping: 22 }}

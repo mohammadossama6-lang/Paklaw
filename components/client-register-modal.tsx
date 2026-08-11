@@ -5,13 +5,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X as CloseIcon } from "lucide-react";
 
 import IntakeForm from "@/components/intakeform";
+import type { IntakePreset } from "@/components/intake-modal-provider";
 
 export default function ClientRegisterModal({
   open,
   onClose,
+  preset,
 }: {
   open: boolean;
   onClose: () => void;
+  preset?: IntakePreset;
 }) {
   useEffect(() => {
     if (!open) return;
@@ -61,7 +64,7 @@ export default function ClientRegisterModal({
               <CloseIcon className="size-5" />
             </button>
 
-            <IntakeForm />
+            <IntakeForm preset={preset} />
           </motion.div>
         </div>
       )}

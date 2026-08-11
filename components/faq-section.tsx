@@ -80,7 +80,7 @@ export default function FaqSection() {
           </p>
           <button
             type="button"
-            onClick={openIntakeModal}
+            onClick={() => openIntakeModal()}
             className="group mt-8 inline-flex items-center gap-2.5 rounded-full bg-linear-to-r from-[#328FF8] via-indigo-600 to-brand-800 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-700/30 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand-700/50"
           >
             Book Free Consultation
