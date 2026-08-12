@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
@@ -19,6 +19,42 @@ export default function Header() {
   const [mobileOpenService, setMobileOpenService] = useState<string | null>(null);
   const [lawyerModalOpen, setLawyerModalOpen] = useState(false);
   const { openIntakeModal } = useIntakeModal();
+
+  /*
+   * Tailwind gates hover variants behind `@media (hover: hover)`, so on a
+   * touch device wide enough to show the desktop nav — an iPad Pro in
+   * landscape is 1366pt — the fly-outs could never be opened. There the menus
+   * become tap-to-open instead: the trigger toggles the list, and a practice
+   * area toggles its own matters rather than jumping straight to the form.
+   */
+  const [isTouch, setIsTouch] = useState(false);
+  const [tapMenuOpen, setTapMenuOpen] = useState(false);
+  const [tapService, setTapService] = useState<string | null>(null);
+  const practiceAreasRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const query = window.matchMedia("(hover: none)");
+    const sync = () => setIsTouch(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
+
+  function closeTapMenu() {
+    setTapMenuOpen(false);
+    setTapService(null);
+  }
+
+  // A tap anywhere outside the menu dismisses it, the way a hover menu closes
+  // when the pointer leaves.
+  useEffect(() => {
+    if (!tapMenuOpen) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!practiceAreasRef.current?.contains(event.target as Node)) closeTapMenu();
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [tapMenuOpen]);
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] sm:px-6">
@@ -48,9 +84,15 @@ export default function Header() {
             About Us
           </a>
           <span aria-hidden className="h-4 w-px bg-slate-200" />
-          <div className="group relative">
+          <div className="group relative" ref={practiceAreasRef}>
             <button
               type="button"
+              aria-expanded={isTouch ? tapMenuOpen : undefined}
+              onClick={() => {
+                if (!isTouch) return;
+                setTapService(null);
+                setTapMenuOpen((open) => !open);
+              }}
               className="flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-ink transition-colors hover:text-brand-600"
             >
               Practice Areas
@@ -59,7 +101,13 @@ export default function Header() {
             {/* pt-3 rather than mt-3: the gap between the trigger and the panel
                 has to be part of the hover target, or the menu closes as the
                 pointer crosses it on its way down to a sub-menu. */}
-            <div className="invisible absolute left-1/2 top-full w-64 -translate-x-1/2 pt-3 opacity-0 transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+            <div
+              className={`absolute left-1/2 top-full w-64 -translate-x-1/2 pt-3 transition-all ${
+                isTouch && tapMenuOpen
+                  ? "visible opacity-100"
+                  : "invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+              }`}
+            >
               <div className="rounded-2xl bg-white p-2 shadow-2xl shadow-black/20">
                 {SERVICE_OPTIONS.map((option) => {
                   const subServices = SUB_SERVICE_OPTIONS[option.value as ServiceKey];
@@ -72,7 +120,16 @@ export default function Header() {
                     <div key={option.value} className="group/svc relative">
                       <button
                         type="button"
-                        onClick={() => openIntakeModal({ service: option.value as ServiceKey })}
+                        aria-expanded={isTouch ? tapService === option.value : undefined}
+                        onClick={() => {
+                          if (isTouch) {
+                            setTapService((current) =>
+                              current === option.value ? null : option.value
+                            );
+                            return;
+                          }
+                          openIntakeModal({ service: option.value as ServiceKey });
+                        }}
                         className="flex w-full items-center justify-between gap-2 rounded-xl px-4 py-2.5 text-left text-sm text-ink transition-colors hover:bg-slate-50 hover:text-brand-600 group-focus-within/svc:bg-slate-50"
                       >
                         {option.label}
@@ -82,7 +139,11 @@ export default function Header() {
                       {/* pl-2 keeps the pointer inside the hover target while it
                           travels from the parent row into the flyout. */}
                       <div
-                        className={`invisible absolute left-full top-0 ${wide ? "w-[36rem]" : "w-80"} pl-2 opacity-0 transition-all group-hover/svc:visible group-hover/svc:opacity-100 group-focus-within/svc:visible group-focus-within/svc:opacity-100`}
+                        className={`absolute left-full top-0 ${wide ? "w-[36rem]" : "w-80"} pl-2 transition-all ${
+                          isTouch && tapService === option.value
+                            ? "visible opacity-100"
+                            : "invisible opacity-0 group-hover/svc:visible group-hover/svc:opacity-100 group-focus-within/svc:visible group-focus-within/svc:opacity-100"
+                        }`}
                       >
                         <div
                           className={`rounded-2xl bg-white p-2 shadow-2xl shadow-black/20 ${wide ? "grid grid-cols-2 gap-x-1" : ""}`}
@@ -91,12 +152,13 @@ export default function Header() {
                             <button
                               key={sub.value}
                               type="button"
-                              onClick={() =>
+                              onClick={() => {
+                                closeTapMenu();
                                 openIntakeModal({
                                   service: option.value as ServiceKey,
                                   subService: sub.value,
-                                })
-                              }
+                                });
+                              }}
                               className="block w-full rounded-xl px-4 py-2 text-left text-sm text-muted transition-colors hover:bg-slate-50 hover:text-brand-600"
                             >
                               {sub.label}
@@ -197,7 +259,7 @@ export default function Header() {
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
-            className="flex size-10 items-center justify-center rounded-full text-ink transition-colors hover:text-brand-600 xl:hidden"
+            className="flex size-11 items-center justify-center rounded-full text-ink transition-colors hover:text-brand-600 xl:hidden"
           >
             {menuOpen ? <CloseIcon className="size-5" /> : <Menu className="size-5" />}
           </button>

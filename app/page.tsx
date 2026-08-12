@@ -8,8 +8,7 @@ import ClientsSection from "@/components/clients-section";
 import TestimonialsSection from "@/components/testimonials-section";
 import FaqSection from "@/components/faq-section";
 import { SOCIAL_LINKS, WhatsappIcon } from "@/components/social-icons";
-
-const WHATSAPP_HREF = "https://wa.me/923035521111";
+import { WHATSAPP_PRIMARY_HREF } from "@/lib/constants";
 
 const TRUST_POINTS = [
   {
@@ -98,7 +97,7 @@ export default function Home() {
             </div>
 
             <a
-              href={WHATSAPP_HREF}
+              href={WHATSAPP_PRIMARY_HREF}
               target="_blank"
               rel="noopener noreferrer"
               style={{ animationDelay: "860ms" }}

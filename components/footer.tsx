@@ -67,7 +67,7 @@ export default function Footer() {
             <a
               key={link.label}
               href={link.href}
-              className="-my-1.5 py-1.5 text-sm font-semibold text-ink transition-colors hover:text-brand-600"
+              className="-my-3 py-3 text-sm font-semibold text-ink transition-colors hover:text-brand-600"
             >
               {link.label}
             </a>
@@ -82,7 +82,7 @@ export default function Footer() {
             <a
               key={link.label}
               href={link.href}
-              className="-my-1.5 py-1.5 text-sm font-semibold text-ink transition-colors hover:text-brand-600"
+              className="-my-3 py-3 text-sm font-semibold text-ink transition-colors hover:text-brand-600"
             >
               {link.label}
             </a>
@@ -95,7 +95,7 @@ export default function Footer() {
           </span>
           <a
             href={`mailto:${CONTACT.email}`}
-            className="group flex items-center gap-3 text-sm text-muted transition-colors hover:text-brand-600"
+            className="group -my-1.5 flex items-center gap-3 py-1.5 text-sm text-muted transition-colors hover:text-brand-600"
           >
             <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm ring-1 ring-slate-200 transition-colors group-hover:bg-brand-600 group-hover:text-white">
               <Mail className="size-3.5" />
@@ -107,7 +107,7 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`WhatsApp ${CONTACT.phonePrimary}`}
-            className="group flex items-center gap-3 text-sm text-muted transition-colors hover:text-brand-600"
+            className="group -my-1.5 flex items-center gap-3 py-1.5 text-sm text-muted transition-colors hover:text-brand-600"
           >
             <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm ring-1 ring-slate-200 transition-colors group-hover:bg-brand-600 group-hover:text-white">
               <WhatsappIcon className="size-3.5" />
@@ -121,7 +121,7 @@ export default function Footer() {
           </a>
           <a
             href={`tel:${CONTACT.phone.replace(/\s+/g, "")}`}
-            className="group flex items-center gap-3 text-sm text-muted transition-colors hover:text-brand-600"
+            className="group -my-1.5 flex items-center gap-3 py-1.5 text-sm text-muted transition-colors hover:text-brand-600"
           >
             <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm ring-1 ring-slate-200 transition-colors group-hover:bg-brand-600 group-hover:text-white">
               <Phone className="size-3.5" />
@@ -143,14 +143,14 @@ export default function Footer() {
 
       <div className="relative mx-auto mt-12 flex max-w-6xl flex-col gap-3 border-t border-slate-200 pt-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
         <span>© {year} Pak Law. All rights reserved.</span>
-        {/* -my-2 py-2 gives these a finger-sized hit area on touch without
-            adding visible height to the footer bar — at 16px tall they were
-            well under the 44px guideline. */}
-        <div className="-my-2 flex items-center gap-4">
-          <Link href="/terms" className="py-2 transition-colors hover:text-brand-600">
+        {/* The negative margin cancels the padding, so these get a finger-sized
+            hit area on touch without adding visible height to the footer bar.
+            14px either side of a 16px line lands exactly on the 44px guideline. */}
+        <div className="-my-3.5 flex items-center gap-4">
+          <Link href="/terms" className="py-3.5 transition-colors hover:text-brand-600">
             Terms &amp; Conditions
           </Link>
-          <Link href="/privacy" className="py-2 transition-colors hover:text-brand-600">
+          <Link href="/privacy" className="py-3.5 transition-colors hover:text-brand-600">
             Privacy Policy
           </Link>
           <span className="hidden font-serif italic text-slate-400 lg:inline">
