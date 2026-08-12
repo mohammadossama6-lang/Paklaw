@@ -28,13 +28,6 @@ const TESTIMONIALS: Testimonial[] = [
   },
   {
     company: "Senior Journalist",
-    name: "Moeed Pirzada",
-    title: "Journalist",
-    quote:
-      "Barrister Shoaib Razzaq and A.R. & Co. represented me in several highly sensitive and politically motivated matters, including proceedings before the superior courts and representations before state i...",
-  },
-  {
-    company: "Senior Journalist",
     name: "Sabir Shakir",
     title: "Journalist",
     quote:
@@ -82,13 +75,6 @@ const TESTIMONIALS: Testimonial[] = [
     title: "Journalist",
     quote:
       "Barrister Shoaib Razzaq and A.R. & Co. represented me in several complex and sensitive legal matters, including proceedings before the superior courts, engagements with state authorities, and cases be...",
-  },
-  {
-    company: "Senior Journalist",
-    name: "Moeed Pirzada",
-    title: "Journalist",
-    quote:
-      "I was represented by Barrister Shoaib Razzaq and A.R. & Co. in multiple high-stakes and politically sensitive matters, spanning litigation before the superior judiciary, proceedings involving state in...",
   },
 ];
 
