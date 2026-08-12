@@ -151,7 +151,7 @@ export const CONTACT = {
   email: "info@paklaw.ai",
   phonePrimary: "0303 5561111",
   phone: "+92 303 5521111",
-  address: ["House No.20 Street No.29 F-8/1", "Islamabad, Pakistan"],
+  address: ["Office No.20 Street No.29 F-8/1", "Islamabad, Pakistan"],
 };
 
 /**
