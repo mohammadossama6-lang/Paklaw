@@ -151,16 +151,20 @@ export const SUB_SERVICE_OPTIONS = Object.fromEntries(
 
 export const CONTACT = {
   email: "paklawofficial@gmail.com",
-  phonePrimary: "0303 5561111",
+  phonePrimary: "+92 303 5561111",
   phone: "+92 303 5521111",
   address: ["Office No.20 Street No.29 F-8/1", "Islamabad, Pakistan"],
 };
 
 /**
  * wa.me wants a bare international number — no plus, spaces or leading zero.
- * The primary line is written in local Pakistani form, so its 0 prefix is
- * swapped for the 92 country code.
+ * Accepts the primary line in either form it might be written in: local
+ * Pakistani ("0303 5561111", whose 0 prefix becomes the 92 country code) or
+ * already international ("+92 303 5561111", which just loses its punctuation).
  */
-export const WHATSAPP_PRIMARY_HREF = `https://wa.me/92${CONTACT.phonePrimary
-  .replace(/\D/g, "")
-  .replace(/^0/, "")}`;
+function toWhatsappNumber(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  return digits.startsWith("92") ? digits : `92${digits.replace(/^0/, "")}`;
+}
+
+export const WHATSAPP_PRIMARY_HREF = `https://wa.me/${toWhatsappNumber(CONTACT.phonePrimary)}`;
