@@ -119,8 +119,7 @@ export const SERVICE_SUBSERVICE_MAP = {
     "trademark",
     "copyright",
     "industrial-design",
-    "patent",
-    "innovation",
+    "patent-innovation",
     "brand-protection",
   ],
 } as const satisfies Record<string, readonly string[]>;

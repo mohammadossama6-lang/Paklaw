@@ -128,8 +128,7 @@ const SUB_SERVICE_LABELS: Record<SubServiceKey, string> = {
   trademark: "Trademark",
   copyright: "Copyright",
   "industrial-design": "Industrial Design",
-  patent: "Patent",
-  innovation: "Innovation",
+  "patent-innovation": "Patent & Innovation",
   "brand-protection": "Brand Protection",
 };
 
