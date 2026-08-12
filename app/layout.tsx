@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Jost, Lora, Noto_Nastaliq_Urdu, Playfair_Display } from "next/font/google";
+import Script from "next/script";
 import { MotionConfig } from "framer-motion";
 import Header from "@/components/header";
 import { IntakeModalProvider } from "@/components/intake-modal-provider";
@@ -40,6 +41,17 @@ const nastaleeq = Noto_Nastaliq_Urdu({
   preload: false,
 });
 
+/**
+ * Meta (Facebook) Pixel. The ID is not a secret — it ships in the client
+ * bundle by design and is visible to anyone viewing source.
+ *
+ * `afterInteractive` runs it once the page is interactive rather than blocking
+ * first paint. Note this fires PageView on the initial document load only:
+ * moving between routes here is client-side navigation, which the base snippet
+ * does not see.
+ */
+const META_PIXEL_ID = "2154588512126816";
+
 export const metadata: Metadata = {
   title: "Pak Law — Legal Services in Pakistan",
   description:
@@ -77,6 +89,29 @@ export default function RootLayout({
         <link rel="preload" as="image" href="/hero-bg.webp" media="(min-width: 1280px)" />
       </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <Script id="meta-pixel" strategy="afterInteractive">
+          {`!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '${META_PIXEL_ID}');
+fbq('track', 'PageView');`}
+        </Script>
+        <noscript>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            height="1"
+            width="1"
+            alt=""
+            style={{ display: "none" }}
+            src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
+          />
+        </noscript>
+
         <MotionConfig reducedMotion="user">
           <IntakeModalProvider>
             <Header />
