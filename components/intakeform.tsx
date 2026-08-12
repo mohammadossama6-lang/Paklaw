@@ -9,6 +9,7 @@ import { ArrowRight, Check, Loader2 } from "lucide-react";
 
 import {
   detailsStepSchema,
+  serviceStepSchema,
   intakeFormSchema,
   intakeFormDefaults,
   normalizeLead,
@@ -31,13 +32,16 @@ import {
   ForeignNationalPersonalFields,
 } from "@/components/intake/foreign-national-form";
 
-const STEP_LABELS = ["Your Details", "Submit"];
+const STEP_LABELS = ["Service", "Your Details", "Submit"];
 const TOTAL_STEPS = STEP_LABELS.length;
 
-const DETAILS_STEP = 0;
+// What the visitor came for is asked first: the service and matter, then who
+// they are, then the message they want to send.
+const SERVICE_STEP = 0;
+const DETAILS_STEP = 1;
 const DETAILS_SUB_STEPS = 3; // nationality → personal → location
-// Two dots sit in the progress bar between step 1 and step 2, one per
-// boundary crossed inside the three-part "Your Details" step.
+// Two dots sit in the progress bar on the connector leaving "Your Details",
+// one per boundary crossed inside that three-part step.
 const DETAILS_DOTS = [0, 1];
 
 type SubmitState = "idle" | "submitting" | "success" | "error";
@@ -88,7 +92,54 @@ export default function IntakeForm({ preset }: { preset?: IntakePreset } = {}) {
   const consentChecked = useWatch({ control, name: "consent" });
 
   const isLastStep = step === TOTAL_STEPS - 1;
-  const isFirstScreen = step === DETAILS_STEP && detailsSubStep === 0;
+  const isFirstScreen = step === SERVICE_STEP;
+
+  /**
+   * Brings the first failing field into view. The field area scrolls without a
+   * visible scrollbar, so an error below the fold would leave the button
+   * looking like it did nothing. Two deliberate choices, both found by testing:
+   *  - setTimeout, not requestAnimationFrame: rAF callbacks are throttled to
+   *    zero in a backgrounded or non-compositing tab, so the scroll silently
+   *    never happened. A macrotask still lets React paint the errors first.
+   *  - no `behavior: "smooth"`: inside the modal's transformed, animated
+   *    container Chrome drops the smooth scroll and the field never moves.
+   */
+  function scrollToField(field: unknown) {
+    if (typeof field !== "string") return;
+    setTimeout(() => {
+      document.getElementById(field)?.scrollIntoView({ block: "center" });
+    }, 0);
+  }
+
+  /**
+   * Pushes Zod issues onto their matching fields, keeping only the first issue
+   * per field. Zod 4 keeps running refinements after an earlier check on the
+   * same field has already failed, so an empty sub-service yields both "Please
+   * select a sub-service." and the service/sub-service mismatch message —
+   * without this, the second would overwrite the first and tell the user their
+   * selection is wrong when they simply haven't made one.
+   */
+  function applyIssues(issues: { path: PropertyKey[]; message: string }[]) {
+    const claimed = new Set<string>();
+    for (const issue of issues) {
+      const field = issue.path[0];
+      if (typeof field !== "string" || claimed.has(field)) continue;
+      claimed.add(field);
+      setError(field as keyof IntakeFormValues, { type: "manual", message: issue.message });
+    }
+  }
+
+  /** Validates the service step against its own schema. */
+  function validateServiceStep(): boolean {
+    clearErrors(["service", "subService"]);
+
+    const result = serviceStepSchema.safeParse(getValues());
+    if (result.success) return true;
+
+    applyIssues(result.error.issues);
+    scrollToField(result.error.issues[0]?.path[0]);
+    return false;
+  }
 
   /**
    * Validates the current sub-step against its own schema (see
@@ -102,29 +153,18 @@ export default function IntakeForm({ preset }: { preset?: IntakePreset } = {}) {
     const result = detailsStepSchema(detailsSubStep, nationality).safeParse(getValues());
     if (result.success) return true;
 
-    for (const issue of result.error.issues) {
-      const field = issue.path[0] as keyof IntakeFormValues | undefined;
-      if (field) setError(field, { type: "manual", message: issue.message });
-    }
-
-    // The modal hides its scrollbar, so an error below the fold would leave
-    // Next Step looking like it does nothing. Bring the first one into view.
-    // Two deliberate choices here, both found by testing:
-    //  - setTimeout, not requestAnimationFrame: rAF callbacks are throttled to
-    //    zero in a backgrounded or non-compositing tab, so the scroll silently
-    //    never happened. A macrotask still lets React paint the errors first.
-    //  - no `behavior: "smooth"`: inside the modal's transformed, animated
-    //    container Chrome drops the smooth scroll and the field never moves.
-    const firstField = result.error.issues[0]?.path[0];
-    if (typeof firstField === "string") {
-      setTimeout(() => {
-        document.getElementById(firstField)?.scrollIntoView({ block: "center" });
-      }, 0);
-    }
+    applyIssues(result.error.issues);
+    scrollToField(result.error.issues[0]?.path[0]);
     return false;
   }
 
   function goNext() {
+    if (step === SERVICE_STEP) {
+      if (!validateServiceStep()) return;
+      setStep(DETAILS_STEP);
+      return;
+    }
+
     if (step !== DETAILS_STEP) return;
     if (!validateDetailsStep()) return;
 
@@ -134,7 +174,7 @@ export default function IntakeForm({ preset }: { preset?: IntakePreset } = {}) {
       return;
     }
 
-    setStep(1);
+    setStep(DETAILS_STEP + 1);
   }
 
   function goBack() {
@@ -185,6 +225,12 @@ export default function IntakeForm({ preset }: { preset?: IntakePreset } = {}) {
    */
   const onInvalid = (formErrors: typeof errors) => {
     const failed = Object.keys(formErrors);
+
+    if (failed.includes("service") || failed.includes("subService")) {
+      setStep(SERVICE_STEP);
+      return;
+    }
+
     for (let subStep = 0; subStep < DETAILS_SUB_STEPS; subStep++) {
       const fields = detailsFieldsFor(subStep, nationality) as string[];
       if (fields.some((field) => failed.includes(field))) {
@@ -195,16 +241,8 @@ export default function IntakeForm({ preset }: { preset?: IntakePreset } = {}) {
       }
     }
 
-    // Everything that failed is on this step. Bring the first one into view —
-    // the field area scrolls without a visible scrollbar, so an error further
-    // down would otherwise go unnoticed. setTimeout, not rAF: see
-    // validateDetailsStep.
-    const firstField = failed[0];
-    if (firstField) {
-      setTimeout(() => {
-        document.getElementById(firstField)?.scrollIntoView({ block: "center" });
-      }, 0);
-    }
+    // Everything that failed is on this step.
+    scrollToField(failed[0]);
   };
 
   if (submitState === "success") {
@@ -270,17 +308,25 @@ export default function IntakeForm({ preset }: { preset?: IntakePreset } = {}) {
             </div>
             {i < STEP_LABELS.length - 1 && (
               <div className="mx-3 flex flex-1 items-center justify-center gap-2.5" aria-hidden>
-                {DETAILS_DOTS.map((dot) => {
-                  const filled = step > DETAILS_STEP || detailsSubStep > dot;
-                  return (
-                    <span
-                      key={dot}
-                      className={`size-2 rounded-full transition-all duration-300 ${
-                        filled ? "scale-125 bg-brand-500" : "bg-slate-200"
-                      }`}
-                    />
-                  );
-                })}
+                {i === DETAILS_STEP ? (
+                  DETAILS_DOTS.map((dot) => {
+                    const filled = step > DETAILS_STEP || detailsSubStep > dot;
+                    return (
+                      <span
+                        key={dot}
+                        className={`size-2 rounded-full transition-all duration-300 ${
+                          filled ? "scale-125 bg-brand-500" : "bg-slate-200"
+                        }`}
+                      />
+                    );
+                  })
+                ) : (
+                  <span
+                    className={`h-0.5 w-full rounded-full transition-colors duration-300 ${
+                      step > i ? "bg-brand-500" : "bg-slate-200"
+                    }`}
+                  />
+                )}
               </div>
             )}
           </li>
@@ -305,8 +351,71 @@ export default function IntakeForm({ preset }: { preset?: IntakePreset } = {}) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.2 }}
         >
-            {/* STEP 1 — Your details: nationality, then personal, then location */}
-            {step === 0 && (
+            {/* STEP 1 — Service + dependent sub-service */}
+            {step === SERVICE_STEP && (
+              <fieldset>
+                <legend className="mb-2.5 text-base font-semibold tracking-tight text-ink">
+                  Which service do you need?
+                </legend>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="service" className={labelClass}>
+                      Service
+                    </label>
+                    <select
+                      id="service"
+                      {...register("service")}
+                      defaultValue={preset?.service ?? ""}
+                      onChange={(e) => {
+                        setValue("service", e.target.value as IntakeFormValues["service"], {
+                          shouldValidate: true,
+                        });
+                        setValue("subService", "", { shouldValidate: false });
+                      }}
+                      className={inputClass}
+                    >
+                      <option value="" disabled>
+                        Select a service
+                      </option>
+                      {SERVICE_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.service && <p className={errorClass}>{errors.service.message}</p>}
+                  </div>
+
+                  <div>
+                    <label htmlFor="subService" className={labelClass}>
+                      Sub-service
+                    </label>
+                    <select
+                      id="subService"
+                      {...register("subService")}
+                      disabled={!selectedService}
+                      className={`${inputClass} disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-muted`}
+                    >
+                      <option value="">
+                        {selectedService ? "Select a sub-service" : "Choose a service first"}
+                      </option>
+                      {selectedService &&
+                        SUB_SERVICE_OPTIONS[selectedService].map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                    </select>
+                    {errors.subService && (
+                      <p className={errorClass}>{errors.subService.message}</p>
+                    )}
+                  </div>
+                </div>
+              </fieldset>
+            )}
+
+            {/* STEP 2 — Your details: nationality, then personal, then location */}
+            {step === DETAILS_STEP && (
               <fieldset>
                 <legend className="mb-2.5 text-base font-semibold tracking-tight text-ink">
                   {detailsSubStep === 0 ? "What is your nationality?" : "Your details"}
@@ -362,70 +471,10 @@ export default function IntakeForm({ preset }: { preset?: IntakePreset } = {}) {
               </fieldset>
             )}
 
-            {/* STEP 2 — Service + dependent sub-service, then message/consent/submit */}
-            {step === 1 && (
+            {/* STEP 3 — The matter itself, consent and submit */}
+            {step === DETAILS_STEP + 1 && (
               <>
                 <fieldset>
-                  <legend className="mb-2.5 text-base font-semibold tracking-tight text-ink">
-                    Which service do you need?
-                  </legend>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div>
-                      <label htmlFor="service" className={labelClass}>
-                        Service
-                      </label>
-                      <select
-                        id="service"
-                        {...register("service")}
-                        defaultValue={preset?.service ?? ""}
-                        onChange={(e) => {
-                          setValue("service", e.target.value as IntakeFormValues["service"], {
-                            shouldValidate: true,
-                          });
-                          setValue("subService", "", { shouldValidate: false });
-                        }}
-                        className={inputClass}
-                      >
-                        <option value="" disabled>
-                          Select a service
-                        </option>
-                        {SERVICE_OPTIONS.map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                      {errors.service && <p className={errorClass}>{errors.service.message}</p>}
-                    </div>
-
-                    <div>
-                      <label htmlFor="subService" className={labelClass}>
-                        Sub-service
-                      </label>
-                      <select
-                        id="subService"
-                        {...register("subService")}
-                        disabled={!selectedService}
-                        className={`${inputClass} disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-muted`}
-                      >
-                        <option value="">
-                          {selectedService ? "Select a sub-service" : "Choose a service first"}
-                        </option>
-                        {selectedService &&
-                          SUB_SERVICE_OPTIONS[selectedService].map((opt) => (
-                            <option key={opt.value} value={opt.value}>
-                              {opt.label}
-                            </option>
-                          ))}
-                      </select>
-                      {errors.subService && (
-                        <p className={errorClass}>{errors.subService.message}</p>
-                      )}
-                    </div>
-                  </div>
-                </fieldset>
-
-                <fieldset className="mt-5">
                   <legend className="mb-2.5 text-base font-semibold tracking-tight text-ink">
                     Tell us about your matter
                   </legend>

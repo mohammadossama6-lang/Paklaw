@@ -229,6 +229,29 @@ const INTL_LOCATION_STEP = z
     }
   });
 
+/**
+ * The schema guarding the "Service" step. Self-contained for the same reason
+ * as the details sub-steps above: the sub-service/service pairing lives in a
+ * superRefine on the full schema, which never runs while the later fields are
+ * still empty.
+ */
+export const serviceStepSchema = z
+  .object({
+    service: z.enum(SERVICES, { error: "Please select a service." }),
+    subService: z.string().min(1, "Please select a sub-service."),
+  })
+  .superRefine((data, ctx) => {
+    const validSubServices: readonly string[] | undefined =
+      SERVICE_SUBSERVICE_MAP[data.service as ServiceKey];
+    if (!validSubServices?.includes(data.subService)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["subService"],
+        message: "Please select a valid sub-service for the chosen service.",
+      });
+    }
+  });
+
 /** The schema guarding one sub-step of the "Your Details" step. */
 export function detailsStepSchema(subStep: number, nationality: string | undefined) {
   if (subStep === 0) return NATIONALITY_STEP;
