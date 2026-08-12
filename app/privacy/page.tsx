@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Privacy Policy" updated="2 August 2026">
+    <LegalPage title="Privacy Policy" updated="12 August 2026">
       <p>
         This policy explains what we collect when you use this website, why we collect it,
         and who it is shared with.
@@ -82,9 +82,11 @@ export default function PrivacyPage() {
 
       <h2>7. Cookies</h2>
       <p>
-        We use a single essential cookie, set only after you sign in to the portal, to keep
-        you logged in. We do not use advertising or analytics cookies, and we do not track
-        you across other websites.
+        We use an essential cookie, set only after you sign in to the portal, to keep you
+        logged in. We also use the Meta (Facebook) Pixel, which sets cookies and shares
+        limited information about your visit with Meta so we can measure and target our
+        advertising. You can opt out through your Meta ad settings or your browser&rsquo;s
+        cookie controls.
       </p>
 
       <h2>8. Children</h2>
