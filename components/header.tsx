@@ -35,17 +35,8 @@ export default function Header() {
             className="size-9 object-contain sm:size-10"
             priority
           />
-          <span className="flex flex-col leading-none">
-            <span className="font-lora text-xl font-semibold tracking-tight text-ink sm:text-2xl">
-              Pak Law
-            </span>
-            <span
-              dir="rtl"
-              lang="ur"
-              className="font-nastaleeq mt-1 text-sm leading-none text-muted sm:text-base"
-            >
-              حق کی بات، پاک لاء کے ساتھ
-            </span>
+          <span className="font-lora text-xl font-semibold leading-none tracking-tight text-ink sm:text-2xl">
+            Pak Law
           </span>
         </Link>
 
