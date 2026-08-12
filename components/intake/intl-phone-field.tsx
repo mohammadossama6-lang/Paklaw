@@ -16,9 +16,10 @@ type Props = FieldProps & {
 
 /**
  * International phone entry: a searchable country-code picker plus the national
- * number. The picker shows the ISO code and dial code ("PK +92") so it stays
- * narrow beside the number, but it searches the full country name too — typing
- * "pakistan", "pk" or "92" all find it.
+ * number. The list names each country in full beside its flag ("🇵🇰 Pakistan
+ * +92"); the closed field keeps just the flag and dial code, since it sits in a
+ * narrow column next to the number and full names would only truncate. ISO
+ * codes stay searchable — typing "pakistan", "pk" or "92" all find it.
  */
 export default function IntlPhoneField({ register, errors, watch, setValue }: Props) {
   const phoneCountry = watch("phoneCountry");
@@ -27,9 +28,10 @@ export default function IntlPhoneField({ register, errors, watch, setValue }: Pr
     () =>
       COUNTRIES.map((c) => ({
         value: c.iso,
-        label: `${c.iso} ${c.dialCode}`,
+        label: c.dialCode,
+        optionLabel: `${c.name} ${c.dialCode}`,
         prefix: c.flag,
-        keywords: `${c.name} ${c.dialCode.replace("+", "")}`,
+        keywords: `${c.iso} ${c.name} ${c.dialCode.replace("+", "")}`,
       })),
     []
   );

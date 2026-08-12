@@ -5,8 +5,14 @@ import { Check, ChevronDown, Search } from "lucide-react";
 
 export type SearchOption = {
   value: string;
-  /** What the field shows once chosen, e.g. "Pakistan" or "PK +92". */
+  /** What the field shows once chosen, e.g. "Pakistan" or "+92". */
   label: string;
+  /**
+   * What the dropdown list shows, when it should differ from `label` — the
+   * phone picker names the country in full here while the closed field, which
+   * sits in a narrow column beside the number, shows only the dial code.
+   */
+  optionLabel?: string;
   /** Optional leading glyph — a flag, for instance. */
   prefix?: string;
   /** Extra text matched by the search box but not shown in the closed field. */
@@ -69,12 +75,14 @@ export default function SearchableSelect({
 
     const scored: { opt: SearchOption; rank: number }[] = [];
     for (const opt of options) {
-      const label = normalize(opt.label);
-      const hay = `${label} ${normalize(opt.keywords ?? "")} ${normalize(opt.value)}`;
+      // Rank on what the list actually shows, so typing "pak" promotes
+      // Pakistan even when the closed field only carries its dial code.
+      const shown = normalize(opt.optionLabel ?? opt.label);
+      const hay = `${shown} ${normalize(opt.label)} ${normalize(opt.keywords ?? "")} ${normalize(opt.value)}`;
       const at = hay.indexOf(q);
       if (at === -1) continue;
       // Prefer names that start with the query ("Pak" -> Pakistan before Iraq).
-      scored.push({ opt, rank: label.startsWith(q) ? 0 : at });
+      scored.push({ opt, rank: shown.startsWith(q) ? 0 : at });
       if (scored.length > 600) break;
     }
     scored.sort((a, b) => a.rank - b.rank);
@@ -218,7 +226,9 @@ export default function SearchableSelect({
                       ${index === activeIndex ? "bg-brand-50 text-ink" : "text-slate-600"}`}
                   >
                     {option.prefix && <span aria-hidden>{option.prefix}</span>}
-                    <span className="min-w-0 flex-1 truncate">{option.label}</span>
+                    <span className="min-w-0 flex-1 truncate">
+                      {option.optionLabel ?? option.label}
+                    </span>
                     {isSelected && <Check aria-hidden className="size-4 shrink-0 text-brand-600" />}
                   </button>
                 </li>
