@@ -40,9 +40,6 @@ const TOTAL_STEPS = STEP_LABELS.length;
 const SERVICE_STEP = 0;
 const DETAILS_STEP = 1;
 const DETAILS_SUB_STEPS = 3; // nationality → personal → location
-// Two dots sit in the progress bar on the connector leaving "Your Details",
-// one per boundary crossed inside that three-part step.
-const DETAILS_DOTS = [0, 1];
 
 type SubmitState = "idle" | "submitting" | "success" | "error";
 
@@ -93,6 +90,19 @@ export default function IntakeForm({ preset }: { preset?: IntakePreset } = {}) {
 
   const isLastStep = step === TOTAL_STEPS - 1;
   const isFirstScreen = step === SERVICE_STEP;
+
+  /**
+   * How much of the connector leaving step `i` is filled, 0–1. "Your Details"
+   * moves through three sub-steps, so its connector creeps forward as they are
+   * crossed rather than sitting empty until the whole step is done; every other
+   * connector is all-or-nothing. Dividing by the sub-step count (not count - 1)
+   * keeps it short of full until the step is actually left behind.
+   */
+  function connectorFill(i: number): number {
+    if (step > i) return 1;
+    if (step < i) return 0;
+    return i === DETAILS_STEP ? detailsSubStep / DETAILS_SUB_STEPS : 0;
+  }
 
   /**
    * Brings the first failing field into view. The field area scrolls without a
@@ -307,26 +317,13 @@ export default function IntakeForm({ preset }: { preset?: IntakePreset } = {}) {
               </span>
             </div>
             {i < STEP_LABELS.length - 1 && (
-              <div className="mx-3 flex flex-1 items-center justify-center gap-2.5" aria-hidden>
-                {i === DETAILS_STEP ? (
-                  DETAILS_DOTS.map((dot) => {
-                    const filled = step > DETAILS_STEP || detailsSubStep > dot;
-                    return (
-                      <span
-                        key={dot}
-                        className={`size-2 rounded-full transition-all duration-300 ${
-                          filled ? "scale-125 bg-brand-500" : "bg-slate-200"
-                        }`}
-                      />
-                    );
-                  })
-                ) : (
-                  <span
-                    className={`h-0.5 w-full rounded-full transition-colors duration-300 ${
-                      step > i ? "bg-brand-500" : "bg-slate-200"
-                    }`}
+              <div className="mx-3 flex flex-1 items-center" aria-hidden>
+                <div className="h-0.5 w-full overflow-hidden rounded-full bg-slate-200">
+                  <div
+                    className="h-full rounded-full bg-brand-500 transition-[width] duration-300"
+                    style={{ width: `${connectorFill(i) * 100}%` }}
                   />
-                )}
+                </div>
               </div>
             )}
           </li>
