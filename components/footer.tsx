@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
 
-import { SOCIAL_LINKS } from "@/components/social-icons";
-import { CONTACT } from "@/lib/constants";
+import { SOCIAL_LINKS, WhatsappIcon } from "@/components/social-icons";
+import { CONTACT, WHATSAPP_PRIMARY_HREF } from "@/lib/constants";
 
 const COLUMN_ONE = [
   { label: "About Us", href: "#about" },
@@ -108,11 +108,14 @@ export default function Footer() {
             {CONTACT.email}
           </a>
           <a
-            href={`tel:${CONTACT.phonePrimary.replace(/\s+/g, "")}`}
+            href={WHATSAPP_PRIMARY_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`WhatsApp ${CONTACT.phonePrimary}`}
             className="group flex items-center gap-3 text-sm text-muted transition-colors hover:text-brand-600"
           >
             <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm ring-1 ring-slate-200 transition-colors group-hover:bg-brand-600 group-hover:text-white">
-              <Phone className="size-3.5" />
+              <WhatsappIcon className="size-3.5" />
             </span>
             <span className="flex items-center gap-2">
               {CONTACT.phonePrimary}

@@ -153,3 +153,12 @@ export const CONTACT = {
   phone: "+92 303 5521111",
   address: ["House No.20 Street No.29 F-8/1", "Islamabad, Pakistan"],
 };
+
+/**
+ * wa.me wants a bare international number — no plus, spaces or leading zero.
+ * The primary line is written in local Pakistani form, so its 0 prefix is
+ * swapped for the 92 country code.
+ */
+export const WHATSAPP_PRIMARY_HREF = `https://wa.me/92${CONTACT.phonePrimary
+  .replace(/\D/g, "")
+  .replace(/^0/, "")}`;
