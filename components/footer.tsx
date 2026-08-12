@@ -39,13 +39,8 @@ export default function Footer() {
               height={511}
               className="size-9 object-contain sm:size-10"
             />
-            <span className="flex flex-col leading-none">
-              <span className="font-lora text-lg font-semibold uppercase tracking-tight text-ink sm:text-xl">
-                Pak Law
-              </span>
-              <span className="mt-0.5 text-[8px] font-medium uppercase tracking-[0.25em] text-muted">
-                Advocates &amp; Legal Counsel
-              </span>
+            <span className="font-lora text-lg font-semibold uppercase leading-none tracking-tight text-ink sm:text-xl">
+              Pak Law
             </span>
           </Link>
           <div className="flex items-center gap-2.5">
