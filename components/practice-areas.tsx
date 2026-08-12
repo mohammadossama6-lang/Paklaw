@@ -14,12 +14,10 @@ import {
 } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 
-import { SERVICE_OPTIONS } from "@/lib/constants";
+import { SERVICE_OPTIONS, WHATSAPP_PRIMARY_HREF } from "@/lib/constants";
 import type { ServiceKey } from "@/lib/schema";
 import { WhatsappIcon } from "@/components/social-icons";
 import { useIntakeModal, type IntakePreset } from "@/components/intake-modal-provider";
-
-const WHATSAPP_HREF = "https://wa.me/923035521111";
 
 const PRACTICE_AREA_ICONS: Record<ServiceKey, ComponentType<SVGProps<SVGSVGElement>>> = {
   "public-institution-complaints": Landmark,
@@ -483,7 +481,7 @@ export default function PracticeAreas() {
 
           {/* mobile: no zigzag line, just the button in normal flow */}
           <div className="mt-12 flex justify-center sm:hidden">
-            <a href={WHATSAPP_HREF} target="_blank" rel="noopener noreferrer" className={buttonClass}>
+            <a href={WHATSAPP_PRIMARY_HREF} target="_blank" rel="noopener noreferrer" className={buttonClass}>
               <WhatsappIcon className="size-4" />
               WhatsApp Us
             </a>
@@ -495,7 +493,7 @@ export default function PracticeAreas() {
               style={{ left: endPoint.x, top: endPoint.y }}
             >
               <motion.a
-                href={WHATSAPP_HREF}
+                href={WHATSAPP_PRIMARY_HREF}
                 target="_blank"
                 rel="noopener noreferrer"
                 initial={{ opacity: 0, y: 16 }}
