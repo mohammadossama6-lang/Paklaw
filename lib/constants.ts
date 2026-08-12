@@ -127,6 +127,10 @@ const SUB_SERVICE_LABELS: Record<SubServiceKey, string> = {
   // IP & Trademark
   trademark: "Trademark",
   copyright: "Copyright",
+  "industrial-design": "Industrial Design",
+  patent: "Patent",
+  innovation: "Innovation",
+  "brand-protection": "Brand Protection",
 };
 
 export const toOptions = <V extends string>(

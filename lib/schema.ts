@@ -115,7 +115,14 @@ export const SERVICE_SUBSERVICE_MAP = {
     "contract-compliance-review",
     "litigation-encumbrance-search",
   ],
-  "ip-trademark": ["trademark", "copyright"],
+  "ip-trademark": [
+    "trademark",
+    "copyright",
+    "industrial-design",
+    "patent",
+    "innovation",
+    "brand-protection",
+  ],
 } as const satisfies Record<string, readonly string[]>;
 
 export type ServiceKey = keyof typeof SERVICE_SUBSERVICE_MAP;
