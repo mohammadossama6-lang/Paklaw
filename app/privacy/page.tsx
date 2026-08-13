@@ -62,7 +62,8 @@ export default function PrivacyPage() {
         our customer relationship management system, our website hosting and database
         providers, our file storage provider (for uploaded CVs), and the messaging provider
         that delivers login codes. These providers act on our instructions and are bound by
-        confidentiality obligations.
+        confidentiality obligations. We also share limited website-usage information with
+        Meta, as described under Cookies below.
       </p>
 
       <h2>5. Data Security &amp; Retention</h2>
