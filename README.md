@@ -37,20 +37,18 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ### Function region
 
-`vercel.json` pins Serverless Functions to `sin1` (Singapore). This is not a
-preference — **it has to match wherever the Neon database lives**, which is
-currently Singapore (`ap-southeast-1`).
+Serverless Functions must run in the **same region as the Neon database**,
+which is Singapore (`ap-southeast-1`). Set this in the Vercel project settings
+under Functions; there is deliberately no `vercel.json` pinning it, because
+requesting a region the plan does not allow fails the deployment outright
+rather than falling back to the default.
 
 Functions ran in the default `iad1` (Washington DC) while the database was in
-Singapore, so every query crossed the Pacific. The homepage never noticed —
-it is static and served from the CDN — but each round trip on the enquiry form
+Singapore, so every query crossed the Pacific. The homepage never noticed — it
+is static and served from the CDN — but each round trip on the enquiry form
 cost roughly a quarter of a second.
 
-If the database is ever moved, move this with it. Co-located is what matters;
-a mismatch is worse than either region on its own, and moving only one of the
-two is the way to make submissions slower while looking like an optimisation.
-
-Note that regions other than the default require a Vercel Pro plan. Route-level
-`preferredRegion` is not an alternative here: on Vercel it only accepts a
-specific region when the route runs on the edge runtime, and these routes need
-Node for Prisma and the Neon WebSocket driver.
+If the database is ever moved, move the function region with it. Co-located is
+what matters; a mismatch is worse than either region on its own, and moving
+only one of the two is the way to make submissions slower while looking like an
+optimisation.
