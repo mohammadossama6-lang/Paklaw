@@ -162,6 +162,33 @@ gtag('config', '${GOOGLE_ADS_ID}');`}
             {children}
           </IntakeModalProvider>
         </MotionConfig>
+        <body className="min-h-full flex flex-col" suppressHydrationWarning>
+
+  {/* Meta Pixel */}
+  <Script id="meta-pixel" strategy="afterInteractive">
+    {`
+      // your existing Meta Pixel code
+    `}
+  </Script>
+
+  {/* Google Ads Tag */}
+  <Script
+    src="https://www.googletagmanager.com/gtag/js?id=AW-18396101596"
+    strategy="afterInteractive"
+  />
+
+  <Script id="google-ads-tag" strategy="afterInteractive">
+    {`
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){window.dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-18396101596');
+    `}
+  </Script>
+
+  {children}
+
+</body>
       </body>
     </html>
   );
