@@ -7,131 +7,22 @@ import {
   fullNameSchema,
 } from "@/lib/intake/validators";
 
-/* ------------------------------------------------------------------ */
-/* Step 1 — Nationality                                               */
-/* ------------------------------------------------------------------ */
-export const NATIONALITIES = [
-  "pakistani-national",
-  "overseas-pakistani",
-  "foreign-national",
-] as const;
+export {
+  NATIONALITIES,
+  GENDERS,
+  PROVINCES,
+  SERVICE_SUBSERVICE_MAP,
+  SERVICES,
+} from "@/lib/service-data";
+export type { ServiceKey } from "@/lib/service-data";
 
-/* ------------------------------------------------------------------ */
-/* Step 2 — Personal & contact details                                */
-/* ------------------------------------------------------------------ */
-export const GENDERS = ["male", "female"] as const;
-
-export const PROVINCES = [
-  "punjab",
-  "sindh",
-  "kpk",
-  "balochistan",
-  "gilgit-baltistan",
-  "azad-kashmir",
-  "islamabad",
-] as const;
-
-/* ------------------------------------------------------------------ */
-/* Step 3 — Service + dependent sub-service                           */
-/* Single source of truth: constants.ts imports this same object to   */
-/* build dropdown labels, so schema and UI can never drift apart.     */
-/* ------------------------------------------------------------------ */
-export const SERVICE_SUBSERVICE_MAP = {
-  "public-institution-complaints": [
-    "cda",
-    "hec",
-    "nadra",
-    "pemra",
-    "fbr",
-    "secp",
-    "pta",
-    "ogra",
-    "nepra",
-    "pesco",
-    "sbp",
-    "ppra",
-  ],
-  "facilitation-center": [
-    "secp-registration",
-    "pfa-license",
-    "ihra-license",
-    "drap-licensing",
-    "ntn-registration",
-    "strn-registration",
-    "tax-filing",
-    "property-transfer",
-    "agreement-drafting",
-    "tv-channel-registration",
-    "restaurant-license",
-    "chamber-of-commerce-registration",
-    "succession-certification",
-    "family-registration-certificate",
-    "child-registration-certificate",
-    "ip-service",
-  ],
-  "overseas-pakistani": [
-    "property-verification-due-diligence",
-    "property-sale-purchase-transfer",
-    "property-dispute-illegal-possession",
-    "power-of-attorney",
-    "overseas-family-law",
-    "inheritance-succession-matters",
-    "will-drafting",
-    "civil-litigation-court-representation",
-    "corporate-business-legal-services",
-    "documentation-affidavits-notarial",
-  ],
-  "regulatory-government": [
-    "hec-degree-attestation",
-    "nadra-complaint-resolution",
-    "cda-development-authority-issues",
-    "fbr-tax-authority-complaints",
-    "utility-authority",
-    "excise-taxation-department",
-    "public-authority-complaints-followups",
-    "regulatory-delay-maladministration",
-  ],
-  "women-desk": [
-    "harassment-cases",
-    "khula-process",
-    "divorce-proceedings",
-    "child-custody-guardianship",
-    "maintenance-financial-support",
-    "domestic-violence-protection",
-    "womens-family-law",
-    "inheritance-succession-rights",
-    "dower-haq-mehr-recovery",
-  ],
-  litigation: [
-    "civil-litigation",
-    "commercial-arbitration",
-    "constitutional-petitions",
-    "adr-mediation",
-  ],
-  "due-diligence": [
-    "property-title-verification",
-    "corporate-ma-due-diligence",
-    "company-background-verification",
-    "contract-compliance-review",
-    "litigation-encumbrance-search",
-  ],
-  "ip-trademark": [
-    "trademark",
-    "copyright",
-    "industrial-design",
-    "patent-innovation",
-    "brand-protection",
-  ],
-} as const satisfies Record<string, readonly string[]>;
-
-export type ServiceKey = keyof typeof SERVICE_SUBSERVICE_MAP;
-
-// Built as a proper non-empty tuple (not `string[]`) so z.enum infers the
-// literal union of service keys instead of widening to `string`. This is
-// what lets constants.ts type dropdown values safely.
-export const SERVICES = Object.keys(
-  SERVICE_SUBSERVICE_MAP
-) as [ServiceKey, ...ServiceKey[]];
+import {
+  NATIONALITIES,
+  GENDERS,
+  SERVICES,
+  SERVICE_SUBSERVICE_MAP,
+  type ServiceKey,
+} from "@/lib/service-data";
 
 /* ------------------------------------------------------------------ */
 /* Persisted lead schema — the normalized shape stored in the database */

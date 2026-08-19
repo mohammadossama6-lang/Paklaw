@@ -5,7 +5,7 @@ import {
   SERVICES,
   SERVICE_SUBSERVICE_MAP,
   type ServiceKey,
-} from "./schema";
+} from "./service-data";
 
 export type SelectOption = {
   value: string;
