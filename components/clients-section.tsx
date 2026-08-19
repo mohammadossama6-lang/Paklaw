@@ -1,7 +1,4 @@
-"use client";
-
 import Image from "next/image";
-import { motion } from "framer-motion";
 const ROW_ONE = [
   { name: "MCB Bank", src: "/clients/mcb.webp" },
   { name: "ARY News", src: "/clients/ary-news.webp" },
@@ -47,8 +44,12 @@ function MarqueeRow({
             <Image
               src={src}
               alt={name}
-              fill
-              sizes="176px"
+              /* Explicit dimensions, not `fill`. With `fill` + `sizes` Next
+                 still emits a 15-candidate srcset per logo, and each one became
+                 a ~1.5 KB `<link rel=preload>` in the document — 13 logos that
+                 nobody sees until they scroll, queued ahead of the hero. */
+              width={176}
+              height={96}
               /* Rendered grayscale at 50% opacity, so extra fidelity is
                  invisible; this trims the strip without a visible change. */
               quality={65}
@@ -56,8 +57,10 @@ function MarqueeRow({
                  with transform, which the browser's lazy-loading intersection
                  check doesn't re-evaluate — so these never loaded at all and
                  the strip rendered empty. They are ~7 KB each at this size and
-                 the two halves of the loop share the same files. */
+                 the two halves of the loop share the same files. `low` keeps
+                 them from competing with the hero image and the fonts. */
               loading="eager"
+              fetchPriority="low"
               className="object-contain grayscale opacity-50 transition-all duration-500 ease-out group-hover/card:scale-110 group-hover/card:opacity-100 group-hover/card:grayscale-0"
             />
           </div>
@@ -106,13 +109,7 @@ export default function ClientsSection() {
           className="pointer-events-none absolute -right-24 bottom-10 size-80 rounded-full bg-gold-400/15 blur-[120px]"
         />
 
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="relative mx-auto max-w-xl text-center"
-        >
+        <div className="animate-reveal relative mx-auto max-w-xl text-center">
           <span className="inline-flex items-center gap-2.5 text-sm font-bold uppercase tracking-[0.15em] text-brand-600">
             <span aria-hidden className="h-px w-6 bg-linear-to-r from-transparent to-gold-400" />
             Together We&apos;ve Built Great Things
@@ -126,18 +123,15 @@ export default function ClientsSection() {
             universities — organizations across Pakistan and abroad trust
             Pak Law with matters that matter.
           </p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-          className="relative mx-auto mt-10 sm:mt-14 flex max-w-5xl flex-col gap-8"
+        <div
+          style={{ animationDelay: "100ms" }}
+          className="animate-reveal relative mx-auto mt-10 sm:mt-14 flex max-w-5xl flex-col gap-8"
         >
           <MarqueeRow items={ROW_ONE} direction="right" duration={32} />
           <MarqueeRow items={ROW_TWO} direction="left" duration={30} />
-        </motion.div>
+        </div>
       </section>
 
       <svg

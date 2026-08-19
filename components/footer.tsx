@@ -35,8 +35,8 @@ export default function Footer() {
             <Image
               src="/logo.png"
               alt="Pak Law"
-              width={612}
-              height={511}
+              width={48}
+              height={40}
               className="size-9 object-contain sm:size-10"
             />
             <span className="font-lora text-lg font-semibold uppercase leading-none tracking-tight text-ink sm:text-xl">

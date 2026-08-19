@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
@@ -8,7 +9,17 @@ import { ChevronDown, ChevronRight, Menu, UserCheck, UserPlus, X as CloseIcon } 
 
 import { SERVICE_OPTIONS, SUB_SERVICE_OPTIONS } from "@/lib/constants";
 import type { ServiceKey } from "@/lib/schema";
-import LawyerRegisterModal from "@/components/lawyer-register-modal";
+/**
+ * The lawyer application form drags in Zod, react-hook-form and the resolver —
+ * ~535 KB decoded — and the header lives in the root layout, so a static
+ * import put all of it in the first-load bundle of every page for every
+ * visitor, almost none of whom are lawyers applying for a job. Loading it on
+ * demand mirrors what the client intake modal already does in
+ * `intake-modal-provider`.
+ */
+const LawyerRegisterModal = dynamic(() => import("@/components/lawyer-register-modal"), {
+  ssr: false,
+});
 import { useIntakeModal } from "@/components/intake-modal-provider";
 
 export default function Header() {
@@ -63,11 +74,16 @@ export default function Header() {
           href="#home"
           className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2.5"
         >
+          {/* Declared at the source PNG's 612x511 while rendering at 36-40 CSS
+              px, which made Next pick the w=1920 variant as `src` — and because
+              it is `priority`, that ~42 KB render of a 40 px logo was preloaded
+              ahead of the hero. Fixed dimensions with no `sizes` give a plain
+              1x/2x pair at the size it is actually drawn. */}
           <Image
             src="/logo.png"
             alt="Pak Law"
-            width={612}
-            height={511}
+            width={48}
+            height={40}
             className="size-9 object-contain sm:size-10"
             priority
           />
@@ -414,10 +430,10 @@ export default function Header() {
         )}
       </AnimatePresence>
 
-      <LawyerRegisterModal
-        open={lawyerModalOpen}
-        onClose={() => setLawyerModalOpen(false)}
-      />
+      {/* Not mounted until first opened — keeps the chunk off the critical path. */}
+      {lawyerModalOpen && (
+        <LawyerRegisterModal open onClose={() => setLawyerModalOpen(false)} />
+      )}
     </header>
   );
 }

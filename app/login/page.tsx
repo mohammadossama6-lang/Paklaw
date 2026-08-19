@@ -101,8 +101,8 @@ function LoginForm() {
           <Image
             src="/logo.png"
             alt="Pak Law"
-            width={612}
-            height={511}
+            width={48}
+            height={40}
             className="mb-3 size-10 object-contain"
           />
           <h1 className="font-serif text-2xl italic tracking-tight text-ink">

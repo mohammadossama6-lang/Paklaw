@@ -16,14 +16,25 @@ const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
 });
 
+/**
+ * Jost and Lora are accent faces used on a handful of elements. They were
+ * preloaded alongside the two faces that render the bulk of the page, so four
+ * woff2 files (~130 KB) competed with the stylesheet and the hero image for
+ * the first round trips. `preload: false` keeps them off the critical path;
+ * `display: swap` means their text paints in a fallback until they land.
+ */
 const jost = Jost({
   variable: "--font-jost",
   subsets: ["latin"],
+  display: "swap",
+  preload: false,
 });
 
 const lora = Lora({
   variable: "--font-lora",
   subsets: ["latin"],
+  display: "swap",
+  preload: false,
 });
 
 /**
@@ -45,10 +56,15 @@ const nastaleeq = Noto_Nastaliq_Urdu({
  * Meta (Facebook) Pixel. The ID is not a secret — it ships in the client
  * bundle by design and is visible to anyone viewing source.
  *
- * `afterInteractive` runs it once the page is interactive rather than blocking
- * first paint. Note this fires PageView on the initial document load only:
- * moving between routes here is client-side navigation, which the base snippet
- * does not see.
+ * `lazyOnload` defers it to idle time after load, rather than injecting it the
+ * moment hydration finishes. The pixel pulls ~683 KB of decoded JS across
+ * fbevents.js and its config, which on a mid-range Android is a long main-
+ * thread block landing right where we are trying to get the page usable.
+ * PageView still fires — a few hundred ms later — so attribution is intact for
+ * everything except a bounce faster than the page could be read anyway.
+ *
+ * Note this fires PageView on the initial document load only: moving between
+ * routes here is client-side navigation, which the base snippet does not see.
  */
 const META_PIXEL_ID = "2154588512126816";
 
@@ -89,7 +105,7 @@ export default function RootLayout({
         <link rel="preload" as="image" href="/hero-bg.webp" media="(min-width: 1280px)" />
       </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <Script id="meta-pixel" strategy="afterInteractive">
+        <Script id="meta-pixel" strategy="lazyOnload">
           {`!function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};

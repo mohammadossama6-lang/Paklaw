@@ -28,18 +28,37 @@ export default function Home() {
         id="home"
         className="bg-star-field relative flex flex-1 flex-col overflow-hidden px-4 py-28 font-sans sm:py-36"
       >
-        {/* ambient glows */}
+        {/* Ambient glows.
+            These were solid tinted circles pushed through `blur-[130px]` /
+            `blur-[110px]`. A filter that wide forces the compositor to raster
+            and convolve a layer far larger than the element, three times over,
+            before the hero can paint — the most expensive thing above the fold
+            on a low-end GPU. A radial gradient draws the same soft falloff as
+            an ordinary background, with no filter pass at all. Boxes are grown
+            to cover the spread the blur used to add. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -top-48 left-1/2 h-130 w-205 -translate-x-1/2 rounded-full bg-brand-600/30 blur-[130px]"
+          className="pointer-events-none absolute -top-64 left-1/2 h-160 w-250 -translate-x-1/2"
+          style={{
+            backgroundImage:
+              "radial-gradient(closest-side, rgba(37,99,235,0.30), transparent)",
+          }}
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute -left-40 top-1/3 size-96 rounded-full bg-indigo-500/20 blur-[110px]"
+          className="pointer-events-none absolute -left-64 top-1/4 size-160"
+          style={{
+            backgroundImage:
+              "radial-gradient(closest-side, rgba(99,102,241,0.20), transparent)",
+          }}
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-40 bottom-0 size-96 rounded-full bg-sky-500/15 blur-[110px]"
+          className="pointer-events-none absolute -right-64 -bottom-32 size-160"
+          style={{
+            backgroundImage:
+              "radial-gradient(closest-side, rgba(14,165,233,0.15), transparent)",
+          }}
         />
 
         <div className="pointer-events-none absolute inset-y-0 right-4 z-10 hidden items-center sm:right-6 lg:flex">
