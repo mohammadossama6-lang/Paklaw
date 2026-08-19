@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Jost, Lora, Noto_Nastaliq_Urdu, Playfair_Display } from "next/font/google";
 import Script from "next/script";
-import { MotionConfig } from "framer-motion";
 import Header from "@/components/header";
 import { IntakeModalProvider } from "@/components/intake-modal-provider";
 import "./globals.css";
@@ -156,12 +155,14 @@ gtag('js', new Date());
 gtag('config', '${GOOGLE_ADS_ID}');`}
         </Script>
 
-        <MotionConfig reducedMotion="user">
-          <IntakeModalProvider>
-            <Header />
-            {children}
-          </IntakeModalProvider>
-        </MotionConfig>
+        {/* `MotionConfig reducedMotion="user"` used to wrap this. Everything
+            it governed is CSS now, and the stylesheet honours
+            `prefers-reduced-motion` directly — see the block at the foot of
+            globals.css. */}
+        <IntakeModalProvider>
+          <Header />
+          {children}
+        </IntakeModalProvider>
       </body>
     </html>
   );

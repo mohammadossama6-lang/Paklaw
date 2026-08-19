@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll } from "framer-motion";
 import {
   ArrowRight,
   Building2,
@@ -227,11 +226,6 @@ export default function PracticeAreas() {
     };
   }, []);
 
-  const { scrollYProgress } = useScroll({
-    target: trackRef,
-    offset: ["start center", "end center"],
-  });
-
   // Wide sweep (used for the card-to-card connector): each segment swings
   // almost all the way to the track's outer edge before curling back into the
   // next point — a big, lazy loop rather than a tidy lean between the cards.
@@ -349,7 +343,7 @@ export default function PracticeAreas() {
           </p>
         </div>
 
-        <div ref={trackRef} className="relative mt-12 sm:mt-20">
+        <div ref={trackRef} className="practice-track relative mt-12 sm:mt-20">
           {pathD && (
             <svg
               aria-hidden
@@ -389,24 +383,28 @@ export default function PracticeAreas() {
                   which the browser had to re-rasterise on every scroll frame
                   because `pathLength` is scroll-linked. A second stroke costs
                   nothing and reads the same at this width. */}
-              <motion.path
+              <path
+                className="draw-on-scroll"
+                pathLength={1}
+                strokeDashoffset={0}
                 d={pathD}
                 fill="none"
                 stroke="url(#practice-zigzag-gradient)"
                 strokeWidth={6}
                 strokeLinecap="round"
                 opacity={0.22}
-                style={{ pathLength: scrollYProgress }}
               />
 
               {/* gradient zigzag that draws in as you scroll */}
-              <motion.path
+              <path
+                className="draw-on-scroll"
+                pathLength={1}
+                strokeDashoffset={0}
                 d={pathD}
                 fill="none"
                 stroke="url(#practice-zigzag-gradient)"
                 strokeWidth={2}
                 strokeLinecap="round"
-                style={{ pathLength: scrollYProgress }}
               />
 
               {points.map((p, i) => (

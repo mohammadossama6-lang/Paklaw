@@ -245,6 +245,105 @@
   }
 }
 
+/* Collapsible regions: the mobile menu, its two levels of sub-menu, and the
+   FAQ answers. Framer Motion animated `height: auto`, which it can only do by
+   measuring the content on every frame. A 0fr/1fr grid row gets the same result
+   from the style engine, and degrades to an instant open/close on engines that
+   cannot interpolate `fr` (Chrome < 107, Safari < 16) — the content is still
+   correctly shown and hidden there, it just does not slide.
+
+   `visibility` keeps the collapsed content out of the tab order without
+   killing the transition: it flips to hidden only after the collapse has run,
+   and back to visible immediately on open. */
+.collapse-y {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    grid-template-rows 200ms ease,
+    opacity 200ms ease,
+    visibility 0s linear 200ms;
+}
+
+.collapse-y > * {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.collapse-y[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    grid-template-rows 200ms ease,
+    opacity 200ms ease,
+    visibility 0s;
+}
+
+/* The icon flourish on the header's two pill buttons, previously a Framer
+   `whileHover` keyframe array. */
+@keyframes icon-wiggle {
+  0% {
+    transform: rotate(0) scale(1);
+  }
+  25% {
+    transform: rotate(-18deg) scale(1.15);
+  }
+  50% {
+    transform: rotate(12deg) scale(1.05);
+  }
+  75% {
+    transform: rotate(-6deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(0) scale(1);
+  }
+}
+
+.group:hover .icon-wiggle {
+  animation: icon-wiggle 600ms ease-in-out;
+}
+
+/* The practice-area connector drawing itself in as you scroll. This was a
+   Framer `useScroll` progress value written onto `pathLength` every frame;
+   `view()` hands the same job to the compositor with no JS at all. The path
+   carries `pathLength="1"`, so the dash units are a plain 0-1 fraction of its
+   length whatever its real geometry.
+
+   Only browsers with scroll-driven animations get the draw-on. Everywhere else
+   the rule never applies and the line is simply there from the start, which is
+   the right fallback for the phones this site is aimed at. */
+@keyframes draw-line {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  /* The timeline hangs on the track element rather than on the paths. 'view()'
+     measures a subject's CSS layout box against the scrollport, and an SVG
+     '<path>' has no such box — naming the path as the subject leaves the
+     timeline permanently inactive. */
+  .practice-track {
+    view-timeline-name: --practice-track;
+  }
+
+  /* Deliberately no 'both' fill: outside the range, or if the timeline fails to
+     resolve at all, no animated value applies and the path falls back to its
+     own 'stroke-dashoffset: 0' — a fully drawn line. The failure mode is the
+     line simply being there, never the line being invisible. */
+  .draw-on-scroll {
+    stroke-dasharray: 1;
+    animation: draw-line linear;
+    animation-timeline: --practice-track;
+    animation-range: cover 0% cover 85%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee-left,
   .animate-marquee-right,
@@ -254,7 +353,18 @@
   .animate-reveal,
   .animate-reveal-left,
   .animate-ping-ring,
-  .animate-cta-glow {
+  .animate-cta-glow,
+  .icon-wiggle {
+    animation: none;
+  }
+
+  .collapse-y,
+  .collapse-y[data-open="true"] {
+    transition: none;
+  }
+
+  .draw-on-scroll {
+    stroke-dasharray: none;
     animation: none;
   }
 }

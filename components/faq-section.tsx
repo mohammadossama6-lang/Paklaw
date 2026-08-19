@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { Minus, Plus } from "lucide-react";
 
 import { useIntakeModal } from "@/components/intake-modal-provider";
@@ -134,22 +133,13 @@ export default function FaqSection() {
                   </span>
                 </button>
 
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      key="content"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
-                      <p className="px-6 pb-6 pl-16 text-[15px] leading-7 text-slate-400">
-                        {faq.answer}
-                      </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <div data-open={isOpen} className="collapse-y">
+                  <div>
+                    <p className="px-6 pb-6 pl-16 text-[15px] leading-7 text-slate-400">
+                      {faq.answer}
+                    </p>
+                  </div>
+                </div>
               </div>
             );
           })}
