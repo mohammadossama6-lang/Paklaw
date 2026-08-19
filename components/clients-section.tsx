@@ -61,7 +61,7 @@ function MarqueeRow({
                  them from competing with the hero image and the fonts. */
               loading="eager"
               fetchPriority="low"
-              className="object-contain grayscale opacity-50 transition-all duration-500 ease-out group-hover/card:scale-110 group-hover/card:opacity-100 group-hover/card:grayscale-0"
+              className="h-full w-full object-contain grayscale opacity-50 transition-all duration-500 ease-out group-hover/card:scale-110 group-hover/card:opacity-100 group-hover/card:grayscale-0"
             />
           </div>
         ))}
