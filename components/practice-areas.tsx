@@ -79,6 +79,17 @@ const PRACTICE_AREA_DESCRIPTIONS: Record<ServiceKey, string> = {
 // positioned button never overlaps the section that follows.
 const BUTTON_GAP = 190;
 const SPACER_HEIGHT = 260;
+// The same tail is too long once the layout narrows: 190px of bare curve below
+// the last card is a third of a 640px-tall viewport. It is also measured from
+// the card's bottom edge rather than its centre, because a card that has
+// wrapped to twice the height would otherwise put the button on top of itself.
+const COMPACT_BUTTON_CLEARANCE = 76;
+const COMPACT_SPACER_HEIGHT = 172;
+// How much of the track the wide sweep needs left empty between the two columns
+// before its loop is worth drawing. Below this it has nowhere to go but over
+// the cards — at 768px the middle is only 9% of the track and the line crosses
+// them badly.
+const WIDE_SWEEP_MIN_MIDDLE = 0.25;
 
 type Point = { x: number; y: number };
 
@@ -118,7 +129,7 @@ function PracticeCard({
       onClick={() => openIntakeModal({ service: key })}
       /* The accent class sits on the root so every `currentColor` below picks
          it up — one source for the icon, the rule, the bloom and the CTA. */
-      className={`group relative block w-full max-w-sm overflow-hidden rounded-2xl border border-white/10 bg-white/4 p-6 text-left transition-[transform,background-color,border-color] duration-300 ease-out hover:-translate-y-1.5 hover:border-white/20 hover:bg-white/8 focus-visible:-translate-y-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 sm:w-80 ${PRACTICE_AREA_ACCENTS[key]}`}
+      className={`group relative block w-[80%] overflow-hidden rounded-2xl border border-white/10 bg-white/4 p-6 text-left transition-[transform,background-color,border-color] duration-300 ease-out hover:-translate-y-1.5 hover:border-white/20 hover:bg-white/8 focus-visible:-translate-y-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 sm:w-80 ${PRACTICE_AREA_ACCENTS[key]}`}
     >
       {/* accent bloom behind the top edge */}
       <span
@@ -176,15 +187,13 @@ function PracticeCard({
   );
 }
 
-type Edge = { top: number; bottom: number };
-
 export default function PracticeAreas() {
   const { openIntakeModal } = useIntakeModal();
   const trackRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [points, setPoints] = useState<Point[]>([]);
-  const [edges, setEdges] = useState<Edge[]>([]);
   const [trackSize, setTrackSize] = useState({ width: 0, height: 0 });
+  const [lastCardHalf, setLastCardHalf] = useState(0);
 
   useEffect(() => {
     function measure() {
@@ -195,21 +204,16 @@ export default function PracticeAreas() {
       const nextPoints = cardRefs.current.map((card) => {
         if (!card) return { x: 0, y: 0 };
         const cardRect = card.getBoundingClientRect();
-        const isLeft = cardRect.left - trackRect.left < trackRect.width / 2;
+        const isLeft =
+          cardRect.left + cardRect.width / 2 - trackRect.left < trackRect.width / 2;
         return {
           x: (isLeft ? cardRect.right : cardRect.left) - trackRect.left,
           y: cardRect.top - trackRect.top + cardRect.height / 2,
         };
       });
-      const nextEdges = cardRefs.current.map((card) => {
-        if (!card) return { top: 0, bottom: 0 };
-        const cardRect = card.getBoundingClientRect();
-        const top = cardRect.top - trackRect.top;
-        return { top, bottom: top + cardRect.height };
-      });
-
+      const lastCard = cardRefs.current[cardRefs.current.length - 1];
+      setLastCardHalf(lastCard ? lastCard.getBoundingClientRect().height / 2 : 0);
       setPoints(nextPoints);
-      setEdges(nextEdges);
       setTrackSize({ width: trackRect.width, height: trackRect.height });
     }
 
@@ -243,13 +247,69 @@ export default function PracticeAreas() {
     }, "");
   }
 
+  // Which connector to draw is a question about the geometry, not the device.
+  // The wide sweep needs an empty middle to loop through: a left card's
+  // connector point is its right edge and a right card's is its left edge, so
+  // the space between them is the middle, and it goes negative once the columns
+  // overlap. Measuring it instead of naming a breakpoint covers the phone (the
+  // columns overlap), 640px (a 320px card no longer fits beside its neighbour)
+  // and the tablet (they fit, but with 9% of the track between them) with one
+  // rule.
+  const columnMiddle = points.length > 1 ? points[1].x - points[0].x : 0;
+  const isCompact =
+    points.length > 1 && columnMiddle < trackSize.width * WIDE_SWEEP_MIN_MIDDLE;
+  const buttonGap = isCompact
+    ? lastCardHalf + COMPACT_BUTTON_CLEARANCE
+    : BUTTON_GAP;
+  const spacerHeight = isCompact ? COMPACT_SPACER_HEIGHT : SPACER_HEIGHT;
+
+  // Drawn when the columns leave too little room between them for the wide
+  // sweep, which is every width from a phone up to a tablet. Rather than loop
+  // through a middle that isn't there, each segment leans OUT into its own
+  // card's margin, crosses in the gap between the cards, and comes back in on
+  // the far side.
+  function buildCompactCurvePath(pts: Point[], trackWidth: number): string {
+    const margin = trackWidth * 0.11;
+    // A card's connector point sits on the edge facing the centre, so "away
+    // from the card" is rightwards for the left column and leftwards for the
+    // right one — it alternates with the index. Deciding by comparing the point
+    // to the track's midpoint instead only happens to work while the columns
+    // overlap; at 768px it pushes the left column's control point back through
+    // its own card.
+    const away = (x: number, index: number) =>
+      Math.min(
+        Math.max(x + (index % 2 === 0 ? margin : -margin), 2),
+        trackWidth - 2,
+      );
+
+    return pts.reduce((d, curr, i) => {
+      if (i === 0) return `M ${curr.x} ${curr.y}`;
+      const prev = pts[i - 1];
+      // The sideways travel has to happen in the gap between the cards, and a
+      // cubic's x is independent of its y — so the steering is in the y terms.
+      // Handing each control point the OTHER end's y drives the line down past
+      // the card it is leaving before it starts crossing, then holds it in the
+      // gap while it does. Pairing each y with its own end instead lets the
+      // curve cut back over the card it just left.
+      // The button is the exception: it sits on the centre line, not in a
+      // margin, so pulling its control point outward and back up would drag the
+      // tail straight through the last card. Drop into it from directly above.
+      const isButton = i === pts.length - 1;
+      const c2x = isButton ? curr.x : away(curr.x, i);
+      const c2y = isButton ? curr.y : prev.y;
+      return `${d} C ${away(prev.x, i - 1)} ${curr.y}, ${c2x} ${c2y}, ${curr.x} ${curr.y}`;
+    }, "");
+  }
+
   const lastPoint = points[points.length - 1];
   const endPoint: Point | null = lastPoint
-    ? { x: trackSize.width / 2, y: lastPoint.y + BUTTON_GAP }
+    ? { x: trackSize.width / 2, y: lastPoint.y + buttonGap }
     : null;
 
   const zigzagPoints = endPoint ? [...points, endPoint] : points;
-  const pathD = buildWideCurvePath(zigzagPoints, trackSize.width);
+  const pathD = isCompact
+    ? buildCompactCurvePath(zigzagPoints, trackSize.width)
+    : buildWideCurvePath(zigzagPoints, trackSize.width);
 
   // Gradient stops placed at each card's actual position, colored to match
   // that card's accent — so the line's color shifts card by card instead of
@@ -260,29 +320,6 @@ export default function PracticeAreas() {
           offset: (points[i]?.y ?? 0) / trackSize.height,
           color: PRACTICE_AREA_HEX[option.value as ServiceKey],
         })).concat(endPoint ? [{ offset: endPoint.y / trackSize.height, color: "#d4af37" }] : [])
-      : [];
-
-  // Mobile: cards stack full-width in one column, so the wide zigzag sweep
-  // doesn't apply. Instead, a straight line runs through the GAPS between
-  // cards only (never through a card's own body) — one disconnected M/L
-  // subpath per gap, still revealed with the same scroll-linked pathLength.
-  function buildMobileGapPath(edgs: Edge[], centerX: number): string {
-    let d = "";
-    for (let i = 0; i < edgs.length - 1; i++) {
-      d += ` M ${centerX} ${edgs[i].bottom} L ${centerX} ${edgs[i + 1].top}`;
-    }
-    return d.trim();
-  }
-
-  const mobileCenterX = trackSize.width / 2;
-  const mobilePathD = buildMobileGapPath(edges, mobileCenterX);
-
-  const mobileGradientStops =
-    trackSize.height > 0
-      ? SERVICE_OPTIONS.map((option, i) => ({
-          offset: (edges[i]?.top ?? 0) / trackSize.height,
-          color: PRACTICE_AREA_HEX[option.value as ServiceKey],
-        }))
       : [];
 
   return (
@@ -316,7 +353,7 @@ export default function PracticeAreas() {
           {pathD && (
             <svg
               aria-hidden
-              className="pointer-events-none absolute left-0 top-0 hidden sm:block"
+              className="pointer-events-none absolute left-0 top-0"
               width={trackSize.width}
               height={trackSize.height}
               viewBox={`0 0 ${trackSize.width} ${trackSize.height}`}
@@ -390,94 +427,14 @@ export default function PracticeAreas() {
             </svg>
           )}
 
-          {mobilePathD && (
-            <svg
-              aria-hidden
-              className="pointer-events-none absolute left-0 top-0 block sm:hidden"
-              width={trackSize.width}
-              height={trackSize.height}
-              viewBox={`0 0 ${trackSize.width} ${trackSize.height}`}
-              style={{ overflow: "visible" }}
-            >
-              <defs>
-                <linearGradient
-                  id="practice-mobile-gradient"
-                  gradientUnits="userSpaceOnUse"
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2={trackSize.height}
-                >
-                  {mobileGradientStops.map((stop, i) => (
-                    <stop key={i} offset={stop.offset} stopColor={stop.color} />
-                  ))}
-                </linearGradient>
-              </defs>
-
-              {/* dim dotted track, always visible */}
-              <path
-                d={mobilePathD}
-                fill="none"
-                stroke="rgba(255,255,255,0.14)"
-                strokeWidth={1.5}
-                strokeDasharray="1 6"
-                strokeLinecap="round"
-              />
-
-              {/* Wide translucent stroke under the bright line — see the desktop
-                  track above for why this is not an feGaussianBlur. */}
-              <motion.path
-                d={mobilePathD}
-                fill="none"
-                stroke="url(#practice-mobile-gradient)"
-                strokeWidth={5}
-                strokeLinecap="round"
-                opacity={0.22}
-                style={{ pathLength: scrollYProgress }}
-              />
-
-              {/* gradient line that draws in as you scroll */}
-              <motion.path
-                d={mobilePathD}
-                fill="none"
-                stroke="url(#practice-mobile-gradient)"
-                strokeWidth={2}
-                strokeLinecap="round"
-                style={{ pathLength: scrollYProgress }}
-              />
-
-              {edges.map((edge, i) => (
-                <g key={i}>
-                  <circle
-                    cx={mobileCenterX}
-                    cy={edge.top}
-                    r={4}
-                    fill="none"
-                    stroke={PRACTICE_AREA_HEX[SERVICE_OPTIONS[i].value as ServiceKey]}
-                    strokeWidth={1.5}
-                    className="animate-ping-ring"
-                    style={{ animationDelay: `${i * 0.3}s` }}
-                  />
-                  <circle
-                    cx={mobileCenterX}
-                    cy={edge.top}
-                    r={4}
-                    fill={PRACTICE_AREA_HEX[SERVICE_OPTIONS[i].value as ServiceKey]}
-                    className="drop-shadow-[0_0_6px_rgba(209,175,106,0.7)]"
-                  />
-                </g>
-              ))}
-            </svg>
-          )}
-
-          <div className="space-y-10 sm:space-y-14">
+          <div className="space-y-14">
             {SERVICE_OPTIONS.map((option, i) => {
               const Icon = PRACTICE_AREA_ICONS[option.value as ServiceKey];
               const isEven = i % 2 === 0;
               return (
                 <div
                   key={option.value}
-                  className={`animate-reveal relative flex sm:items-center ${isEven ? "sm:justify-start" : "sm:justify-end"}`}
+                  className={`animate-reveal relative flex items-center ${isEven ? "justify-start" : "justify-end"}`}
                 >
                   <PracticeCard
                     option={option}
@@ -494,19 +451,11 @@ export default function PracticeAreas() {
           </div>
 
           {/* reserved flow space for the absolutely-positioned button + its trailing line */}
-          <div aria-hidden style={{ height: SPACER_HEIGHT }} className="hidden sm:block" />
-
-          {/* mobile: no zigzag line, just the button in normal flow */}
-          <div className="mt-12 flex justify-center sm:hidden">
-            <a href={WHATSAPP_PRIMARY_HREF} target="_blank" rel="noopener noreferrer" className={buttonClass}>
-              <WhatsappIcon className="size-4" />
-              WhatsApp Us
-            </a>
-          </div>
+          <div aria-hidden style={{ height: spacerHeight }} />
 
           {endPoint && (
             <div
-              className="absolute hidden -translate-x-1/2 -translate-y-1/2 sm:block"
+              className="absolute -translate-x-1/2 -translate-y-1/2"
               style={{ left: endPoint.x, top: endPoint.y }}
             >
               <a
