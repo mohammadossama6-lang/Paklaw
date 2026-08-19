@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { ChevronDown, Quote } from "lucide-react";
 
 type Testimonial = {
@@ -122,13 +121,7 @@ export default function TestimonialsSection() {
       />
 
       <div className="relative mx-auto max-w-5xl">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="mx-auto max-w-2xl text-center"
-        >
+        <div className="animate-reveal mx-auto max-w-2xl text-center">
           <span className="inline-flex items-center gap-2.5 text-sm font-bold uppercase tracking-[0.15em] text-brand-600">
             <span aria-hidden className="h-px w-6 bg-linear-to-r from-transparent to-gold-400" />
             Testimonials
@@ -141,7 +134,7 @@ export default function TestimonialsSection() {
             From national media houses to multinational corporations —
             hear directly from the people Pak Law has stood beside.
           </p>
-        </motion.div>
+        </div>
 
         {/* Horizontal testimonial bars — the client's name sits prominently on
             the left panel, with their words running alongside it. */}
@@ -150,13 +143,10 @@ export default function TestimonialsSection() {
             const accent = ACCENTS[i % ACCENTS.length];
             const label = t.name ?? t.company;
             return (
-              <motion.article
+              <article
                 key={`${t.company}-${i}`}
-                initial={{ opacity: 0, x: -24 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.5, ease: "easeOut", delay: 0.04 * (i % 6) }}
-                className={`group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm transition-all duration-500 hover:-translate-y-0.5 hover:border-transparent hover:shadow-xl sm:flex-row ${
+                style={{ animationDelay: `${(i % 6) * 40}ms` }}
+                className={`animate-reveal-left group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-sm transition-all duration-500 hover:-translate-y-0.5 hover:border-transparent hover:shadow-xl sm:flex-row ${
                   // Hidden on mobile until expanded; always visible from sm up.
                   i >= MOBILE_VISIBLE && !showAll ? "hidden sm:flex" : ""
                 }`}
@@ -198,7 +188,7 @@ export default function TestimonialsSection() {
                     {t.quote}
                   </p>
                 </div>
-              </motion.article>
+              </article>
             );
           })}
         </div>

@@ -75,6 +75,46 @@
   }
 }
 
+/* Section reveals. These match the fade-and-rise the sections used to get from
+   Framer Motion's `whileInView`, but as plain CSS — see `.animate-reveal`. */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes reveal-left {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Expanding ring on the practice-area connector points. Framer Motion used to
+   drive these by animating the SVG `r` attribute — a layout/paint property —
+   on sixteen circles at 60fps, forever, whether or not the section was on
+   screen. transform + opacity are compositor-only, and the browser throttles
+   CSS animations that scroll out of view. */
+@keyframes ping-ring {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+
 @keyframes marquee-left {
   from {
     transform: translateX(0);
@@ -108,6 +148,26 @@
 
   .animate-fade-in {
     animation: fade-in 1.4s ease-out both;
+  }
+
+  /* Section reveals used to be Framer Motion `initial={{opacity:0}}` +
+     `whileInView`. That renders `style="opacity:0"` into the server HTML, so
+     every section below the hero arrived invisible and stayed that way until
+     ~1.3 MB of JS had downloaded, parsed and hydrated — and stayed invisible
+     *permanently* on any browser where that JS failed. Doing it in CSS means
+     the copy is on screen as soon as the stylesheet lands, on every device.
+
+     `backwards` (not `both`) is deliberate: it applies the `from` state only
+     during `animation-delay`, and after the run the element falls back to its
+     own styles rather than to a held keyframe. So anything that stops the
+     animation — reduced motion, an old engine, a dropped stylesheet rule —
+     leaves the element at its natural, visible state. */
+  .animate-reveal {
+    animation: reveal-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+
+  .animate-reveal-left {
+    animation: reveal-left 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
   }
 
   .bg-gradient-primary {
@@ -170,6 +230,12 @@
     }
   }
 
+  .animate-ping-ring {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: ping-ring 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
   .animate-marquee-left {
     animation: marquee-left linear infinite;
   }
@@ -185,6 +251,9 @@
   .animate-fade-in-down,
   .animate-fade-in-up,
   .animate-fade-in,
+  .animate-reveal,
+  .animate-reveal-left,
+  .animate-ping-ring,
   .animate-cta-glow {
     animation: none;
   }

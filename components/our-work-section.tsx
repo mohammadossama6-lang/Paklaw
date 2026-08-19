@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Briefcase, Building2, ChevronDown, Gavel, Landmark, Scale, ShieldCheck } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 
@@ -87,13 +86,7 @@ export default function OurWorkSection() {
       />
 
       <div className="relative mx-auto max-w-6xl">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="mx-auto max-w-2xl text-center"
-        >
+        <div className="animate-reveal mx-auto max-w-2xl text-center">
           <span className="text-sm font-bold uppercase tracking-[0.15em] text-sky-400">
             Our Work
           </span>
@@ -105,17 +98,14 @@ export default function OurWorkSection() {
             handled for real clients, across media, business, and civil
             litigation.
           </p>
-        </motion.div>
+        </div>
 
         <div className="mx-auto mt-10 sm:mt-16 grid max-w-5xl gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {WORK_ITEMS.map(({ title, category, client, description, Icon }, i) => (
-            <motion.div
+            <div
               key={title}
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.55, ease: "easeOut", delay: 0.06 * i }}
-              className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/3 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-gold-400/40 hover:bg-white/6 ${
+              style={{ animationDelay: `${i * 60}ms` }}
+              className={`animate-reveal group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/3 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-gold-400/40 hover:bg-white/6 ${
                 // Hidden on mobile until expanded; always visible from sm up.
                 i >= MOBILE_VISIBLE && !showAll ? "hidden sm:flex" : ""
               }`}
@@ -137,7 +127,7 @@ export default function OurWorkSection() {
               <span className="mt-auto pt-5 text-xs font-bold uppercase tracking-widest text-slate-500">
                 {client}
               </span>
-            </motion.div>
+            </div>
           ))}
         </div>
 

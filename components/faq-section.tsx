@@ -58,13 +58,7 @@ export default function FaqSection() {
 
       <div className="relative mx-auto grid max-w-6xl gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
         {/* Left — intro */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="lg:sticky lg:top-28 lg:self-start"
-        >
+        <div className="animate-reveal lg:sticky lg:top-28 lg:self-start">
           <span className="inline-flex items-center gap-2.5 text-sm font-bold uppercase tracking-[0.15em] text-sky-400">
             <span aria-hidden className="h-px w-6 bg-linear-to-r from-transparent to-gold-400" />
             Need To Know
@@ -91,20 +85,17 @@ export default function FaqSection() {
               →
             </span>
           </button>
-        </motion.div>
+        </div>
 
         {/* Right — accordion */}
         <div className="flex flex-col gap-4">
           {FAQS.map((faq, i) => {
             const isOpen = openIndex === i;
             return (
-              <motion.div
+              <div
                 key={faq.question}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.5, ease: "easeOut", delay: 0.06 * i }}
-                className={`group relative overflow-hidden rounded-2xl border transition-colors duration-300 ${
+                style={{ animationDelay: `${i * 60}ms` }}
+                className={`animate-reveal group relative overflow-hidden rounded-2xl border transition-colors duration-300 ${
                   isOpen
                     ? "border-gold-400/40 bg-white/[0.06]"
                     : "border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.05]"
@@ -159,7 +150,7 @@ export default function FaqSection() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </motion.div>
+              </div>
             );
           })}
         </div>

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll } from "framer-motion";
 import {
+  ArrowRight,
   Building2,
   Copyright,
   FileSearch,
@@ -84,10 +85,17 @@ type Point = { x: number; y: number };
 const buttonClass =
   "group inline-flex items-center gap-2.5 rounded-full bg-linear-to-r from-emerald-400 to-emerald-600 px-7 py-3.5 font-semibold text-emerald-950 shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-emerald-500/50 hover:brightness-105 active:scale-[0.98]";
 
-// Scroll-linked zoom: as a card travels through the viewport it grows to a
-// peak scale/opacity around the midpoint, then eases back down as the next
-// card takes over — layered on top of the existing one-time fade-up entrance
-// below, not replacing it.
+/**
+ * A practice-area card.
+ *
+ * This used to run a `useScroll` + `useTransform` pair *per card* — eight
+ * scroll subscriptions writing scale and opacity on every frame — and it left
+ * every card parked at 45% opacity whenever the JS had not run yet. The accent
+ * each area already owns now does the work instead: it tints the icon, blooms
+ * behind the top edge and picks out the call to action on hover. Everything
+ * here is compositor-only (transform + opacity) and idle until you point at
+ * it, so eight cards cost nothing to scroll past.
+ */
 function PracticeCard({
   option,
   index,
@@ -101,36 +109,40 @@ function PracticeCard({
   cardRef: (el: HTMLButtonElement | null) => void;
   openIntakeModal: (preset?: IntakePreset) => void;
 }) {
-  const localRef = useRef<HTMLButtonElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: localRef,
-    offset: ["start end", "end start"],
-  });
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.86, 1.14, 0.86]);
-  const zoomOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.45, 1, 0.45]);
+  const key = option.value as ServiceKey;
 
   return (
-    <motion.button
-      ref={(el) => {
-        localRef.current = el;
-        cardRef(el);
-      }}
+    <button
+      ref={cardRef}
       type="button"
-      onClick={() => openIntakeModal({ service: option.value as ServiceKey })}
-      style={{ scale, opacity: zoomOpacity }}
-      whileHover={{ y: -4 }}
-      transition={{ type: "spring", stiffness: 300, damping: 22 }}
-      className="group relative block w-full max-w-sm rounded-2xl border border-white/10 bg-white/3 p-6 text-left backdrop-blur-sm transition-colors duration-300 hover:border-gold-400/40 hover:bg-white/6 sm:w-80"
+      onClick={() => openIntakeModal({ service: key })}
+      /* The accent class sits on the root so every `currentColor` below picks
+         it up — one source for the icon, the rule, the bloom and the CTA. */
+      className={`group relative block w-full max-w-sm overflow-hidden rounded-2xl border border-white/10 bg-white/4 p-6 text-left transition-[transform,background-color,border-color] duration-300 ease-out hover:-translate-y-1.5 hover:border-white/20 hover:bg-white/8 focus-visible:-translate-y-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 sm:w-80 ${PRACTICE_AREA_ACCENTS[key]}`}
     >
+      {/* accent bloom behind the top edge */}
       <span
         aria-hidden
-        className={`absolute -right-3 -top-3 flex size-8 items-center justify-center rounded-full border border-white/10 bg-[#05070f] font-serif text-sm italic ring-1 ring-white/10 ${PRACTICE_AREA_ACCENTS[option.value as ServiceKey]}`}
-      >
-        {index + 1}
-      </span>
+        className="pointer-events-none absolute inset-x-0 top-0 h-28 opacity-0 transition-opacity duration-500 group-hover:opacity-20"
+        style={{
+          backgroundImage:
+            "radial-gradient(60% 100% at 50% 0%, currentColor, transparent 72%)",
+        }}
+      />
+      {/* accent hairline along the top edge */}
       <span
-        className={`relative flex size-12 items-center justify-center overflow-hidden rounded-xl bg-white/5 ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-105 ${PRACTICE_AREA_ACCENTS[option.value as ServiceKey]}`}
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-current to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-80"
+      />
+      {/* oversized ghost numeral, echoing the About cards */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -top-1 right-4 select-none font-serif text-6xl font-black italic leading-none text-white/5 transition-colors duration-500 group-hover:text-white/10"
       >
+        {String(index + 1).padStart(2, "0")}
+      </span>
+
+      <span className="relative flex size-12 items-center justify-center overflow-hidden rounded-xl bg-white/5 ring-1 ring-white/10 transition-all duration-300 group-hover:scale-105 group-hover:ring-white/25">
         <span
           aria-hidden
           className="absolute inset-0 opacity-25"
@@ -142,13 +154,25 @@ function PracticeCard({
         />
         <Icon className="relative size-5.5" />
       </span>
-      <h3 className="mt-4 text-lg font-semibold tracking-tight text-white">
+
+      <h3 className="relative mt-4 text-lg font-semibold tracking-tight text-white">
         {option.label}
       </h3>
-      <p className="mt-1.5 text-sm leading-6 text-slate-400">
-        {PRACTICE_AREA_DESCRIPTIONS[option.value as ServiceKey]}
+      <p className="relative mt-1.5 text-sm leading-6 text-slate-400">
+        {PRACTICE_AREA_DESCRIPTIONS[key]}
       </p>
-    </motion.button>
+
+      {/* Nothing previously said these cards were clickable. Kept legible at
+          rest rather than revealed on hover, since a touch device never
+          hovers. */}
+      <span className="relative mt-5 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500 transition-colors duration-300 group-hover:text-current">
+        Start your case
+        <ArrowRight
+          aria-hidden
+          className="size-3.5 transition-transform duration-300 group-hover:translate-x-1"
+        />
+      </span>
+    </button>
   );
 }
 
@@ -311,9 +335,6 @@ export default function PracticeAreas() {
                     <stop key={i} offset={stop.offset} stopColor={stop.color} />
                   ))}
                 </linearGradient>
-                <filter id="practice-zigzag-blur" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="5" />
-                </filter>
               </defs>
 
               {/* dim dotted track, always visible */}
@@ -326,15 +347,18 @@ export default function PracticeAreas() {
                 strokeLinecap="round"
               />
 
-              {/* soft blurred halo behind the bright line, for a neon-tube glow */}
+              {/* Wide translucent stroke under the bright line for the neon-tube
+                  read. This was the same path pushed through an feGaussianBlur,
+                  which the browser had to re-rasterise on every scroll frame
+                  because `pathLength` is scroll-linked. A second stroke costs
+                  nothing and reads the same at this width. */}
               <motion.path
                 d={pathD}
                 fill="none"
                 stroke="url(#practice-zigzag-gradient)"
                 strokeWidth={6}
                 strokeLinecap="round"
-                opacity={0.5}
-                filter="url(#practice-zigzag-blur)"
+                opacity={0.22}
                 style={{ pathLength: scrollYProgress }}
               />
 
@@ -350,15 +374,15 @@ export default function PracticeAreas() {
 
               {points.map((p, i) => (
                 <g key={i}>
-                  <motion.circle
+                  <circle
                     cx={p.x}
                     cy={p.y}
                     r={5}
                     fill="none"
                     stroke="#d4af37"
                     strokeWidth={1.5}
-                    animate={{ r: [5, 13, 5], opacity: [0.6, 0, 0.6] }}
-                    transition={{ duration: 2.4, repeat: Infinity, ease: "easeOut", delay: i * 0.3 }}
+                    className="animate-ping-ring"
+                    style={{ animationDelay: `${i * 0.3}s` }}
                   />
                   <circle cx={p.x} cy={p.y} r={5} fill="#d4af37" className="drop-shadow-[0_0_6px_rgba(212,175,55,0.7)]" />
                 </g>
@@ -388,9 +412,6 @@ export default function PracticeAreas() {
                     <stop key={i} offset={stop.offset} stopColor={stop.color} />
                   ))}
                 </linearGradient>
-                <filter id="practice-mobile-blur" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="4" />
-                </filter>
               </defs>
 
               {/* dim dotted track, always visible */}
@@ -403,15 +424,15 @@ export default function PracticeAreas() {
                 strokeLinecap="round"
               />
 
-              {/* soft blurred halo behind the bright line */}
+              {/* Wide translucent stroke under the bright line — see the desktop
+                  track above for why this is not an feGaussianBlur. */}
               <motion.path
                 d={mobilePathD}
                 fill="none"
                 stroke="url(#practice-mobile-gradient)"
                 strokeWidth={5}
                 strokeLinecap="round"
-                opacity={0.5}
-                filter="url(#practice-mobile-blur)"
+                opacity={0.22}
                 style={{ pathLength: scrollYProgress }}
               />
 
@@ -427,15 +448,15 @@ export default function PracticeAreas() {
 
               {edges.map((edge, i) => (
                 <g key={i}>
-                  <motion.circle
+                  <circle
                     cx={mobileCenterX}
                     cy={edge.top}
                     r={4}
                     fill="none"
                     stroke={PRACTICE_AREA_HEX[SERVICE_OPTIONS[i].value as ServiceKey]}
                     strokeWidth={1.5}
-                    animate={{ r: [4, 11, 4], opacity: [0.6, 0, 0.6] }}
-                    transition={{ duration: 2.4, repeat: Infinity, ease: "easeOut", delay: i * 0.3 }}
+                    className="animate-ping-ring"
+                    style={{ animationDelay: `${i * 0.3}s` }}
                   />
                   <circle
                     cx={mobileCenterX}
@@ -454,13 +475,9 @@ export default function PracticeAreas() {
               const Icon = PRACTICE_AREA_ICONS[option.value as ServiceKey];
               const isEven = i % 2 === 0;
               return (
-                <motion.div
+                <div
                   key={option.value}
-                  initial={{ opacity: 0, y: 32 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                  className={`relative flex sm:items-center ${isEven ? "sm:justify-start" : "sm:justify-end"}`}
+                  className={`animate-reveal relative flex sm:items-center ${isEven ? "sm:justify-start" : "sm:justify-end"}`}
                 >
                   <PracticeCard
                     option={option}
@@ -471,7 +488,7 @@ export default function PracticeAreas() {
                       cardRefs.current[i] = el;
                     }}
                   />
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -492,19 +509,15 @@ export default function PracticeAreas() {
               className="absolute hidden -translate-x-1/2 -translate-y-1/2 sm:block"
               style={{ left: endPoint.x, top: endPoint.y }}
             >
-              <motion.a
+              <a
                 href={WHATSAPP_PRIMARY_HREF}
                 target="_blank"
                 rel="noopener noreferrer"
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-                className={buttonClass}
+                className={`animate-reveal ${buttonClass}`}
               >
                 <WhatsappIcon className="size-4" />
                 WhatsApp Us
-              </motion.a>
+              </a>
             </div>
           )}
         </div>

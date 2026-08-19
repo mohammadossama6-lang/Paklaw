@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { Briefcase, GraduationCap, Landmark, Megaphone } from "lucide-react";
 
 const TRUST_POINTS = [
@@ -51,13 +48,7 @@ export default function AboutSection() {
       />
 
       <div className="relative mx-auto max-w-6xl">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="mx-auto max-w-2xl text-center"
-        >
+        <div className="animate-reveal mx-auto max-w-2xl text-center">
           <span className="inline-flex items-center gap-2.5 text-sm font-bold uppercase tracking-[0.15em] text-brand-600">
             <span aria-hidden className="h-px w-6 bg-linear-to-r from-transparent to-gold-400" />
             About Pak Law
@@ -73,17 +64,14 @@ export default function AboutSection() {
             corporate entities, financial institutions, media groups,
             government bodies, and prominent public figures across Pakistan.
           </p>
-        </motion.div>
+        </div>
 
         <div className="mx-auto mt-10 sm:mt-14 grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {TRUST_POINTS.map(({ Icon, label, body, accent, glow }, i) => (
-            <motion.div
+            <div
               key={label}
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.55, ease: "easeOut", delay: 0.08 * i }}
-              className={`group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/70 bg-white p-6 text-left shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-transparent hover:shadow-2xl ${glow}`}
+              style={{ animationDelay: `${i * 80}ms` }}
+              className={`animate-reveal group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200/70 bg-white p-6 text-left shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-transparent hover:shadow-2xl ${glow}`}
             >
               <span
                 aria-hidden
@@ -109,7 +97,7 @@ export default function AboutSection() {
                 aria-hidden
                 className={`relative mt-auto block h-px w-8 bg-linear-to-r transition-all duration-500 group-hover:w-14 ${accent}`}
               />
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
