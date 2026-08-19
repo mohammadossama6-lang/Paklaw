@@ -68,6 +68,22 @@ const nastaleeq = Noto_Nastaliq_Urdu({
  */
 const META_PIXEL_ID = "2154588512126816";
 
+/**
+ * Google Ads (gtag.js). Like the pixel ID, this is not a secret.
+ *
+ * Google supplies this as two raw <script> tags; in the App Router they have to
+ * go through next/script, or React will not run the inline half reliably.
+ * `lazyOnload` matches the Meta Pixel, for the same reason — gtag.js is another
+ * ~100 KB of third-party JavaScript, and the two together are the single
+ * biggest main-thread cost on the page.
+ *
+ * Deferring is safe for conversions: `gtag()` only pushes onto `dataLayer`, so
+ * anything queued before gtag.js arrives is replayed when it loads, and a form
+ * submission happens long after idle either way. The gclid is read from the
+ * URL, which does not change while the visitor is on the page.
+ */
+const GOOGLE_ADS_ID = "AW-18396101596";
+
 export const metadata: Metadata = {
   title: "Pak Law — Legal Services in Pakistan",
   description:
@@ -127,6 +143,18 @@ fbq('track', 'PageView');`}
             src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
           />
         </noscript>
+
+        <Script
+          id="google-ads"
+          strategy="lazyOnload"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
+        />
+        <Script id="google-ads-config" strategy="lazyOnload">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GOOGLE_ADS_ID}');`}
+        </Script>
 
         <MotionConfig reducedMotion="user">
           <IntakeModalProvider>

@@ -63,7 +63,7 @@ export default function PrivacyPage() {
         providers, our file storage provider (for uploaded CVs), and the messaging provider
         that delivers login codes. These providers act on our instructions and are bound by
         confidentiality obligations. We also share limited website-usage information with
-        Meta, as described under Cookies below.
+        Meta and Google, as described under Cookies below.
       </p>
 
       <h2>5. Data Security &amp; Retention</h2>
@@ -84,10 +84,10 @@ export default function PrivacyPage() {
       <h2>7. Cookies</h2>
       <p>
         We use an essential cookie, set only after you sign in to the portal, to keep you
-        logged in. We also use the Meta (Facebook) Pixel, which sets cookies and shares
-        limited information about your visit with Meta so we can measure and target our
-        advertising. You can opt out through your Meta ad settings or your browser&rsquo;s
-        cookie controls.
+        logged in. We also use the Meta (Facebook) Pixel and Google Ads tags, which set
+        cookies and share limited information about your visit with Meta and Google so we
+        can measure and target our advertising. You can opt out through your Meta ad
+        settings, your Google ad settings, or your browser&rsquo;s cookie controls.
       </p>
 
       <h2>8. Children</h2>
