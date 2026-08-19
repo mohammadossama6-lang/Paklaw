@@ -66,11 +66,20 @@ export async function POST(request: Request) {
         .replace(/^[.-]+/, "")
         .slice(-80) || "cv";
 
-    const blob = await put(`lawyer-cvs/${Date.now()}-${safeName}`, cvFile, {
-      access: "public",
-      addRandomSuffix: true,
-    });
-    cvUrl = blob.url;
+    // Best-effort, like the CRM sync below: losing the attachment should not
+    // lose the application. `put` throws when BLOB_READ_WRITE_TOKEN is absent,
+    // which would have turned a fully valid submission into a 500 and no
+    // record of the applicant at all — the one part of this we cannot ask them
+    // to send again.
+    try {
+      const blob = await put(`lawyer-cvs/${Date.now()}-${safeName}`, cvFile, {
+        access: "public",
+        addRandomSuffix: true,
+      });
+      cvUrl = blob.url;
+    } catch (err) {
+      console.error("CV upload failed — saving the application without it:", err);
+    }
   }
 
   const application = await prisma.lawyerApplication.create({
