@@ -1,4 +1,5 @@
 import { put } from "@vercel/blob";
+import { after } from "next/server";
 import { z } from "zod";
 
 import {
@@ -76,22 +77,29 @@ export async function POST(request: Request) {
     data: { ...parsed.data, cvUrl },
   });
 
-  // Best-effort: a failed CRM sync shouldn't fail the submission itself,
-  // since the application is already safely persisted above.
-  const { ok: synced, recordId } = await syncLawyerApplicationToGoHighLevel(
-    parsed.data,
-    cvUrl
-  ).catch((err) => {
-    console.error("GoHighLevel sync failed:", err);
-    return { ok: false, recordId: undefined };
-  });
-
-  if (synced) {
-    await prisma.lawyerApplication.update({
-      where: { id: application.id },
-      data: { ghlNotifiedAt: new Date(), ghlRecordId: recordId },
+  /*
+   * Best-effort: a failed CRM sync shouldn't fail the submission itself, since
+   * the application is already safely persisted above. It is also several
+   * sequential calls to GoHighLevel, which the applicant was made to wait
+   * through for no benefit — `after` returns the response first and finishes
+   * the sync on the same invocation.
+   */
+  after(async () => {
+    const { ok: synced, recordId } = await syncLawyerApplicationToGoHighLevel(
+      parsed.data,
+      cvUrl
+    ).catch((err) => {
+      console.error("GoHighLevel sync failed:", err);
+      return { ok: false, recordId: undefined };
     });
-  }
+
+    if (synced) {
+      await prisma.lawyerApplication.update({
+        where: { id: application.id },
+        data: { ghlNotifiedAt: new Date(), ghlRecordId: recordId },
+      });
+    }
+  });
 
   return Response.json({ ok: true }, { status: 201 });
 }

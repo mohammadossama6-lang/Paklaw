@@ -50,14 +50,20 @@ export async function checkRateLimit(options: {
   const windowStart = new Date(Date.now() - windowMs);
 
   try {
-    // Drop this key's expired rows so the table can't grow without bound.
-    await prisma.rateLimitHit.deleteMany({
-      where: { key, createdAt: { lt: windowStart } },
-    });
-
-    const hits = await prisma.rateLimitHit.count({
-      where: { key, createdAt: { gte: windowStart } },
-    });
+    // The prune and the count touch disjoint rows — one is strictly older than
+    // `windowStart`, the other strictly newer — so they can go together rather
+    // than as two sequential round trips. Every trip to Neon is paid at the
+    // distance between the function and the database, on the path a visitor
+    // waits on before their enquiry is accepted.
+    const [, hits] = await Promise.all([
+      // Drop this key's expired rows so the table can't grow without bound.
+      prisma.rateLimitHit.deleteMany({
+        where: { key, createdAt: { lt: windowStart } },
+      }),
+      prisma.rateLimitHit.count({
+        where: { key, createdAt: { gte: windowStart } },
+      }),
+    ]);
 
     if (hits >= limit) {
       const oldest = await prisma.rateLimitHit.findFirst({

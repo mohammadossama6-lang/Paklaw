@@ -1,3 +1,4 @@
+import { after } from "next/server";
 import { z } from "zod";
 
 import { leadSchema } from "@/lib/schema";
@@ -42,49 +43,59 @@ export async function POST(request: Request) {
 
   const lead = await prisma.lead.create({ data: parsed.data });
 
-  // Best-effort: a failed lawyer match shouldn't fail the lead submission
-  // itself, since the lead is already safely persisted above. Lawyer matching
-  // is province-based, so it only applies to leads that have a province
-  // (Pakistani citizens) — overseas / foreign leads skip it.
-  const matchedLawyer = parsed.data.province
-    ? await findMatchingLawyer({
-        service: parsed.data.service,
-        province: parsed.data.province,
-        city: parsed.data.city,
-      }).catch((err) => {
-        console.error("Lawyer matching failed:", err);
-        return null;
-      })
-    : null;
+  /*
+   * Everything past this point is bookkeeping the enquirer has no stake in:
+   * picking a lawyer, and pushing the lead into GoHighLevel across four or
+   * five sequential calls to their API. All of it used to run before the
+   * response, so someone on a phone in Karachi held a spinner through a
+   * round trip to the CRM and back for work that is explicitly best-effort —
+   * and the lead is already safely persisted above either way.
+   *
+   * `after` hands the response back now and finishes the rest on the same
+   * invocation. Failures still land in the logs; they just no longer cost the
+   * person a wait, and a CRM outage can no longer look like a broken form.
+   */
+  after(async () => {
+    // Lawyer matching is province-based, so it only applies to leads that have
+    // a province (Pakistani citizens) — overseas / foreign leads skip it.
+    const matchedLawyer = parsed.data.province
+      ? await findMatchingLawyer({
+          service: parsed.data.service,
+          province: parsed.data.province,
+          city: parsed.data.city,
+        }).catch((err) => {
+          console.error("Lawyer matching failed:", err);
+          return null;
+        })
+      : null;
 
-  if (matchedLawyer) {
-    await prisma.lead.update({
-      where: { id: lead.id },
-      data: { matchedLawyerId: matchedLawyer.id },
+    if (matchedLawyer) {
+      await prisma.lead.update({
+        where: { id: lead.id },
+        data: { matchedLawyerId: matchedLawyer.id },
+      });
+    }
+
+    const {
+      ok: synced,
+      contactId,
+      opportunityId,
+    } = await syncLeadToGoHighLevel(parsed.data, matchedLawyer).catch((err) => {
+      console.error("GoHighLevel sync failed:", err);
+      return { ok: false, contactId: undefined, opportunityId: undefined };
     });
-  }
 
-  // Best-effort: a failed CRM sync shouldn't fail the lead submission itself,
-  // since the lead is already safely persisted above.
-  const {
-    ok: synced,
-    contactId,
-    opportunityId,
-  } = await syncLeadToGoHighLevel(parsed.data, matchedLawyer).catch((err) => {
-    console.error("GoHighLevel sync failed:", err);
-    return { ok: false, contactId: undefined, opportunityId: undefined };
+    if (synced) {
+      await prisma.lead.update({
+        where: { id: lead.id },
+        data: {
+          ghlNotifiedAt: new Date(),
+          ghlContactId: contactId,
+          ghlOpportunityId: opportunityId,
+        },
+      });
+    }
   });
-
-  if (synced) {
-    await prisma.lead.update({
-      where: { id: lead.id },
-      data: {
-        ghlNotifiedAt: new Date(),
-        ghlContactId: contactId,
-        ghlOpportunityId: opportunityId,
-      },
-    });
-  }
 
   return Response.json({ ok: true }, { status: 201 });
 }
