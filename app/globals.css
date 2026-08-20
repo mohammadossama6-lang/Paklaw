@@ -99,22 +99,6 @@
   }
 }
 
-/* Expanding ring on the practice-area connector points. Framer Motion used to
-   drive these by animating the SVG `r` attribute — a layout/paint property —
-   on sixteen circles at 60fps, forever, whether or not the section was on
-   screen. transform + opacity are compositor-only, and the browser throttles
-   CSS animations that scroll out of view. */
-@keyframes ping-ring {
-  from {
-    opacity: 0.6;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(2.6);
-  }
-}
-
 @keyframes marquee-left {
   from {
     transform: translateX(0);
@@ -230,12 +214,6 @@
     }
   }
 
-  .animate-ping-ring {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: ping-ring 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
-  }
-
   .animate-marquee-left {
     animation: marquee-left linear infinite;
   }
@@ -305,45 +283,6 @@
   animation: icon-wiggle 600ms ease-in-out;
 }
 
-/* The practice-area connector drawing itself in as you scroll. This was a
-   Framer `useScroll` progress value written onto `pathLength` every frame;
-   `view()` hands the same job to the compositor with no JS at all. The path
-   carries `pathLength="1"`, so the dash units are a plain 0-1 fraction of its
-   length whatever its real geometry.
-
-   Only browsers with scroll-driven animations get the draw-on. Everywhere else
-   the rule never applies and the line is simply there from the start, which is
-   the right fallback for the phones this site is aimed at. */
-@keyframes draw-line {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@supports (animation-timeline: view()) {
-  /* The timeline hangs on the track element rather than on the paths. 'view()'
-     measures a subject's CSS layout box against the scrollport, and an SVG
-     '<path>' has no such box — naming the path as the subject leaves the
-     timeline permanently inactive. */
-  .practice-track {
-    view-timeline-name: --practice-track;
-  }
-
-  /* Deliberately no 'both' fill: outside the range, or if the timeline fails to
-     resolve at all, no animated value applies and the path falls back to its
-     own 'stroke-dashoffset: 0' — a fully drawn line. The failure mode is the
-     line simply being there, never the line being invisible. */
-  .draw-on-scroll {
-    stroke-dasharray: 1;
-    animation: draw-line linear;
-    animation-timeline: --practice-track;
-    animation-range: cover 0% cover 85%;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee-left,
   .animate-marquee-right,
@@ -352,7 +291,6 @@
   .animate-fade-in,
   .animate-reveal,
   .animate-reveal-left,
-  .animate-ping-ring,
   .animate-cta-glow,
   .icon-wiggle {
     animation: none;
@@ -361,11 +299,6 @@
   .collapse-y,
   .collapse-y[data-open="true"] {
     transition: none;
-  }
-
-  .draw-on-scroll {
-    stroke-dasharray: none;
-    animation: none;
   }
 }
 
