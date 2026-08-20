@@ -175,12 +175,20 @@ export default function PracticeAreas() {
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-32 left-1/4 size-96 rounded-full bg-brand-600/25 blur-[130px]"
-      />
+        className="pointer-events-none absolute -top-64 left-[calc(25%-8rem)] size-160"
+            style={{
+              backgroundImage:
+                "radial-gradient(closest-side, rgba(37,99,235,0.25), transparent)",
+            }}
+            />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-32 right-1/4 size-96 rounded-full bg-gold-400/10 blur-[130px]"
-      />
+        className="pointer-events-none absolute -bottom-64 right-[calc(25%-8rem)] size-160"
+            style={{
+              backgroundImage:
+                "radial-gradient(closest-side, rgba(212,175,55,0.10), transparent)",
+            }}
+            />
 
       <div className="relative mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center">

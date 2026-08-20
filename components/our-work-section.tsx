@@ -78,12 +78,20 @@ export default function OurWorkSection() {
     <section className="relative overflow-hidden bg-[#05070f] px-4 py-16 sm:py-28 sm:px-6">
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-32 left-1/4 size-96 rounded-full bg-gold-400/10 blur-[130px]"
-      />
+        className="pointer-events-none absolute -top-64 left-[calc(25%-8rem)] size-160"
+            style={{
+              backgroundImage:
+                "radial-gradient(closest-side, rgba(212,175,55,0.10), transparent)",
+            }}
+            />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-32 right-1/4 size-96 rounded-full bg-brand-500/10 blur-[130px]"
-      />
+        className="pointer-events-none absolute -bottom-64 right-[calc(25%-8rem)] size-160"
+            style={{
+              backgroundImage:
+                "radial-gradient(closest-side, rgba(59,130,246,0.10), transparent)",
+            }}
+            />
 
       <div className="relative mx-auto max-w-6xl">
         <div className="animate-reveal mx-auto max-w-2xl text-center">
@@ -105,7 +113,7 @@ export default function OurWorkSection() {
             <div
               key={title}
               style={{ animationDelay: `${i * 60}ms` }}
-              className={`animate-reveal group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/3 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-gold-400/40 hover:bg-white/6 ${
+              className={`animate-reveal group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/3 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-gold-400/40 hover:bg-white/6 ${
                 // Hidden on mobile until expanded; always visible from sm up.
                 i >= MOBILE_VISIBLE && !showAll ? "hidden sm:flex" : ""
               }`}
@@ -137,7 +145,7 @@ export default function OurWorkSection() {
             <button
               type="button"
               onClick={() => setShowAll(true)}
-              className="flex min-h-11 items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:border-gold-400/40 hover:bg-white/10"
+              className="flex min-h-11 items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:border-gold-400/40 hover:bg-white/10"
             >
               View {hiddenOnMobile} more matters
               <ChevronDown aria-hidden className="size-4" />

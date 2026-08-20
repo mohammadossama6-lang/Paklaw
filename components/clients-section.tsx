@@ -102,12 +102,20 @@ export default function ClientsSection() {
       <section className="relative overflow-hidden bg-slate-50/60 px-4 pb-14 pt-3 sm:px-6 sm:pb-16 sm:pt-4">
         <div
           aria-hidden
-          className="pointer-events-none absolute -left-24 top-10 size-80 rounded-full bg-brand-500/10 blur-[120px]"
-        />
+          className="pointer-events-none absolute -left-56 -top-22 size-144"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(closest-side, rgba(59,130,246,0.10), transparent)",
+                }}
+                />
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-24 bottom-10 size-80 rounded-full bg-gold-400/15 blur-[120px]"
-        />
+          className="pointer-events-none absolute -right-56 -bottom-22 size-144"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(closest-side, rgba(212,175,55,0.15), transparent)",
+                }}
+                />
 
         <div className="animate-reveal relative mx-auto max-w-xl text-center">
           <span className="inline-flex items-center gap-2.5 text-sm font-bold uppercase tracking-[0.15em] text-brand-600">

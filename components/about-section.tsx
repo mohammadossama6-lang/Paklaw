@@ -36,12 +36,20 @@ export default function AboutSection() {
     <section id="about" className="relative overflow-hidden bg-slate-50 px-4 py-14 sm:py-24 sm:px-6">
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 left-1/4 size-96 rounded-full bg-brand-500/10 blur-[130px]"
-      />
+        className="pointer-events-none absolute -top-72 left-[calc(25%-8rem)] size-160"
+            style={{
+              backgroundImage:
+                "radial-gradient(closest-side, rgba(59,130,246,0.10), transparent)",
+            }}
+            />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-40 right-1/4 size-96 rounded-full bg-gold-400/10 blur-[130px]"
-      />
+        className="pointer-events-none absolute -bottom-72 right-[calc(25%-8rem)] size-160"
+            style={{
+              backgroundImage:
+                "radial-gradient(closest-side, rgba(212,175,55,0.10), transparent)",
+            }}
+            />
       <div
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-0 h-px w-full max-w-6xl -translate-x-1/2 bg-linear-to-r from-transparent via-gold-400/70 to-transparent"

@@ -44,12 +44,20 @@ export default function FaqSection() {
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-32 -left-24 size-96 rounded-full bg-brand-600/25 blur-[130px]"
-      />
+        className="pointer-events-none absolute -top-64 -left-56 size-160"
+            style={{
+              backgroundImage:
+                "radial-gradient(closest-side, rgba(37,99,235,0.25), transparent)",
+            }}
+            />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-32 -right-24 size-96 rounded-full bg-gold-400/10 blur-[130px]"
-      />
+        className="pointer-events-none absolute -bottom-64 -right-56 size-160"
+            style={{
+              backgroundImage:
+                "radial-gradient(closest-side, rgba(212,175,55,0.10), transparent)",
+            }}
+            />
       <div
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-0 h-px w-full max-w-6xl -translate-x-1/2 bg-linear-to-r from-transparent via-gold-400/50 to-transparent"
