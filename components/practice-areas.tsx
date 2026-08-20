@@ -89,7 +89,7 @@ function PracticeCard({
       onClick={() => openIntakeModal({ service: key })}
       /* The accent class sits on the root so every `currentColor` below picks
          it up — one source for the icon, the rule, the bloom and the CTA. */
-      className={`group animate-reveal relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/4 p-6 text-left transition-[transform,background-color,border-color] duration-300 ease-out hover:-translate-y-1.5 hover:border-white/20 hover:bg-white/8 focus-visible:-translate-y-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 ${PRACTICE_AREA_ACCENTS[key]}`}
+      className={`group animate-reveal relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/4 p-4 text-left sm:p-6 transition-[transform,background-color,border-color] duration-300 ease-out hover:-translate-y-1.5 hover:border-white/20 hover:bg-white/8 focus-visible:-translate-y-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 ${PRACTICE_AREA_ACCENTS[key]}`}
     >
       {/* accent bloom behind the top edge */}
       <span
@@ -108,12 +108,12 @@ function PracticeCard({
       {/* oversized ghost numeral, echoing the About cards */}
       <span
         aria-hidden
-        className="pointer-events-none absolute -top-1 right-4 select-none font-serif text-6xl font-black italic leading-none text-white/5 transition-colors duration-500 group-hover:text-white/10"
+        className="pointer-events-none absolute -top-1 right-3 select-none font-serif text-4xl font-black italic leading-none text-white/5 transition-colors duration-500 group-hover:text-white/10 sm:right-4 sm:text-6xl"
       >
         {String(index + 1).padStart(2, "0")}
       </span>
 
-      <span className="relative flex size-12 items-center justify-center overflow-hidden rounded-xl bg-white/5 ring-1 ring-white/10 transition-all duration-300 group-hover:scale-105 group-hover:ring-white/25">
+      <span className="relative flex size-10 items-center justify-center overflow-hidden rounded-xl bg-white/5 ring-1 ring-white/10 transition-all duration-300 group-hover:scale-105 group-hover:ring-white/25 sm:size-12">
         <span
           aria-hidden
           className="absolute inset-0 opacity-25"
@@ -123,13 +123,13 @@ function PracticeCard({
             backgroundSize: "8px 8px",
           }}
         />
-        <Icon className="relative size-5.5" />
+        <Icon className="relative size-4.5 sm:size-5.5" />
       </span>
 
-      <h3 className="relative mt-4 text-lg font-semibold tracking-tight text-white">
+      <h3 className="relative mt-3 text-sm font-semibold tracking-tight text-white sm:mt-4 sm:text-lg">
         {option.label}
       </h3>
-      <p className="relative mt-1.5 text-sm leading-6 text-slate-400">
+      <p className="relative mt-1 line-clamp-4 text-xs leading-5 text-slate-400 sm:mt-1.5 sm:line-clamp-none sm:text-sm sm:leading-6">
         {PRACTICE_AREA_DESCRIPTIONS[key]}
       </p>
 
@@ -137,11 +137,11 @@ function PracticeCard({
           a row of cards whose descriptions differ in length. Kept legible at
           rest rather than revealed on hover, since a touch device never
           hovers. */}
-      <span className="relative mt-auto pt-5 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500 transition-colors duration-300 group-hover:text-current">
+      <span className="relative mt-auto inline-flex items-center gap-1.5 pt-4 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 transition-colors duration-300 group-hover:text-current sm:pt-5 sm:text-[11px] sm:tracking-[0.14em]">
         Start your case
         <ArrowRight
           aria-hidden
-          className="size-3.5 transition-transform duration-300 group-hover:translate-x-1"
+          className="size-3 transition-transform duration-300 group-hover:translate-x-1 sm:size-3.5"
         />
       </span>
     </button>
@@ -198,7 +198,7 @@ export default function PracticeAreas() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-5 sm:mt-16 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid grid-cols-2 gap-3 sm:mt-16 sm:gap-5 lg:grid-cols-4">
           {SERVICE_OPTIONS.map((option, i) => (
             <PracticeCard
               key={option.value}
