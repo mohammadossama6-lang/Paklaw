@@ -9,8 +9,33 @@ import {
 } from "@/lib/lawyer-schema";
 import { prisma } from "@/lib/prisma";
 import { syncLawyerApplicationToGoHighLevel } from "@/lib/ghl";
+import { checkRateLimit, clientIpFrom, phoneKey } from "@/lib/rate-limit";
+
+/*
+ * This endpoint had no limit at all, while accepting a file upload — see
+ * /api/lead for why the per-person tier is keyed on the phone rather than the
+ * address. Applying is a rarer act than enquiring, so the per-person ceiling is
+ * lower.
+ */
+const APPLICATION_PHONE_LIMIT = 2;
+const APPLICATION_IP_BURST_LIMIT = 40;
+const APPLICATION_RATE_WINDOW_MS = 60 * 60 * 1000;
 
 export async function POST(request: Request) {
+  const ipRate = await checkRateLimit({
+    identifier: clientIpFrom(request),
+    scope: "lawyer-application:ip",
+    limit: APPLICATION_IP_BURST_LIMIT,
+    windowMs: APPLICATION_RATE_WINDOW_MS,
+  });
+
+  if (!ipRate.allowed) {
+    return Response.json(
+      { message: "You've sent several requests already. Please try again in a few minutes." },
+      { status: 429, headers: { "Retry-After": String(ipRate.retryAfterSeconds) } }
+    );
+  }
+
   const formData = await request.formData().catch(() => null);
   if (!formData) {
     return Response.json({ message: "Invalid form submission." }, { status: 400 });
@@ -40,6 +65,24 @@ export async function POST(request: Request) {
         errors: z.flattenError(parsed.error).fieldErrors,
       },
       { status: 400 }
+    );
+  }
+
+  // Before the upload, so a repeat submission cannot spend blob storage.
+  const phoneRate = await checkRateLimit({
+    identifier: phoneKey(parsed.data.phone),
+    scope: "lawyer-application:phone",
+    limit: APPLICATION_PHONE_LIMIT,
+    windowMs: APPLICATION_RATE_WINDOW_MS,
+  });
+
+  if (!phoneRate.allowed) {
+    return Response.json(
+      {
+        message:
+          "We've already received your application. Our team will review it and get back to you.",
+      },
+      { status: 429, headers: { "Retry-After": String(phoneRate.retryAfterSeconds) } }
     );
   }
 

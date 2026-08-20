@@ -1,5 +1,6 @@
 import "server-only";
 import { createHash } from "node:crypto";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 import { prisma } from "@/lib/prisma";
 
@@ -15,10 +16,38 @@ import { prisma } from "@/lib/prisma";
  * would reset constantly and limit almost nothing.
  */
 
-/** Never store the raw address. The salt stops the hash being reversed via a rainbow table of the IPv4 space. */
-function hashIp(ip: string, scope: string): string {
+/**
+ * Never store the raw identifier — an address or a phone number. The salt stops
+ * the hash being reversed via a rainbow table of the IPv4 space, or of the
+ * (much smaller) space of Pakistani mobile numbers.
+ */
+function hashIdentifier(value: string, scope: string): string {
   const salt = process.env.SESSION_SECRET ?? "paklaw";
-  return createHash("sha256").update(`${salt}:${scope}:${ip}`).digest("hex");
+  return createHash("sha256").update(`${salt}:${scope}:${value}`).digest("hex");
+}
+
+/**
+ * The key for a per-person limit.
+ *
+ * Normalising first is the whole point: "0300 1234567", "+92 300 1234567" and
+ * "03001234567" are one person, and hashing them as typed would produce three
+ * separate budgets and limit nothing. The intake form already sends E.164, but
+ * this endpoint is public and can be called with anything.
+ */
+export function phoneKey(phone: string): string {
+  const trimmed = phone.trim();
+  try {
+    // A number that already carries a dialling code is parsed by that code, so
+    // the default only applies to one typed in local form. Without it,
+    // "03001234567" and "+923001234567" hash to two different budgets and the
+    // same person gets two — verified: with "PK" both collapse to
+    // +923001234567, while +44 and +971 numbers are untouched.
+    const parsed = parsePhoneNumberFromString(trimmed, "PK");
+    if (parsed && parsed.isPossible()) return parsed.number;
+  } catch {
+    /* fall through to the digit-only form */
+  }
+  return trimmed.replace(/\D/g, "") || trimmed;
 }
 
 /**
@@ -39,14 +68,18 @@ export type RateLimitResult = {
 };
 
 export async function checkRateLimit(options: {
-  request: Request;
-  /** Distinguishes endpoints so they don't share a budget. */
+  /**
+   * The raw value the budget belongs to — an IP for a flood backstop, a phone
+   * number for a per-person limit. Hashed before it is stored.
+   */
+  identifier: string;
+  /** Distinguishes endpoints and tiers so they don't share a budget. */
   scope: string;
   limit: number;
   windowMs: number;
 }): Promise<RateLimitResult> {
-  const { request, scope, limit, windowMs } = options;
-  const key = hashIp(clientIpFrom(request), scope);
+  const { identifier, scope, limit, windowMs } = options;
+  const key = hashIdentifier(identifier, scope);
   const windowStart = new Date(Date.now() - windowMs);
 
   try {

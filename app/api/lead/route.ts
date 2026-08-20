@@ -5,26 +5,44 @@ import { leadSchema } from "@/lib/schema";
 import { prisma } from "@/lib/prisma";
 import { syncLeadToGoHighLevel } from "@/lib/ghl";
 import { findMatchingLawyer } from "@/lib/lawyer-matching";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit, clientIpFrom, phoneKey } from "@/lib/rate-limit";
 
-// A genuine enquirer submits once, maybe twice if they mistype something.
-// Five in ten minutes leaves room for that while stopping a script from
-// filling the CRM.
-const LEAD_RATE_LIMIT = 5;
+/*
+ * Two tiers, because they answer different questions.
+ *
+ * This budget used to be per-IP alone, which assumes one address is one
+ * person. On the networks this site's traffic actually arrives from — Jazz,
+ * Zong, Telenor, Ufone — carrier-grade NAT puts thousands of subscribers
+ * behind a single public IPv4. Five submissions per ten minutes across all of
+ * them meant that during an ad push the sixth genuine enquirer was turned away
+ * because five strangers on the same carrier had got there first. Paid traffic,
+ * rejected at the form.
+ *
+ * So the per-person limit is keyed on the phone number instead: two people on
+ * one carrier IP have different numbers and never collide, while the case the
+ * limit exists for — the same person, or a script reusing one identity — is
+ * still caught. The IP tier stays purely as a flood backstop, with a ceiling
+ * far above what a shared carrier address produces in normal traffic but well
+ * below what one machine hammering the endpoint would.
+ */
+const LEAD_PHONE_LIMIT = 4;
+const LEAD_IP_BURST_LIMIT = 80;
 const LEAD_RATE_WINDOW_MS = 10 * 60 * 1000;
 
 export async function POST(request: Request) {
-  const rate = await checkRateLimit({
-    request,
-    scope: "lead",
-    limit: LEAD_RATE_LIMIT,
+  // The backstop runs first: it needs nothing from the body, so a flood is
+  // turned away before any parsing happens.
+  const ipRate = await checkRateLimit({
+    identifier: clientIpFrom(request),
+    scope: "lead:ip",
+    limit: LEAD_IP_BURST_LIMIT,
     windowMs: LEAD_RATE_WINDOW_MS,
   });
 
-  if (!rate.allowed) {
+  if (!ipRate.allowed) {
     return Response.json(
       { message: "You've sent several requests already. Please try again in a few minutes." },
-      { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+      { status: 429, headers: { "Retry-After": String(ipRate.retryAfterSeconds) } }
     );
   }
 
@@ -38,6 +56,26 @@ export async function POST(request: Request) {
         errors: z.flattenError(parsed.error).fieldErrors,
       },
       { status: 400 }
+    );
+  }
+
+  // The per-person limit can only run once the body has been validated, since
+  // it is keyed on the phone number. Parsing first costs nothing — it is in
+  // memory, and the backstop above already stopped any flood.
+  const phoneRate = await checkRateLimit({
+    identifier: phoneKey(parsed.data.phone),
+    scope: "lead:phone",
+    limit: LEAD_PHONE_LIMIT,
+    windowMs: LEAD_RATE_WINDOW_MS,
+  });
+
+  if (!phoneRate.allowed) {
+    return Response.json(
+      {
+        message:
+          "We've already received your enquiry. Our team will be in touch shortly.",
+      },
+      { status: 429, headers: { "Retry-After": String(phoneRate.retryAfterSeconds) } }
     );
   }
 
